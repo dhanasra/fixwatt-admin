@@ -14,7 +14,7 @@ const dashboard = {
   children: [
     {
       id: 'customers',
-      title: 'Customers',
+      title: 'My Customers',
       type: 'item',
       url: '/',
       icon: icons.UserOutlined,
