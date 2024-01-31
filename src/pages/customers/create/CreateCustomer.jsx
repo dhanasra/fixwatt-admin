@@ -15,18 +15,23 @@ const CreateCustomer = () => {
         <Box>
             <Grid container rowSpacing={1.5} columnSpacing={2.75}>
                 <Grid item xs={12}>
-                    <MainCard sx={{ alignItems: "center", display: "flex", justifyContent: "center" }}>
+                    <MainCard 
+                        sx={{ alignItems: "center", display: "flex", justifyContent: "center" }}
+                        contentSX={{
+                            width: "100%",
+                        }}
+                    >
                         <Stack direction="row" alignItems="center" spacing={2}>
                             <IconButton disableRipple aria-label="go back" onClick={handleBack} edge="start" color="secondary">
                                 <ArrowLeftOutlined/>
                             </IconButton>
                             <Typography variant="h4">Create Customer</Typography>
                         </Stack>
-                        <Grid container spacing={3} columnSpacing={16} sx={{ padding: "30px" }}>
-                            <Grid item xs={6}>
+                        <Grid container spacing={3} columnSpacing={16} sx={{ px: { xs: '8px', sm: "36px" }, py: { xs: '24px', sm: "36px" } }}>
+                            <Grid item sm={5} xs={0} sx={{ display: { xs: 'none', sm: 'block' } }}>
                                 <Box component="img" src={PlaceholderImg} sx={{ width: "100%" }}/>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item sm={7} xs={12}>
                             <Formik
                                 initialValues={{
                                     name: '',
@@ -48,7 +53,7 @@ const CreateCustomer = () => {
                             >
                                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                                     <form noValidate onSubmit={handleSubmit}>
-                                        <Stack spacing={3}>
+                                        <Stack spacing={3} sx={{width: "100%"}}>
                                             {[
                                                 { id: "full-name", label: "Full Name", name: "name", placeholder: "Enter full name" },
                                                 { id: "phone-number", label: "Phone Number", name: "phone", placeholder: "Enter phone number" },
