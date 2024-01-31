@@ -1,10 +1,12 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { AppBar, IconButton, Toolbar } from "@mui/material";
+import { AppBar, IconButton, Toolbar, useMediaQuery } from "@mui/material";
 import HeaderContent from "./content/HeaderContent";
 import { useTheme } from '@mui/material/styles';
+import AppBarStyled from "./AppBarStyled";
 
 const Header =({ open, handleDrawerToggle })=>{
     const theme = useTheme();
+    const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
 
     const appBar = {
         position: 'fixed',
@@ -35,7 +37,15 @@ const Header =({ open, handleDrawerToggle })=>{
     )
 
     return (
-        <AppBar {...appBar}>{mainHeader}</AppBar>
+        <>
+            {!matchDownMD ? (
+                <AppBarStyled open={open} {...appBar}>
+                    {mainHeader}
+                </AppBarStyled>
+                ) : (
+                <AppBar {...appBar}>{mainHeader}</AppBar>
+                )}
+        </>
     )   
 }
 

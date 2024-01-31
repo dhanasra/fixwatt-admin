@@ -1,10 +1,13 @@
 import appLogo from './assets/app-logo.png'
 import AppRoutes from './routes/AppRoutes'
+import CustomTheme from './theme/CustomTheme'
 
 function App() {
 
   return (
-    <AppRoutes/>
+    <CustomTheme>
+      <AppRoutes/>
+    </CustomTheme>
   )
 }
 
