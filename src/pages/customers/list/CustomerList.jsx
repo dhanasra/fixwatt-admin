@@ -1,4 +1,4 @@
-import { PlusOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons";
+import { DeleteFilled, DeleteOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { Box, Button, FormControl, Grid, IconButton, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ const CustomerList = () => {
 
   const [customers, setCustomers] = useState([]);
   const [data, setData] = useState([]);
+  const [selectedContacts, setSelectedContacts] = useState([]);
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -76,7 +77,7 @@ const CustomerList = () => {
       <Grid item xs={12} display={'flex'}>
         <MainCard sx={{ width: '100%' }}>
           <>
-              <Stack direction={'row'} spacing={2} sx={{ mb: 3 }}>
+              <Stack direction={'row'} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
                 <Box sx={{ width: '100%' }}>
                   <FormControl sx={{ width: { xs: '100%', md: 300 } }}>
                     <OutlinedInput
@@ -95,6 +96,11 @@ const CustomerList = () => {
                     />
                   </FormControl>
                 </Box>
+                {/* <IconButton disabled={selectedContacts.length<=0} onClick={()=>{}}>
+                  <Box sx={{ border: `1px solid ${theme.palette.error.light}`, borderRadius: '4px', p: 1 }}>
+                    <DeleteFilled style={{color: selectedContacts.length<=0 ? theme.palette.error.light : "red"}}/>
+                  </Box>
+                </IconButton> */}
                 <Box>
                   <Button
                     variant="outlined"
@@ -106,11 +112,6 @@ const CustomerList = () => {
                     Add Customer
                   </Button>
                 </Box>
-                <IconButton onClick={()=>{}}>
-                  <Box sx={{ border: `1px solid ${theme.palette.grey[300]}`, borderRadius: '4px', p: 1 }}>
-                    <ReloadOutlined />
-                  </Box>
-                </IconButton>
               </Stack>
               <StripedDataGrid
                 rows={rows}
@@ -127,9 +128,9 @@ const CustomerList = () => {
                 checkboxSelection
                 disableRowSelectionOnClick
                 onRowSelectionModelChange={(selected) => {
-
+                  setSelectedContacts(selected);
                 }}
-                // rowSelectionModel={selectedContacts}
+                rowSelectionModel={selectedContacts}
               />
             </>
         </MainCard>
