@@ -3,7 +3,8 @@ import axios from 'axios';
 import { showSnackbar } from '../utils/snackbar-utils';
 
 const axiosClient = axios.create({
-    baseURL: `http://13.233.244.254/test/v1`,
+    // baseURL: `http://13.233.244.254/test/v1`,
+    baseURL: `https://spiderlings.in/test/v1`,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
