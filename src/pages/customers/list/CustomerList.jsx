@@ -1,5 +1,5 @@
-import { DeleteFilled, DeleteOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons";
-import { Box, Button, FormControl, Grid, IconButton, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { Box, Button, FormControl, Grid, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCustomers } from "../../../network/service/customerService";
