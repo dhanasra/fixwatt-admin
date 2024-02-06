@@ -23,10 +23,15 @@ axiosClient.interceptors.request.use(
 
 axiosClient.interceptors.response.use(
     response=>{
-        const data = response.data["data"];
-        const message = response.data["message"];
+        const res = response.data;
 
-        if(message){
+        const data = res["data"];
+        const message = res["message"];
+
+        if(res.status === 422){
+            showSnackbar(data?.errors[0]?.msg ?? message, { variant: 'error' });
+            return null;
+        }else if(res.status === 200){
             showSnackbar(message, { variant: 'success' });
         }
 
