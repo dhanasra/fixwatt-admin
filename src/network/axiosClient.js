@@ -1,6 +1,7 @@
 
 import axios from 'axios';
 import { showSnackbar } from '../utils/snackbar-utils';
+import Cookies from 'js-cookie';
 
 const axiosClient = axios.create({
     // baseURL: `http://13.233.244.254/test/v1`,
@@ -14,6 +15,12 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
     config=>{
+        const accessToken = Cookies.get('refreshToken');
+
+        console.log(accessToken)
+        if(accessToken){
+            config.headers['x-refresh-token'] = `${accessToken}`;
+        }
         return config;
     },
     error=>{
