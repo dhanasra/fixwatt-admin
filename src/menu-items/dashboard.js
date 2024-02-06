@@ -1,10 +1,10 @@
 // assets
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, FieldTimeOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
-  UserOutlined
-  
+  UserOutlined,
+  FieldTimeOutlined
 };
 
 const dashboard = {
@@ -14,10 +14,18 @@ const dashboard = {
   children: [
     {
       id: 'customers',
-      title: 'My Customers',
+      title: 'Customers',
       type: 'item',
       url: '/',
       icon: icons.UserOutlined,
+      breadcrumbs: false,
+    },
+    {
+      id: 'orders',
+      title: 'Orders',
+      type: 'item',
+      url: '/orders',
+      icon: icons.FieldTimeOutlined,
       breadcrumbs: false,
     }
   ]
