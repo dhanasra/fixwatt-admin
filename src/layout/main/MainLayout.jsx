@@ -1,11 +1,13 @@
-import { Box, Toolbar, AppBar, useMediaQuery } from '@mui/material';
+import { Box, Toolbar, useMediaQuery } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Header from './header/Header';
 import MainDrawer from './drawer/MainDrawer';
 import { useTheme } from '@emotion/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { openDrawer } from '../../store/reducers/menu';
+import navigation from '../../menu-items/index';
 import { useEffect, useState } from 'react';
+import Breadcrumbs from '../../components/@extended/Breadcrumbs';
 
 const MainLayout = ()=>{
 
@@ -38,8 +40,9 @@ const MainLayout = ()=>{
             <Header open={open} handleDrawerToggle={handleDrawerToggle} />
             <MainDrawer open={open} handleDrawerToggle={handleDrawerToggle} />
             <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
-            <Toolbar />
-            <Outlet/>
+                <Toolbar />
+                <Breadcrumbs id="bctag" navigation={navigation} title />
+                <Outlet/>
             </Box>
         </Box>
     );

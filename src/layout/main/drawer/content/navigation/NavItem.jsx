@@ -115,6 +115,7 @@ const NavItem = ({ item, level }) => {
       )}
       {(drawerOpen || (!drawerOpen && level !== 1)) && (
         <ListItemText
+          sx={{ml: item.sub ? "28px" : "0px"}}
           primary={
             <Typography variant="h6" sx={{ color: isSelected ? iconSelectedColor : textColor }}>
               {item.title}

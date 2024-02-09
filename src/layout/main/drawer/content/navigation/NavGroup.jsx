@@ -1,41 +1,39 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
-
-// material-ui
-import { Box, List, Typography } from '@mui/material';
-
-// project import
+import { Box, List, Typography, Collapse } from '@mui/material';
 import NavItem from './NavItem';
-
+import CollapseItem from './CollpaseItem';
 
 const NavGroup = ({ item }) => {
   const menu = useSelector((state) => state.menu);
   const { drawerOpen } = menu;
+  const [open, setOpen] = useState(false);
 
-  const navCollapse = item.children?.map((menuItem) => {
-    switch (menuItem.type) {
-      case 'collapse':
-        return (
-          <Typography key={menuItem.id} variant="caption" color="error" sx={{ p: 2.5 }}>
-            collapse - only available in paid version
-          </Typography>
-        );
-      case 'item':
-        return <NavItem key={menuItem.id} item={menuItem} level={1} />;
-      default:
-        return (
-          <Typography key={menuItem.id} variant="h6" color="error" align="center">
-            Fix - Group Collapse or Items
-          </Typography>
-        );
-    }
-  });
+  const handleCollapseToggle = () => {
+    setOpen(!open);
+    console.log("hello")
+  };
+
+  const renderChildren = (children) => {
+    return children.map((childItem) => {
+      switch (childItem.type) {
+        case 'item':
+          return <NavItem key={childItem.id} item={childItem} level={1} />;
+        case 'collapse':
+          return (
+            <NavGroup key={childItem.id} item={childItem} />
+          );
+        default:
+          return null;
+      }
+    });
+  };
 
   return (
     <List
       subheader={
-        item.title &&
-        drawerOpen && (
+        item.title && (item.type != "collapse") && drawerOpen && (
           <Box sx={{ pl: 3, mb: 1.5 }}>
             <Typography variant="subtitle2" color="textSecondary">
               {item.title}
@@ -45,7 +43,16 @@ const NavGroup = ({ item }) => {
       }
       sx={{ mb: drawerOpen ? 1.5 : 0, py: 0, zIndex: 0 }}
     >
-      {navCollapse}
+      {item.type === 'collapse' ? (
+        <>
+          <CollapseItem onClick={handleCollapseToggle} key={item.id} item={item} level={1} isSelected={open}/>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            {renderChildren(item.children)}
+          </Collapse>
+        </>
+      ) : (
+        renderChildren(item.children)
+      )}
     </List>
   );
 };

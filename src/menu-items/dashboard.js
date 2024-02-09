@@ -1,10 +1,9 @@
 // assets
-import { UserOutlined, FieldTimeOutlined } from '@ant-design/icons';
+import { DashboardOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
-  UserOutlined,
-  FieldTimeOutlined
+  DashboardOutlined
 };
 
 const dashboard = {
@@ -13,20 +12,12 @@ const dashboard = {
   type: 'group',
   children: [
     {
-      id: 'customers',
-      title: 'Customers',
+      id: 'dashboard',
+      title: 'Dashboard',
       type: 'item',
-      url: '/',
-      icon: icons.UserOutlined,
-      breadcrumbs: false,
-    },
-    {
-      id: 'orders',
-      title: 'Orders',
-      type: 'item',
-      url: '/orders',
-      icon: icons.FieldTimeOutlined,
-      breadcrumbs: false,
+      url: '/dashboard',
+      icon: icons.DashboardOutlined,
+      breadcrumbs: false
     }
   ]
 };

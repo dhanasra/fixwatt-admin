@@ -20,6 +20,8 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
   const getCollapse = (menu) => {
     if (menu.children) {
       menu.children.filter((collapse) => {
+
+        console.log(collapse)
         
         if (collapse.type && collapse.type === 'collapse') {
           getCollapse(collapse);
@@ -58,13 +60,9 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
     );
   }
 
-
-
   // items
   if (item && item.type === 'item') {
-
-
-
+    
     itemTitle = item.title;
     itemContent = (
       <Typography variant="subtitle1" color="textPrimary">
@@ -73,29 +71,31 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
     );
 
 
+    console.log(mainContent);
     // main
-    if (item.breadcrumbs !== false) {
-      breadcrumbContent = (
-        <MainCard border={false} sx={{ mb: 3, bgcolor: 'transparent' }} {...others} content={false}>
-          <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
-            <Grid item>
-              <MuiBreadcrumbs aria-label="breadcrumb">
-                <Typography component={Link} to="/" color="textSecondary" variant="h6" sx={{ textDecoration: 'none' }}>
-                  Home
-                </Typography>
-                {mainContent}
-                {itemContent}
-              </MuiBreadcrumbs>
-            </Grid>
-            {title && (
-              <Grid item sx={{ mt: 1 }}>
-                <Typography variant="h3">{item.title}</Typography>
+    breadcrumbContent = (
+      <MainCard border={false} sx={{ mb: 3, bgcolor: 'transparent' }} {...others} content={false}>
+        <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
+          {
+            (item.breadcrumbs !== false) &&
+              <Grid item>
+                <MuiBreadcrumbs aria-label="breadcrumb">
+                  <Typography component={Link} to="/dashboard" color="textSecondary" variant="h6" sx={{ textDecoration: 'none' }}>
+                    Home
+                  </Typography>
+                  {mainContent}
+                  {itemContent}
+                </MuiBreadcrumbs>
               </Grid>
-            )}
-          </Grid>
-        </MainCard>
-      );
-    }
+          }
+          {title && (
+            <Grid item sx={{ mt: item.breadcrumbs !== false ? 1 : 0 }}>
+              <Typography variant="h3">{item.subtitle ?? item.title}</Typography>
+            </Grid>
+          )}
+        </Grid>
+      </MainCard>
+    );
   }
 
 

@@ -1,5 +1,5 @@
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Box, Button, FormControl, Grid, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
+import { Box, Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCustomers } from "../../../network/service/customerService";
@@ -31,7 +31,7 @@ const CustomerList = () => {
   }, []);
 
   const onAddCustomer = () => {
-    navigate("/customer");
+    navigate("/customer/create");
   };
 
   const handleSearch = async (event) => {
@@ -70,72 +70,60 @@ const CustomerList = () => {
   }));
 
   return (
-    <Grid container rowSpacing={2.5} columnSpacing={2.75}>
-      <Grid item xs={12}>
-        <Typography variant="h3">My Customers</Typography>
-      </Grid>
-      <Grid item xs={12} display={'flex'}>
-        <MainCard sx={{ width: '100%' }}>
-          <>
-              <Stack direction={'row'} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
-                <Box sx={{ width: '100%' }}>
-                  <FormControl sx={{ width: { xs: '100%', md: 300 } }}>
-                    <OutlinedInput
-                      id="header-search"
-                      startAdornment={
-                        <InputAdornment position="start" sx={{ mr: -0.5 }}>
-                          <SearchOutlined />
-                        </InputAdornment>
-                      }
-                      onChange={handleSearch}
-                      placeholder="Search by name, email or phone number"
-                      aria-describedby="header-search-text"
-                      inputProps={{
-                        'aria-label': 'weight'
-                      }}
-                    />
-                  </FormControl>
-                </Box>
-                {/* <IconButton disabled={selectedContacts.length<=0} onClick={()=>{}}>
-                  <Box sx={{ border: `1px solid ${theme.palette.error.light}`, borderRadius: '4px', p: 1 }}>
-                    <DeleteFilled style={{color: selectedContacts.length<=0 ? theme.palette.error.light : "red"}}/>
-                  </Box>
-                </IconButton> */}
-                <Box>
-                  <Button
-                    variant="outlined"
-                    size="medium"
-                    sx={{ px: 0, width: '140px' }}
-                    onClick={onAddCustomer}
-                    startIcon={<PlusOutlined style={{ fontSize: '16px' }} />}
-                  >
-                    Add Customer
-                  </Button>
-                </Box>
-              </Stack>
-              <StripedDataGrid
-                rows={rows}
-                columns={columns}
-                getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
-                sx={{
-                  '& .MuiDataGrid-columnHeader': { fontSize: '15px', fontWeight: '900' },
-                  '& .MuiDataGrid-cell': { fontSize: '14px' },
-                  border: 1,
-                  borderColor: `${theme.palette.grey[200]}`
+    <MainCard sx={{ width: '100%' }}>
+      <>
+        <Stack direction={'row'} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
+          <Box sx={{ width: '100%' }}>
+            <FormControl sx={{ width: { xs: '100%', md: 300 } }}>
+              <OutlinedInput
+                id="header-search"
+                startAdornment={
+                  <InputAdornment position="start" sx={{ mr: -0.5 }}>
+                    <SearchOutlined />
+                  </InputAdornment>
+                }
+                onChange={handleSearch}
+                placeholder="Search by name, email or phone number"
+                aria-describedby="header-search-text"
+                inputProps={{
+                  'aria-label': 'weight'
                 }}
-                initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
-                pageSizeOptions={[5, 10]}
-                checkboxSelection
-                disableRowSelectionOnClick
-                onRowSelectionModelChange={(selected) => {
-                  setSelectedContacts(selected);
-                }}
-                rowSelectionModel={selectedContacts}
               />
-            </>
-        </MainCard>
-      </Grid>
-    </Grid>
+            </FormControl>
+          </Box>
+          <Box>
+            <Button
+              variant="outlined"
+              size="medium"
+              sx={{ px: 0, width: '140px' }}
+              onClick={onAddCustomer}
+              startIcon={<PlusOutlined style={{ fontSize: '16px' }} />}
+            >
+              Add Customer
+            </Button>
+          </Box>
+        </Stack>
+        <StripedDataGrid
+          rows={rows}
+          columns={columns}
+          getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
+          sx={{
+            '& .MuiDataGrid-columnHeader': { fontSize: '15px', fontWeight: '900' },
+            '& .MuiDataGrid-cell': { fontSize: '14px' },
+            border: 1,
+            borderColor: `${theme.palette.grey[200]}`
+          }}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          onRowSelectionModelChange={(selected) => {
+            setSelectedContacts(selected);
+          }}
+          rowSelectionModel={selectedContacts}
+        />
+      </>
+    </MainCard>
   );
 };
 
