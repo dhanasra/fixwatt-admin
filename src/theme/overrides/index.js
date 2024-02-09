@@ -17,6 +17,7 @@ import Tab from './Tab';
 import TableCell from './TableCell';
 import Tabs from './Tabs';
 import Typography from './Typography';
+import Autocomplete from './Autocomplete';
 
 export default function ComponentsOverrides(theme) {
   return merge(
@@ -27,6 +28,7 @@ export default function ComponentsOverrides(theme) {
     Chip(theme),
     IconButton(theme),
     InputLabel(theme),
+    Autocomplete(theme),
     LinearProgress(),
     Link(),
     ListItemIcon(),
