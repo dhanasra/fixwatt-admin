@@ -8,6 +8,7 @@ import NavGroup from './NavGroup';
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
 const Navigation = () => {
+  
   const navGroups = menuItems.items.map((item) => {
     switch (item.type) {
       case 'group':

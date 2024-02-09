@@ -20,8 +20,6 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
   const getCollapse = (menu) => {
     if (menu.children) {
       menu.children.filter((collapse) => {
-
-        console.log(collapse)
         
         if (collapse.type && collapse.type === 'collapse') {
           getCollapse(collapse);
@@ -70,8 +68,6 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
       </Typography>
     );
 
-
-    console.log(mainContent);
     // main
     breadcrumbContent = (
       <MainCard border={false} sx={{ mb: 3, bgcolor: 'transparent' }} {...others} content={false}>

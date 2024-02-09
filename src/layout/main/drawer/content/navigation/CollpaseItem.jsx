@@ -10,6 +10,8 @@ const CollapseItem = ({ item, level, onClick, isSelected }) => {
   const theme = useTheme();
   const { icon: Icon, external, url, target, disabled, title } = item;
 
+  // const isSelected = openItem.findIndex((id) => id === item.id) > -1;
+
   const itemTarget = external ? '_blank' : '_self';
   const listItemProps = external ? { component: 'a', href: url, target: target || itemTarget } : { component: forwardRef((props, ref) => <Link ref={ref} {...props} />) };
 
@@ -28,12 +30,13 @@ const CollapseItem = ({ item, level, onClick, isSelected }) => {
       ...(isSelected && { bgcolor: 'primary.lighter' })
     })
   };
+  
 
   return (
     <ListItemButton
       {...listItemProps}
       disabled={disabled}
-      onClick={onClick}
+      onClick={() => onClick(item.id)}
       sx={{
         zIndex: 1200,
         pl: drawerOpen ? `${level * 28}px` : 1.5,

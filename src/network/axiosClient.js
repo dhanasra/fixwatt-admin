@@ -16,8 +16,6 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
     config=>{
         const accessToken = Cookies.get('refreshToken');
-
-        console.log(accessToken)
         if(accessToken){
             config.headers['x-refresh-token'] = `${accessToken}`;
         }

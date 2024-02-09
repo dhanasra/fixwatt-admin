@@ -8,11 +8,10 @@ import CollapseItem from './CollpaseItem';
 const NavGroup = ({ item }) => {
   const menu = useSelector((state) => state.menu);
   const { drawerOpen } = menu;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // State to control the collapse
 
   const handleCollapseToggle = () => {
     setOpen(!open);
-    console.log("hello")
   };
 
   const renderChildren = (children) => {
@@ -45,6 +44,14 @@ const NavGroup = ({ item }) => {
     >
       {item.type === 'collapse' ? (
         <>
+          {/* <Typography
+            variant="caption"
+            color="error"
+            sx={{ p: 2.5, cursor: 'pointer' }}
+            onClick={handleCollapseToggle}
+          >
+            {item.title}
+          </Typography> */}
           <CollapseItem onClick={handleCollapseToggle} key={item.id} item={item} level={1} isSelected={open}/>
           <Collapse in={open} timeout="auto" unmountOnExit>
             {renderChildren(item.children)}
