@@ -14,11 +14,10 @@ const ServiceTable =({services})=>{
       <Table>
         <TableHead>
           <TableRow style={{ backgroundColor: '#f9fafa' }}>
-            <TableCell style={{ width: 'auto' }} >Product</TableCell>
-            <TableCell style={{ width: '180px' }} >Quantity</TableCell>
+            <TableCell style={{ width: '300px' }} >Service</TableCell>
+            <TableCell style={{ width: 'auto' }} >Description</TableCell>
             <TableCell style={{ width: '220px' }} >Date</TableCell>
             <TableCell style={{ width: '220px' }} >Time</TableCell>
-            <TableCell style={{ width: '120px' }} >Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -50,7 +49,7 @@ const ServiceTable =({services})=>{
               />
             </TableCell>
             <TableCell>
-              <OutlinedInput />
+              <OutlinedInput fullWidth/>
             </TableCell>
             <TableCell>
               <DatePicker
@@ -63,9 +62,6 @@ const ServiceTable =({services})=>{
                 value={dayjs('2022-04-17')}
                 onChange={(newValue) => setValue(newValue)}
               />
-            </TableCell>
-            <TableCell>
-              <Typography/>
             </TableCell>
           </TableRow>
         </TableBody>

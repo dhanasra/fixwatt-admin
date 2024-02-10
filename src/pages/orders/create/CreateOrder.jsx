@@ -13,9 +13,6 @@ const CreateOrder = () => {
 
   const [customers, setCustomers] = useState([]);
   const [services, setServices] = useState([]);
-
-  const [ paymentStatus, setPaymentStatus ] = useState('pending');
-  const [ paymentType, setPaymentType ] = useState('cash');
   
   return (
     <Box>
@@ -113,32 +110,6 @@ const CreateOrder = () => {
                     <InputLabel htmlFor={"service"}>Phone number</InputLabel>
                     <OutlinedInput/>
                   </Stack>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h5" sx={{my: 0.6}}>Payment</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <SingleSelect 
-                    label={"Status"}
-                    value={paymentStatus}
-                    handleChange={setPaymentStatus}
-                    items={[
-                      <MenuItem value={"pending"}>Pending</MenuItem>,
-                      <MenuItem value={"completed"}>Completed</MenuItem>,
-                    ]}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <SingleSelect 
-                    label={"Type"}
-                    value={paymentType}
-                    handleChange={setPaymentType}
-                    items={[
-                      <MenuItem value={"cash"}>Cash</MenuItem>,
-                      <MenuItem value={"online"}>Online</MenuItem>,
-                      <MenuItem value={"upi"}>UPI</MenuItem>
-                    ]}
-                  />
                 </Grid>
                 <Grid item xs={12}>
                   <Divider sx={{py: 1}}/>
