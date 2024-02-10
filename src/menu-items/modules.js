@@ -1,10 +1,12 @@
 // assets
-import { UserOutlined, FieldTimeOutlined } from '@ant-design/icons';
+import { UserOutlined, FieldTimeOutlined, ToolOutlined, TeamOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
   UserOutlined,
-  FieldTimeOutlined
+  FieldTimeOutlined,
+  ToolOutlined,
+  TeamOutlined
 };
 
 const modules = {
@@ -59,6 +61,22 @@ const modules = {
           sub: true
         }
       ]
+    },
+    {
+      id: 'team',
+      title: 'Technicians',
+      type: 'item',
+      url: '/team',
+      subtitle: 'Technicians List',
+      icon: icons.TeamOutlined
+    },
+    {
+      id: 'services',
+      title: 'Services',
+      type: 'item',
+      url: '/services',
+      subtitle: 'Services List',
+      icon: icons.ToolOutlined
     }
   ]
 };

@@ -40,7 +40,7 @@ const NavGroup = ({ item }) => {
           </Box>
         )
       }
-      sx={{ mb: drawerOpen ? 1.5 : 0, py: 0, zIndex: 0 }}
+      sx={{ mb: item.type != "collapse" && drawerOpen ? 1.5 : 0, py: 0, zIndex: 0 }}
     >
       {item.type === 'collapse' ? (
         <>

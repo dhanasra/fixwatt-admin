@@ -66,7 +66,7 @@ const CollapseItem = ({ item, level, onClick, isSelected }) => {
         />
       )}
       <ListItemIcon sx={iconStyle}>
-        {isSelected ? <UpOutlined /> : <DownOutlined />}
+        {isSelected ? <UpOutlined style={{fontSize: "12px"}}/> : <DownOutlined style={{fontSize: "12px"}}/>}
       </ListItemIcon>
     </ListItemButton>
   );
