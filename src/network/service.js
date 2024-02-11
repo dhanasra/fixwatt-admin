@@ -22,8 +22,8 @@ export async function deleteTechnician(id){
   return await axiosClient.delete(`/technician/${id}`);
 }
 
-export async function updateTechnician({name, phoneNumber, categoryId, technician}){
-  const data = { name, phoneNumber, category_id: categoryId };
+export async function updateTechnician({name, phone, categoryId, technician}){
+  const data = { name, phone, category_id: categoryId };
   if(technician){
     return await axiosClient.put(`/technician/${technician.id}`, data);
   }else{

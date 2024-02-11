@@ -25,11 +25,12 @@ const TechniciansList = () => {
     const fetchCustomers = async () => {
       try {
         const data = await Promise.all([
-          getServices(),
-          // getTechnicians()
+          getCategories(),
+          getTechnicians()
         ]);
+        console.log(data);
         setCategories(data[0].categories);
-        // setTechnicians(data[1].technicians)
+        setTechnicians(data[1].technicians)
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
@@ -51,6 +52,7 @@ const TechniciansList = () => {
   };
 
   const handleDeleteClick = async()=>{
+    console.log(deleteId)
     await deleteTechnician(deleteId);
     const updated = technicians.filter((i)=>i.id!=deleteId);
     setTechnicians(updated)
@@ -77,7 +79,7 @@ const TechniciansList = () => {
         <EditOutlined />
       </IconButton>
       </Tooltip>
-      <Tooltip title="Make Inactive">
+      {/* <Tooltip title="Make Inactive">
       <IconButton sx={{background: "#efefef"}} onClick={
         ()=>{
           setOpenDelete(true);
@@ -86,25 +88,17 @@ const TechniciansList = () => {
       >
         <DeleteOutlined/>
       </IconButton>
-      </Tooltip>
+      </Tooltip> */}
     </Stack>
   );
 
 
   const columns = [
     { field: 'name', headerName: 'Name', flex: 1, renderCell: renderTextCell },
-    { field: 'category', headerName: 'Category', flex: 1, renderCell: renderTextCell },
-    { field: 'phone', headerName: 'Phone number', width: 180, renderCell: renderTextCell },
+    { field: 'category_name', headerName: 'Category', flex: 1, renderCell: renderTextCell },
+    { field: 'phone', headerName: 'Phone number', flex: 1, renderCell: renderTextCell },
     { field: 'id', headerName: 'actions', width: 180, renderCell: renderActionsCell }
   ];
-
-  const rows = technicians.map((customer) => ({
-    id: customer.id,
-    name: customer.name,
-    phone: customer.phone,
-    email: customer.email,
-    address: customer.address
-  }));
 
   return (
     <>
@@ -113,12 +107,21 @@ const TechniciansList = () => {
       onClose={()=>{
         setOpenDrawer(false);
       }} 
+      technician={technicianEdit}
       categories={categories}
       onEdit={(v)=>{
-
+        const updated = technicians.map((s)=>{
+          if(s.id==v.id){
+            return v;
+          }
+          return s
+        })
+        setTechnicians(updated);
+        setOpenDrawer(false);
       }}
       onSave={(v)=>{
-
+        setTechnicians([...technicians, v])
+        setOpenDrawer(false);
       }}
     />
     <ConfirmDialog
@@ -126,11 +129,11 @@ const TechniciansList = () => {
       onOk={handleDeleteClick} 
       onCancel={()=>{
         setDeleteId(null)
-        setOpenDrawer(false)
+        setOpenDelete(false)
       }} 
       btnTxt={"Delete"}
       title={"Are you sure you want to delete?"}   
-      content={`By deleting this category, hereafter no orders can create in this category.`}
+      content={`By deleting this technician, hereafter you can not appoint any order to this technician.`}
     />
     <MainCard sx={{ width: '100%' }}>
       <>
@@ -166,7 +169,7 @@ const TechniciansList = () => {
           </Box>
         </Stack>
         <StripedDataGrid
-          rows={rows}
+          rows={technicians}
           columns={columns}
           getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
           sx={{

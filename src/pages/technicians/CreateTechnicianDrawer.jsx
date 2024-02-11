@@ -6,6 +6,8 @@ import { updateTechnician } from "../../network/service";
 
 const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, categories }) => {
 
+  console.log(categories);
+
   const category = categories.find((e)=>e.id==technician?.category_id)
 
   return (
@@ -13,7 +15,7 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
       <Formik
         initialValues={{
           name: technician?.name,
-          phoneNumber: technician?.phoneNumber,
+          phoneNumber: technician?.phone,
           category: technician?.category
         }}
         validationSchema={Yup.object().shape({
@@ -28,8 +30,8 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
             if(category){
               const technicianToUpdate = {
                 name: values.name, 
-                phoneNumber: category.phoneNumber, 
-                categoryId: values.categoryId, 
+                phone: values.phoneNumber, 
+                categoryId: category.id, 
                 technician
               }
               const data = await updateTechnician(technicianToUpdate)
