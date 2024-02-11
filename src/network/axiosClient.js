@@ -16,6 +16,9 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
     config=>{
         const accessToken = Cookies.get('refreshToken');
+        if(config.url==="/service" && config.method==="post"){
+            config.headers['Content-Type'] = 'multipart/form-data';
+        }
         if(accessToken){
             config.headers['x-refresh-token'] = `${accessToken}`;
         }

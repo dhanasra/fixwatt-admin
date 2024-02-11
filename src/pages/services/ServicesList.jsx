@@ -1,40 +1,41 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Box, Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Box, Button, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../components/MainCard";
-import { getOrders } from "../../network/service";
+import { deleteService, getCategories, getServices } from "../../network/service";
 import { StripedDataGrid } from "../../components/grid-styled";
-import { formatDate } from "../../utils/utils";
 import CreateServiceDrawer from "./CreateServiceDrawer";
+import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
 
 const ServicesList = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
 
-  const [openCreate, setOpenCreate] = useState(false);
+  const [openCreate, setOpenCreate] = useState(false); 
+  const [openDelete, setOpenDelete] = useState(false);
 
-  const [orders, setOrders] = useState([]);
-  const [data, setData] = useState([]);
-  const [selectedContacts, setSelectedContacts] = useState([]);
+  const [deleteId, setDeleteId] = useState(null);
 
+  const [services, setServices] = useState([]);
+  const [serviceEdit, setServiceEdit] = useState(null);
+  const [categories, setCategories] = useState([]);
 
-  const onAddOrder = () => {
-    navigate("/orders/create");
-  };
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const data = await Promise.all([
+          getServices(),
+          getCategories()
+        ]);
+        setServices(data[0].services);
+        setCategories(data[1].categories);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+      }
+    };
 
-  const handleSearch = async (event) => {
-    const query = event.target.value.toLowerCase();
-    const filtered = data.filter(
-      (customer) =>
-        customer.name?.toLowerCase()?.includes(query) ||
-        customer.email?.toLowerCase()?.includes(query) ||
-        customer.phone?.includes(query) ||
-        customer.address?.toLowerCase()?.includes(query)
-    );
-    setOrders(filtered);
-  };
+    fetchServices();
+  }, []);
 
   const renderTextCell = (params) => (
     <Stack>
@@ -42,47 +43,85 @@ const ServicesList = () => {
     </Stack>
   );
 
-  const columns = [
-    { field: 'name', headerName: 'Name', width: 200, renderCell: renderTextCell },
-    { field: 'phone', headerName: 'Phone number', width: 180, renderCell: renderTextCell },
-    { field: 'email', headerName: 'Email Address', width: 180, renderCell: renderTextCell },
-    { field: 'address', headerName: 'Address', flex: 1, renderCell: renderTextCell },
-    { field: 'created', headerName: 'Created', width: 120, renderCell: renderTextCell }
-  ];
+  const handleDeleteClick = async()=>{
+    await deleteService(deleteId);
+    const updated = services.filter((i)=>i.id!=deleteId);
+    setServices(updated)
+    setOpenDelete(false);
+  }
 
-  const rows = orders.map((order) => ({
-    id: order.id,
-    name: order.name,
-    phone: order.phone,
-    email: order.email,
-    address: order.address,
-    created: formatDate(order.created_at)
-  }));
+  const renderActionsCell = (params) => (
+    <Stack direction={"row"} spacing={2}>
+      <Tooltip title="Edit">
+      <IconButton sx={{background: "#efefef"}} onClick={
+        ()=>{
+          const service = services.find((i)=>i.id===params.value);
+          setServiceEdit(service);
+          setOpenCreate(true);
+        }}
+      >
+        <EditOutlined />
+      </IconButton>
+      </Tooltip>
+      <Tooltip title="Make Inactive">
+      <IconButton sx={{background: "#efefef"}} onClick={
+        ()=>{
+          setOpenDelete(true);
+          setDeleteId(params.value)
+        }}
+      >
+        <DeleteOutlined/>
+      </IconButton>
+      </Tooltip>
+    </Stack>
+  );
+
+  const columns = [
+    { field: 'name', headerName: 'Name', flex: 1, renderCell: renderTextCell },
+    { field: 'category_name', headerName: 'Category', flex: 1, renderCell: renderTextCell },
+    { field: 'price', headerName: 'Price', width: 180, renderCell: renderTextCell },
+    { field: 'id', headerName: 'actions', width: 180, renderCell: renderActionsCell },
+  ];
 
   return (
     <>
-    <CreateServiceDrawer open={openCreate} onClose={()=>setOpenCreate(false)}/>
+    <CreateServiceDrawer 
+      open={openCreate} 
+      onClose={()=>{
+        setOpenCreate(false);
+        setServiceEdit(null);
+      }} 
+      categories={categories}
+      service={serviceEdit}
+      onEdit={(v)=>{
+        const updated = services.map((s)=>{
+          if(s.id==v.id){
+            return v;
+          }
+          return s
+        })
+        setServices(updated);
+        setOpenCreate(false);
+      }}
+      onSave={(v)=>{
+        setServices([...services, v])
+        setOpenCreate(false);
+      }}
+    />
+    <ConfirmDialog
+      open={openDelete} 
+      onOk={handleDeleteClick} 
+      onCancel={()=>{
+        setDeleteId(null)
+        setOpenDelete(false)
+      }} 
+      btnTxt={"Delete"}
+      title={"Are you sure you want to delete?"}   
+      content={`By deleting this category, hereafter no orders can create in this category.`}
+    />
     <MainCard sx={{ width: '100%' }}>
         <>
-          <Stack direction={'row'} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
-            <Box sx={{ width: '100%' }}>
-              <FormControl sx={{ width: { xs: '100%', md: 300 } }}>
-                <OutlinedInput
-                  id="header-search"
-                  startAdornment={
-                    <InputAdornment position="start" sx={{ mr: -0.5 }}>
-                      <SearchOutlined />
-                    </InputAdornment>
-                  }
-                  onChange={handleSearch}
-                  placeholder="Search here ..."
-                  aria-describedby="header-search-text"
-                  inputProps={{
-                    'aria-label': 'weight'
-                  }}
-                />
-              </FormControl>
-            </Box>
+          <Stack direction={"row-reverse"} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
             <Box>
               <Button
                 variant="outlined"
@@ -96,7 +135,7 @@ const ServicesList = () => {
             </Box>
           </Stack>
           <StripedDataGrid
-            rows={rows}
+            rows={services}
             columns={columns}
             getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
             sx={{
@@ -105,14 +144,10 @@ const ServicesList = () => {
               border: 1,
               borderColor: `${theme.palette.grey[200]}`
             }}
-            initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
+            initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
             pageSizeOptions={[5, 10]}
             checkboxSelection
             disableRowSelectionOnClick
-            onRowSelectionModelChange={(selected) => {
-              setSelectedContacts(selected);
-            }}
-            rowSelectionModel={selectedContacts}
           />
         </>
     </MainCard>
