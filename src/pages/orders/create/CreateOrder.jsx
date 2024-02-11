@@ -3,7 +3,7 @@ import { Autocomplete, Box, Button, Divider, Grid, InputLabel, MenuItem, Outline
 import MainCard from "../../../components/MainCard";
 import { Formik } from "formik";
 import { getCustomers } from "../../../network/service/customerService";
-import { getServices } from "../../../network/service";
+import { getServices, getTechnicians, getUsers } from "../../../network/service";
 import ServiceTable from "./ServiceTable";
 import SingleSelect from "../../../components/@extended/SingleSelect";
 
@@ -11,8 +11,30 @@ const CreateOrder = () => {
 
   const theme = useTheme();
 
-  const [customers, setCustomers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [services, setServices] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const data = await Promise.all([
+          getUsers(),
+          getServices(),
+          getTechnicians()
+        ]);
+        setUsers(data[0].users);
+        setServices(data[1].services);
+        setTechnicians(data[2].technicians);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+      }
+    };
+
+    fetch();
+  }, []);
+
+
   
   return (
     <Box>
@@ -31,12 +53,12 @@ const CreateOrder = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"customer"}>Name</InputLabel>
+                    <InputLabel htmlFor={"user"}>Name</InputLabel>
                     <Autocomplete
                         freeSolo
                         disablePortal
-                        id="customer"
-                        options={customers}
+                        id="user"
+                        options={users}
                         filterOptions={(options, state) =>
                             options.filter(option =>
                                 option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
@@ -44,7 +66,7 @@ const CreateOrder = () => {
                                 (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
                             )
                         }
-                        getOptionLabel={(option) => `${option.name} ( ${option.phone} )`}
+                        getOptionLabel={(option) => `${option.name}`}
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -101,8 +123,31 @@ const CreateOrder = () => {
                 </Grid>
                 <Grid item xs={6}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"service"}>Name</InputLabel>
-                    <OutlinedInput/>
+                    <InputLabel htmlFor={"technician"}>Name</InputLabel>
+                    <Autocomplete
+                      freeSolo
+                      disablePortal
+                      id="technician"
+                      options={technicians}
+                      filterOptions={(options, state) =>
+                          options.filter(option =>
+                              option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
+                              (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
+                          )
+                      }
+                      getOptionLabel={(option) => `${option.name}`}
+                      renderInput={(params) => (
+                          <TextField
+                              {...params}
+                              type="text"
+                              name={"name"}
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              fullWidth
+                              variant="outlined"
+                          />
+                      )}
+                    />
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>

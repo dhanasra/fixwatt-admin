@@ -6,6 +6,12 @@ export async function login({phone, password}){
   return await axiosClient.post(`/auth/login`, { phone, password });
 }
 
+// users
+
+export async function getUsers(){
+  return await axiosClient.get(`/user`);
+}
+
 // orders
 
 export async function getOrders(){
