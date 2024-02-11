@@ -2,15 +2,20 @@ import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Box, Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCustomers } from "../../../network/service/customerService";
-import { StripedDataGrid } from "../../../components/grid-styled";
-import { formatDate } from "../../../utils/utils";
+import { getCustomers } from "../../network/service/customerService";
+import { StripedDataGrid } from "../../components/grid-styled";
+import { formatDate } from "../../utils/utils";
 import { useTheme } from "@emotion/react";
-import MainCard from "../../../components/MainCard";
+import MainCard from "../../components/MainCard";
+import CreateTechnicianDrawer from "./CreateTechnicianDrawer";
+import { getCategories, getServices } from "../../network/service";
 
 const TechniciansList = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+
+  const [categories, setCategories] = useState([]);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   const [customers, setCustomers] = useState([]);
   const [data, setData] = useState([]);
@@ -19,6 +24,9 @@ const TechniciansList = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
+        const data = await getCategories();
+        setCategories(data.categories);
+
         const customersData = await getCustomers();
         setData(customersData.customers);
         setCustomers(customersData.customers);
@@ -29,10 +37,6 @@ const TechniciansList = () => {
 
     fetchCustomers();
   }, []);
-
-  const onAddCustomer = () => {
-    navigate("/customer/create");
-  };
 
   const handleSearch = async (event) => {
     const query = event.target.value.toLowerCase();
@@ -70,6 +74,20 @@ const TechniciansList = () => {
   }));
 
   return (
+    <>
+    <CreateTechnicianDrawer
+      open={openDrawer} 
+      onClose={()=>{
+        setOpenDrawer(false);
+      }} 
+      categories={categories}
+      onEdit={(v)=>{
+
+      }}
+      onSave={(v)=>{
+
+      }}
+    />
     <MainCard sx={{ width: '100%' }}>
       <>
         <Stack direction={'row'} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
@@ -96,7 +114,7 @@ const TechniciansList = () => {
               variant="outlined"
               size="medium"
               sx={{ px: 0, width: '140px' }}
-              onClick={onAddCustomer}
+              onClick={()=>setOpenDrawer(true)}
               startIcon={<PlusOutlined style={{ fontSize: '16px' }} />}
             >
               Add Technician
@@ -124,6 +142,7 @@ const TechniciansList = () => {
         />
       </>
     </MainCard>
+    </>
   );
 };
 

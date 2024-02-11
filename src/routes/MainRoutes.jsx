@@ -5,7 +5,7 @@ import CreateCustomer from "../pages/customers/create/CreateCustomer";
 import OrderList from "../pages/orders/list/OrderList";
 import CreateOrder from "../pages/orders/create/CreateOrder";
 import ServicesList from "../pages/services/ServicesList";
-import TechniciansList from "../pages/technicians/list/TechniciansList";
+import TechniciansList from "../pages/technicians/TechniciansList";
 
 const MainRoutes = {
     path: '/',
