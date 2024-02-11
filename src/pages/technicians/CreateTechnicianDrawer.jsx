@@ -1,9 +1,8 @@
-import { Box, Divider, Drawer, IconButton, InputLabel, List, OutlinedInput, Stack, Typography, Button, Grid, FormHelperText, Autocomplete, TextField } from "@mui/material";
-import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
-import ImagePicker from "../../components/ImagePicker";
+import { Box, Divider, Drawer, IconButton, InputLabel, List, OutlinedInput, Stack, Typography, Button, FormHelperText, Autocomplete, TextField } from "@mui/material";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Formik } from "formik";
 import * as Yup from 'yup';
-import { updateService } from "../../network/service";
+import { updateTechnician } from "../../network/service";
 
 const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, categories }) => {
 
@@ -15,37 +14,34 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
         initialValues={{
           name: technician?.name,
           phoneNumber: technician?.phoneNumber,
-          service: technician?.service
+          category: technician?.category
         }}
         validationSchema={Yup.object().shape({
           name: Yup.string().required('Name is required'),
           phoneNumber: Yup.string().required('Phone number is required'),
-          service: Yup.string().required('Service is required')
+          category: Yup.string().required('Category is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
 
-            // var category = categories.find((item)=>item['name']==values.category);
-            // if(category){
-            //   const serviceToUpdate = {
-            //     name: values.name, 
-            //     categoryId: category.id, 
-            //     price: values.price, 
-            //     iconBlob: values.iconBlob,
-            //     imageBlob: values.imageBlob,
-            //     service
-            //   }
-            //   const data = await updateService(serviceToUpdate)
-            //   setStatus({ success: true });
-            //   setSubmitting(false); 
-            //   if(service){
-            //     onEdit(data.service)
-            //   }else{
-            //     onSave(data.service)
-            //   } 
-            // }
+            var category = categories.find((item)=>item['name']==values.category);
+            if(category){
+              const technicianToUpdate = {
+                name: values.name, 
+                phoneNumber: category.phoneNumber, 
+                categoryId: values.categoryId, 
+                technician
+              }
+              const data = await updateTechnician(technicianToUpdate)
+              setStatus({ success: true });
+              setSubmitting(false); 
+              if(technician){
+                onEdit(data.technician)
+              }else{
+                onSave(data.technician)
+              } 
+            }
           } catch (err) {
-            console.log(err);
             setStatus({ success: false });
             setErrors({ submit: err.message });
             setSubmitting(false);

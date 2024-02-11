@@ -1,35 +1,35 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Box, Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { Box, Button, FormControl, IconButton, InputAdornment, OutlinedInput, Stack, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getCustomers } from "../../network/service/customerService";
 import { StripedDataGrid } from "../../components/grid-styled";
-import { formatDate } from "../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../components/MainCard";
 import CreateTechnicianDrawer from "./CreateTechnicianDrawer";
-import { getCategories, getServices } from "../../network/service";
+import { deleteTechnician, getCategories, getTechnicians } from "../../network/service";
+import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
 
 const TechniciansList = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
 
   const [categories, setCategories] = useState([]);
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  const [customers, setCustomers] = useState([]);
-  const [data, setData] = useState([]);
-  const [selectedContacts, setSelectedContacts] = useState([]);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+
+  const [technicians, setTechnicians] = useState([]);
+  const [technicianEdit, setTechnicianEdit] = useState(null);
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const data = await getCategories();
-        setCategories(data.categories);
-
-        const customersData = await getCustomers();
-        setData(customersData.customers);
-        setCustomers(customersData.customers);
+        const data = await Promise.all([
+          getServices(),
+          // getTechnicians()
+        ]);
+        setCategories(data[0].categories);
+        // setTechnicians(data[1].technicians)
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
@@ -50,27 +50,60 @@ const TechniciansList = () => {
     setCustomers(filtered);
   };
 
+  const handleDeleteClick = async()=>{
+    await deleteTechnician(deleteId);
+    const updated = technicians.filter((i)=>i.id!=deleteId);
+    setTechnicians(updated)
+    setOpenDelete(false);
+  }
+
   const renderTextCell = (params) => (
     <Stack>
       <Typography variant="title">{params.value}</Typography>
     </Stack>
   );
 
+
+  const renderActionsCell = (params) => (
+    <Stack direction={"row"} spacing={2}>
+      <Tooltip title="Edit">
+      <IconButton sx={{background: "#efefef"}} onClick={
+        ()=>{
+          const technician = technicians.find((i)=>i.id===params.value);
+          setTechnicianEdit(technician);
+          setOpenDrawer(true);
+        }}
+      >
+        <EditOutlined />
+      </IconButton>
+      </Tooltip>
+      <Tooltip title="Make Inactive">
+      <IconButton sx={{background: "#efefef"}} onClick={
+        ()=>{
+          setOpenDelete(true);
+          setDeleteId(params.value)
+        }}
+      >
+        <DeleteOutlined/>
+      </IconButton>
+      </Tooltip>
+    </Stack>
+  );
+
+
   const columns = [
-    { field: 'name', headerName: 'Name', width: 200, renderCell: renderTextCell },
+    { field: 'name', headerName: 'Name', flex: 1, renderCell: renderTextCell },
+    { field: 'category', headerName: 'Category', flex: 1, renderCell: renderTextCell },
     { field: 'phone', headerName: 'Phone number', width: 180, renderCell: renderTextCell },
-    { field: 'email', headerName: 'Email Address', width: 180, renderCell: renderTextCell },
-    { field: 'address', headerName: 'Address', flex: 1, renderCell: renderTextCell },
-    { field: 'created', headerName: 'Created', width: 120, renderCell: renderTextCell }
+    { field: 'id', headerName: 'actions', width: 180, renderCell: renderActionsCell }
   ];
 
-  const rows = customers.map((customer) => ({
+  const rows = technicians.map((customer) => ({
     id: customer.id,
     name: customer.name,
     phone: customer.phone,
     email: customer.email,
-    address: customer.address,
-    created: formatDate(customer.created_at)
+    address: customer.address
   }));
 
   return (
@@ -87,6 +120,17 @@ const TechniciansList = () => {
       onSave={(v)=>{
 
       }}
+    />
+    <ConfirmDialog
+      open={openDelete} 
+      onOk={handleDeleteClick} 
+      onCancel={()=>{
+        setDeleteId(null)
+        setOpenDrawer(false)
+      }} 
+      btnTxt={"Delete"}
+      title={"Are you sure you want to delete?"}   
+      content={`By deleting this category, hereafter no orders can create in this category.`}
     />
     <MainCard sx={{ width: '100%' }}>
       <>
@@ -135,10 +179,6 @@ const TechniciansList = () => {
           pageSizeOptions={[5, 10]}
           checkboxSelection
           disableRowSelectionOnClick
-          onRowSelectionModelChange={(selected) => {
-            setSelectedContacts(selected);
-          }}
-          rowSelectionModel={selectedContacts}
         />
       </>
     </MainCard>

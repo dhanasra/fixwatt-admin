@@ -12,7 +12,26 @@ export async function getOrders(){
   return await axiosClient.get(`/order`);
 }
 
-// service
+// technicians
+
+export async function getTechnicians(){
+  return await axiosClient.get(`/technician`);
+}
+
+export async function deleteTechnician(id){
+  return await axiosClient.delete(`/technician/${id}`);
+}
+
+export async function updateTechnician({name, phoneNumber, categoryId, technician}){
+  const data = { name, phoneNumber, category_id: categoryId };
+  if(technician){
+    return await axiosClient.put(`/technician/${technician.id}`, data);
+  }else{
+    return await axiosClient.post(`/technician`, data);
+  }
+}
+
+// categories
 
 export async function getCategories(){
   return await axiosClient.get(`/category`);
