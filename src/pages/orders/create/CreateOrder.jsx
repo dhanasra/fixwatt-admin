@@ -37,8 +37,9 @@ const CreateOrder = () => {
     fetch();
   }, []);
 
+  const tomorrow = new Date((new Date()) + 1);
+  const formattedTomorrow = tomorrow.toISOString().slice(0, 10);
 
-  
   return (
     <Box>
       <MainCard>
@@ -55,8 +56,8 @@ const CreateOrder = () => {
             notes: null,
             serviceDesc: null,
             service: null,
-            date: null,
-            time: null
+            date: formattedTomorrow,
+            time: dayjs().set('hour', 10).set('minute', 0).set('second', 0)
           }}
           validationSchema={Yup.object().shape({
             customer: Yup.string().max(255).required("Customer is required"),
@@ -114,7 +115,10 @@ const CreateOrder = () => {
                         freeSolo
                         disablePortal
                         id="user"
-                        options={users}
+                        options={users.map((user, index) => ({
+                            ...user,
+                            key: user.id 
+                        }))}
                         filterOptions={(options, state) =>
                             options.filter(option =>
                                 option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
@@ -125,8 +129,14 @@ const CreateOrder = () => {
                         onChange={(e)=>{
                           const user = users[e.target.dataset?.optionIndex];
                           setFieldValue("phone", user?.phone)
+                          if(user.addresses?.length>0){
+                            setFieldValue("address", user?.addresses[0]?.address)
+                            setFieldValue("pincode", user?.addresses[0]?.pincode)
+                          }else{
+                            setFieldValue("address", '')
+                            setFieldValue("pincode", '')
+                          }
                           setFieldValue("customer", user?.id)
-                          setFieldValue("category", e.target.textContent)
                         }}
                         getOptionLabel={(option) => `${option.name}`}
                         renderInput={(params) => (
@@ -300,7 +310,7 @@ const CreateOrder = () => {
                             <TableCell style={{ verticalAlign: 'top'}}>
                               <Stack spacing={1}>
                                 <DatePicker
-                                  value={dayjs('2022-04-17')}
+                                  value={dayjs(values.date)}
                                   format="MMM DD, YYYY"
                                   onChange={(v)=>{
                                     setFieldValue("date", v.format("YYYY-MM-DD"))
@@ -316,7 +326,7 @@ const CreateOrder = () => {
                             <TableCell style={{ verticalAlign: 'top'}}>
                               <Stack spacing={1}>
                                 <TimePicker
-                                  value={dayjs('2022-04-17')}
+                                  value={values.time}
                                   onChange={(v)=>{
                                     setFieldValue("time", v.format("HH:mm:ss"))
                                   }}
