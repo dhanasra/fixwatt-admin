@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Autocomplete, Box, Button, Divider, Grid, InputLabel, MenuItem, OutlinedInput, Stack, TextField, Typography, useTheme } from "@mui/material";
+import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, InputLabel, OutlinedInput, Stack, TextField, Typography, useTheme, FormHelperText } from "@mui/material";
 import MainCard from "../../../components/MainCard";
+import * as Yup from "yup";
 import { Formik } from "formik";
-import { getCustomers } from "../../../network/service/customerService";
 import { getServices, getTechnicians, getUsers } from "../../../network/service";
 import ServiceTable from "./ServiceTable";
-import SingleSelect from "../../../components/@extended/SingleSelect";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const CreateOrder = () => {
 
@@ -40,12 +43,65 @@ const CreateOrder = () => {
     <Box>
       <MainCard>
         <Formik
-          initialValues={{ customer: null }} // Set initial value for customer
+          initialValues={{ 
+            customer: null,
+            phone: null,
+            altPhone: null,
+            technician: null,
+            technicianPhone: null,
+            techPhone: null,
+            address: null,
+            pincode: null,
+            notes: null,
+            serviceDesc: null,
+            service: null,
+            date: null,
+            time: null
+          }}
+          validationSchema={Yup.object().shape({
+            customer: Yup.string().max(255).required("Customer is required"),
+            technician: Yup.string().max(255).required("Technician is required"),
+            phone: Yup.string()
+              .matches(
+                /^(?:[0-9] ?){6,14}[0-9]$/,
+                "Invalid phone number"
+              )
+              .required("Phone number is required"),
+            altPhone: Yup.string()
+              .matches(
+                /^(?:[0-9] ?){6,14}[0-9]$/,
+                "Invalid phone number"
+              ).notRequired(),
+            address: Yup.string().max(255).required("Address is required"),
+            pincode: Yup.string().max(255).required("Phone number is required"),
+            notes: Yup.string().max(255).notRequired(),
+            serviceDesc: Yup.string().max(255).notRequired(),
+            service: Yup.string().required("Service is required"),
+            date: Yup.string().required("Date is required"),
+            time: Yup.string().required("Time is required"),
+          })}
           onSubmit={async () => {
-            // Handle form submission
+            try {
+              // const customerData = {
+              //   name: values.name,
+              //   phone: values.phone,
+              //   email: values.email,
+              //   address: values.address
+              // };
+
+              // await createCustomer(customerData);
+
+              setStatus({ success: true });
+              setSubmitting(false); 
+              resetForm();
+            } catch (err) {
+              setStatus({ success: false });
+              setErrors({ submit: err.message });
+              setSubmitting(false);
+            }
           }}
         >
-          {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+          {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
             <form noValidate onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -53,7 +109,7 @@ const CreateOrder = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"user"}>Name</InputLabel>
+                    <InputLabel htmlFor={"user"}>Customer</InputLabel>
                     <Autocomplete
                         freeSolo
                         disablePortal
@@ -66,6 +122,12 @@ const CreateOrder = () => {
                                 (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
                             )
                         }
+                        onChange={(e)=>{
+                          const user = users[e.target.dataset?.optionIndex];
+                          setFieldValue("phone", user?.phone)
+                          setFieldValue("customer", user?.id)
+                          setFieldValue("category", e.target.textContent)
+                        }}
                         getOptionLabel={(option) => `${option.name}`}
                         renderInput={(params) => (
                             <TextField
@@ -88,35 +150,189 @@ const CreateOrder = () => {
                 </Grid>
                 <Grid item xs={6}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"service"}>Address</InputLabel>
-                    <OutlinedInput/>
+                    <InputLabel htmlFor={"address"}>Address</InputLabel>
+                    <OutlinedInput
+                      id={"address"}
+                      type="text"
+                      name={"address"}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.address}
+                      fullWidth
+                    />
+                    {touched.address && errors.address && (
+                      <FormHelperText error>
+                        {errors.address}
+                      </FormHelperText>
+                    )}
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"service"}>Pincode</InputLabel>
-                    <OutlinedInput/>
+                    <InputLabel htmlFor={"pincode"}>Pincode</InputLabel>
+                    <OutlinedInput
+                      id={"pincode"}
+                      type="text"
+                      name={"pincode"}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.pincode}
+                      fullWidth
+                    />
+                    {touched.pincode && errors.pincode && (
+                      <FormHelperText error>
+                        {errors.pincode}
+                      </FormHelperText>
+                    )}
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"service"}>Phone number</InputLabel>
-                    <OutlinedInput/>
+                    <InputLabel htmlFor={"phone"}>Phone number</InputLabel>
+                    <OutlinedInput
+                      id={"phone"}
+                      type="text"
+                      name={"phone"}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.phone}
+                      fullWidth
+                    />
+                    {touched.phone && errors.phone && (
+                      <FormHelperText error>
+                        {errors.phone}
+                      </FormHelperText>
+                    )}
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"service"}>Alternative Phone number</InputLabel>
-                    <OutlinedInput/>
+                    <InputLabel htmlFor={"altPhone"}>Alternative Phone number</InputLabel>
+                    <OutlinedInput
+                      id={"altPhone"}
+                      type="text"
+                      name={"altPhone"}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.altPhone}
+                      fullWidth
+                    />
+                    {touched.altPhone && errors.altPhone && (
+                      <FormHelperText error>
+                        {errors.altPhone}
+                      </FormHelperText>
+                    )}
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="h5" sx={{my: 0.6}}>Service</Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <ServiceTable
-                    services={services}
-                  />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TableContainer component={Box}>
+                      <Table>
+                        <TableHead>
+                          <TableRow style={{ backgroundColor: '#f9fafa' }}>
+                            <TableCell style={{ width: '300px' }} >Service</TableCell>
+                            <TableCell style={{ width: 'auto' }} >Description</TableCell>
+                            <TableCell style={{ width: '220px' }} >Date</TableCell>
+                            <TableCell style={{ width: '220px' }} >Time</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{ verticalAlign: 'top'}}>
+                              <Stack spacing={1}>
+                              <Autocomplete
+                                disablePortal
+                                id="service"
+                                options={services}
+                                filterOptions={(options, state) =>
+                                    options.filter(option =>
+                                        option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
+                                        (option.email && option.email.toLowerCase().includes(state.inputValue.toLowerCase())) ||
+                                        (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
+                                    )
+                                }
+                                onChange={(e)=>{
+                                  const service = services[e.target.dataset?.optionIndex];
+                                  setFieldValue("service", service?.id)
+                                }}
+                                getOptionLabel={(option) => `${option.name}`}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        type="text"
+                                        name={"name"}
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        fullWidth
+                                        variant="outlined"
+                                    />
+                                )}
+                              />
+                              {touched.service && errors.service && (
+                                  <FormHelperText error>
+                                    {errors.service}
+                                  </FormHelperText>
+                                )}
+                              </Stack>
+                            </TableCell>
+                            <TableCell style={{ verticalAlign: 'top'}}>
+                              <Stack spacing={1}>
+                                <OutlinedInput
+                                  id={"serviceDesc"}
+                                  type="text"
+                                  name={"serviceDesc"}
+                                  onBlur={handleBlur}
+                                  onChange={handleChange}
+                                  value={values.serviceDesc}
+                                  readOnly
+                                  fullWidth
+                                />
+                                {touched.serviceDesc && errors.serviceDesc && (
+                                  <FormHelperText error>
+                                    {errors.serviceDesc}
+                                  </FormHelperText>
+                                )}
+                              </Stack>
+                            </TableCell>
+                            <TableCell style={{ verticalAlign: 'top'}}>
+                              <Stack spacing={1}>
+                                <DatePicker
+                                  value={dayjs('2022-04-17')}
+                                  format="MMM DD, YYYY"
+                                  onChange={(v)=>{
+                                    setFieldValue("date", v.format("YYYY-MM-DD"))
+                                  }}
+                                />
+                                {touched.date && errors.date && (
+                                  <FormHelperText error>
+                                    {errors.date}
+                                  </FormHelperText>
+                                )}
+                              </Stack>
+                            </TableCell>
+                            <TableCell style={{ verticalAlign: 'top'}}>
+                              <Stack spacing={1}>
+                                <TimePicker
+                                  value={dayjs('2022-04-17')}
+                                  onChange={(v)=>{
+                                    setFieldValue("time", v.format("HH:mm:ss"))
+                                  }}
+                                />
+                                {touched.time && errors.time && (
+                                  <FormHelperText error>
+                                    {errors.time}
+                                  </FormHelperText>
+                                )}
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                    </LocalizationProvider>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="h5" sx={{my: 0.6}}>Technician</Typography>
@@ -125,7 +341,6 @@ const CreateOrder = () => {
                   <Stack spacing={1}>
                     <InputLabel htmlFor={"technician"}>Name</InputLabel>
                     <Autocomplete
-                      freeSolo
                       disablePortal
                       id="technician"
                       options={technicians}
@@ -135,6 +350,11 @@ const CreateOrder = () => {
                               (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
                           )
                       }
+                      onChange={(e)=>{
+                        const technician = technicians[e.target.dataset?.optionIndex];
+                        setFieldValue("technician", technician?.id)
+                        setFieldValue("techPhone", technician?.phone)
+                      }}
                       getOptionLabel={(option) => `${option.name}`}
                       renderInput={(params) => (
                           <TextField
@@ -152,8 +372,22 @@ const CreateOrder = () => {
                 </Grid>
                 <Grid item xs={6}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"service"}>Phone number</InputLabel>
-                    <OutlinedInput/>
+                    <InputLabel htmlFor={"techPhone"}>Phone number</InputLabel>
+                    <OutlinedInput
+                      id={"techPhone"}
+                      type="text"
+                      name={"techPhone"}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.techPhone}
+                      readOnly
+                      fullWidth
+                    />
+                    {touched.techPhone && errors.techPhone && (
+                      <FormHelperText error>
+                        {errors.techPhone}
+                      </FormHelperText>
+                    )}
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
@@ -161,17 +395,28 @@ const CreateOrder = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor={"service"}>Notes</InputLabel>
+                    <InputLabel htmlFor={"notes"}>Notes</InputLabel>
                     <OutlinedInput
+                      id={"notes"}
+                      type="text"
+                      name={"notes"}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.notes}
                       multiline
                       minRows={2}
                     />
+                    {touched.notes && errors.notes && (
+                      <FormHelperText error>
+                        {errors.notes}
+                      </FormHelperText>
+                    )}
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={4} direction={"row-reverse"} sx={{pt: 4, pb: 2}}>
-                    <Button variant="contained" sx={{px: 5, py: 1.2}}>Create</Button>
-                    <Button sx={{px: 5, py: 1.2, color: "red"}} >Cancel</Button>
+                    <Button disabled={isSubmitting} variant="contained" sx={{px: 5, py: 1.2}} type="submit">Create</Button>
+                    <Button disabled={isSubmitting} sx={{px: 5, py: 1.2, color: "red"}} >Cancel</Button>
                   </Stack>
                 </Grid>
               </Grid>
