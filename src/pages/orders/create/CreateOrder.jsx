@@ -3,12 +3,13 @@ import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell,
 import MainCard from "../../../components/MainCard";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { getServices, getTechnicians, getUsers } from "../../../network/service";
+import { createOrder, getServices, getTechnicians, getUsers } from "../../../network/service";
 import ServiceTable from "./ServiceTable";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useNavigate } from "react-router-dom";
 
 const CreateOrder = () => {
 
@@ -17,6 +18,8 @@ const CreateOrder = () => {
   const [users, setUsers] = useState([]);
   const [services, setServices] = useState([]);
   const [technicians, setTechnicians] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetch = async () => {
@@ -57,7 +60,7 @@ const CreateOrder = () => {
             serviceDesc: null,
             service: null,
             date: formattedTomorrow,
-            time: dayjs().set('hour', 10).set('minute', 0).set('second', 0)
+            time: dayjs().set('hour', 10).set('minute', 0).set('second', 0).format("HH:mm:ss")
           }}
           validationSchema={Yup.object().shape({
             customer: Yup.string().max(255).required("Customer is required"),
@@ -81,20 +84,27 @@ const CreateOrder = () => {
             date: Yup.string().required("Date is required"),
             time: Yup.string().required("Time is required"),
           })}
-          onSubmit={async () => {
+          onSubmit={async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
             try {
-              // const customerData = {
-              //   name: values.name,
-              //   phone: values.phone,
-              //   email: values.email,
-              //   address: values.address
-              // };
-
-              // await createCustomer(customerData);
+              console.log(values.time)
+              await createOrder({
+                date: values.date,
+                startTime: values.time,
+                address: values.address, 
+                pincode: values.pincode,
+                serviceId: values.service,
+                userId: values.customer,
+                serviceDescription: values.serviceDesc,
+                technicianId: values.technician,
+                notes: values.notes,
+                alternativePhone: values.altPhone
+              })
 
               setStatus({ success: true });
               setSubmitting(false); 
-              resetForm();
+              
+              navigate('/orders');
+              
             } catch (err) {
               setStatus({ success: false });
               setErrors({ submit: err.message });
@@ -297,7 +307,6 @@ const CreateOrder = () => {
                                   onBlur={handleBlur}
                                   onChange={handleChange}
                                   value={values.serviceDesc}
-                                  readOnly
                                   fullWidth
                                 />
                                 {touched.serviceDesc && errors.serviceDesc && (
@@ -326,7 +335,7 @@ const CreateOrder = () => {
                             <TableCell style={{ verticalAlign: 'top'}}>
                               <Stack spacing={1}>
                                 <TimePicker
-                                  value={values.time}
+                                  value={dayjs().set('hour', 10).set('minute', 0).set('second', 0)}
                                   onChange={(v)=>{
                                     setFieldValue("time", v.format("HH:mm:ss"))
                                   }}

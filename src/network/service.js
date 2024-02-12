@@ -18,6 +18,22 @@ export async function getOrders(){
   return await axiosClient.get(`/order`);
 }
 
+export async function createOrder({date, startTime, address, pincode, serviceId, userId, serviceDescription, technicianId, notes, alternativePhone}){
+  const data = {
+    date,
+    start_time: startTime,
+    address,
+    pincode,
+    service_id: serviceId,
+    user_id: userId,
+    service_description: serviceDescription,
+    technician_id: technicianId,
+    notes: notes,
+    alternative_phone: alternativePhone
+  }
+  return await axiosClient.post(`/order`, data);
+}
+
 // technicians
 
 export async function getTechnicians(){
