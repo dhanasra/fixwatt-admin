@@ -23,7 +23,8 @@ const OrderList = () => {
           getOrders(),
           getServices()
         ]);
-        setOrders(data[0].orders);
+        console.log(data);
+        setOrders(data[0].orders.data);
         setServices(data[1].services);
       } catch (error) {
         console.error("Error fetching customers:", error);
