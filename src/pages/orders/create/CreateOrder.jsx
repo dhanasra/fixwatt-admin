@@ -3,7 +3,7 @@ import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell,
 import MainCard from "../../../components/MainCard";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { createOrder, getServices, getTechnicians, getUsers } from "../../../network/service";
+import { createOrder, createUser, createUserAddress, getServices, getTechnicians, getUsers } from "../../../network/service";
 import ServiceTable from "./ServiceTable";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
@@ -49,6 +49,7 @@ const CreateOrder = () => {
         <Formik
           initialValues={{ 
             customer: null,
+            userId: null,
             phone: null,
             altPhone: null,
             technician: null,
@@ -86,26 +87,37 @@ const CreateOrder = () => {
           })}
           onSubmit={async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
             try {
-              console.log(values.time)
-              await createOrder({
+
+              const data = {
                 date: values.date,
                 startTime: values.time,
                 address: values.address, 
                 pincode: values.pincode,
                 serviceId: values.service,
-                userId: values.customer,
                 serviceDescription: values.serviceDesc,
                 technicianId: values.technician,
                 notes: values.notes,
                 alternativePhone: values.altPhone
-              })
+              };
 
+              if(values.userId){
+                data.userId = values.userId;
+                await createOrder(data)
+              }else{
+                const result = await createUser({name: values.customer, phone: values.phone});
+                const user = result.user
+                await createUserAddress({address: values.address, pincode: values.pincode, userId: user.id})
+                data.userId = user.id;
+                await createOrder(data)
+              }
+            
               setStatus({ success: true });
               setSubmitting(false); 
               
               navigate('/orders');
               
             } catch (err) {
+              console.log(err)
               setStatus({ success: false });
               setErrors({ submit: err.message });
               setSubmitting(false);
@@ -139,23 +151,33 @@ const CreateOrder = () => {
                         onChange={(e)=>{
                           const user = users[e.target.dataset?.optionIndex];
                           setFieldValue("phone", user?.phone)
+                          
+                          setFieldValue("userId", user?.id)
+                          setFieldValue("customer", user?.id)
+
                           if(user.addresses?.length>0){
                             setFieldValue("address", user?.addresses[0]?.address)
                             setFieldValue("pincode", user?.addresses[0]?.pincode)
+                            setFieldValue("userId", user?.id)
                           }else{
                             setFieldValue("address", '')
                             setFieldValue("pincode", '')
                           }
-                          setFieldValue("customer", user?.id)
                         }}
                         getOptionLabel={(option) => `${option.name}`}
                         renderInput={(params) => (
                             <TextField
                                 {...params}
                                 type="text"
-                                name={"name"}
+                                name={"customer"}
                                 onBlur={handleBlur}
-                                onChange={handleChange}
+                                onChange={(e)=>{
+                                  const value = e.target.value;
+                                  setFieldValue("userId", null)
+                                  setFieldValue("customer", value)
+                                  console.log(value)
+                                  handleChange(value);
+                                }}
                                 fullWidth
                                 variant="outlined"
                             />

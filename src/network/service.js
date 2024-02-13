@@ -12,6 +12,17 @@ export async function getUsers(){
   return await axiosClient.get(`/user`);
 }
 
+export async function createUser({name, phone}){
+  const data = {roleId: 2, name, phone}
+  return await axiosClient.post(`/user`, data);
+}
+
+// user address
+
+export async function createUserAddress({userId, address, pincode}){
+  return await axiosClient.post(`/user-address`, {userId, address, pincode});
+}
+
 // orders
 
 export async function getOrders(){
@@ -23,6 +34,7 @@ export async function createOrder({date, startTime, address, pincode, serviceId,
     date,
     start_time: startTime,
     address,
+    quantity: 1,
     pincode,
     service_id: serviceId,
     user_id: userId,
