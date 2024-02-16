@@ -3,9 +3,10 @@ import { Stack, InputLabel, Select, MenuItem, OutlinedInput, FormHelperText } fr
 
 function SingleSelect({ id, label, value, name, handleBlur, handleChange, items }) {
   return (
-    <Stack key={id} spacing={1}>
-      <InputLabel htmlFor={id}>{label}</InputLabel>
+    <Stack key={id} spacing={1} sx={{width: "100%"}}>
+      { label && <InputLabel htmlFor={id}>{label}</InputLabel>}
       <Select
+        
         id={id}
         value={value}
         onChange={(e)=>handleChange(e.target.value)}

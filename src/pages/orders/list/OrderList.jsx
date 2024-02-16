@@ -1,13 +1,14 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Button, IconButton, MenuItem, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StripedDataGrid } from "../../../components/grid-styled";
 import { formatDate, formatTime } from "../../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
-import { getOrders, getServices } from "../../../network/service";
+import { approveOrder, getOrders, getServices, updateOrderStatus } from "../../../network/service";
 import { ArrowLeftIcon, ArrowRightIcon } from "@mui/x-date-pickers";
+import SingleSelect from "../../../components/@extended/SingleSelect";
 
 const OrderList = () => {
   const navigate = useNavigate();
@@ -85,12 +86,34 @@ const OrderList = () => {
     </Stack>
   );
 
+  const renderSingleSelectCell = (params) => (
+      <SingleSelect
+        
+        id={`status-list-${params.value.id}`}
+        handleChange={async(v)=>{
+          if(v=="APPROVED" || v=="REJECTED"){
+            await approveOrder({orderId: params.value.id, status: v})
+          }else{
+            await updateOrderStatus({orderId: params.value.id, status: v})
+          }
+          
+        }}
+        value={params.value.status}
+        items={[
+          <MenuItem value="APPROVED" key={"approved"} >APPROVED</MenuItem>,
+          <MenuItem value="REJECTED" key={"rejected"}  >REJECTED</MenuItem>,
+          <MenuItem value="CANCELLED" key={"cancelled"}  >CANCELLED</MenuItem>,
+          <MenuItem value="COMPLETED" key={"completed"}  >COMPLETED</MenuItem>
+        ]}
+      />
+  );
+
   const columns = [
     { field: 'service', headerName: 'Service', flex: 1, renderCell: renderTextCell },
     { field: 'address', headerName: 'Address', flex: 1, renderCell: renderTextCell },
     { field: 'date', headerName: 'Date', width: 120, renderCell: renderTextCell },
     { field: 'time', headerName: 'Time', width: 120, renderCell: renderTextCell },
-    { field: 'status', headerName: 'Order Status', width: 160, renderCell: renderTextCell },
+    { field: 'status', headerName: 'Order Status', width: 160, renderCell: renderSingleSelectCell },
   ];
 
   const rows = orders.map((order) => ({
@@ -100,7 +123,7 @@ const OrderList = () => {
     time: formatTime(order.start_time),
     date: formatDate(new Date(order.date)),
     address: `${order.address}, ${order.pincode}`,
-    status: order.status
+    status: order
   }));
 
   return (

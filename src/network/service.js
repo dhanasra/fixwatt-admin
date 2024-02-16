@@ -46,6 +46,18 @@ export async function createOrder({date, startTime, address, pincode, serviceId,
   return await axiosClient.post(`/order`, data);
 }
 
+export async function updateOrderStatus({ status, orderId }){
+  const path = status=="COMPLETED" ? "complete": status=="CANCELLED" ? "cancel": ""
+  return await axiosClient.put(`/order/${orderId}/${path}`);
+}
+
+export async function approveOrder({ status, orderId }){
+  const data = {
+    "status": status=="APPROVED" ? "success" : "failed"
+  };
+  return await axiosClient.put(`/order/${orderId}/approval`, data);
+}
+
 // technicians
 
 export async function getTechnicians(){
