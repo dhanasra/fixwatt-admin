@@ -6,6 +6,7 @@ import OrderList from "../pages/orders/list/OrderList";
 import CreateOrder from "../pages/orders/create/CreateOrder";
 import ServicesList from "../pages/services/ServicesList";
 import TechniciansList from "../pages/technicians/TechniciansList";
+import Dashboard from "../pages/dashboard/Dashboard";
 
 const MainRoutes = {
     path: '/',
@@ -13,7 +14,7 @@ const MainRoutes = {
     children: [
         {
             path: '/dashboard',
-            element: <></>
+            element: <Dashboard/>
         },
         {
             path: '/customers',
