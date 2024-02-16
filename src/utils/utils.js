@@ -4,7 +4,7 @@ export function formatDate(dateString) {
 }
 
 export function formatTime(timeString) {
-    const [hours, minutes] = timeString.split(':');
+    const [hours, minutes] = timeString?.split(':');
     
     let hour = parseInt(hours, 10);
     const meridiem = hour >= 12 ? 'pm' : 'am';

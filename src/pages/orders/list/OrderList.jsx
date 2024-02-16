@@ -1,5 +1,5 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Box, Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
+import { PlusOutlined } from "@ant-design/icons";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StripedDataGrid } from "../../../components/grid-styled";
@@ -7,6 +7,7 @@ import { formatDate, formatTime } from "../../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
 import { getOrders, getServices } from "../../../network/service";
+import { ArrowLeftIcon, ArrowRightIcon } from "@mui/x-date-pickers";
 
 const OrderList = () => {
   const navigate = useNavigate();
@@ -16,23 +17,51 @@ const OrderList = () => {
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [services, setServices] = useState([]);
 
+  const [page, setPage] = useState(0);
+
+  const [start, setStart] = useState(1);
+  const [end, setEnd] = useState(0);
+  const [total, setTotal] = useState(0);
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const data = await Promise.all([
-          getOrders(),
+          getOrders({page: page+1}),
           getServices()
         ]);
-        console.log(data);
+        
         setOrders(data[0].orders.data);
+        setTotal(data[0].orders.total);
         setServices(data[1].services);
+
+        const s = (page*10)+1;
+        const isNextEnable = (s+9)<=data[0].orders.total ? true : false;
+
+        setStart(s)
+    
+        setEnd(isNextEnable ? (s+9) : data[0].orders.total);
+
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
     };
 
     fetchOrders();
-  }, []);
+  }, [page]);
+
+
+  const onMoveNext=async()=>{
+    if((start+9)<total){
+      setPage(page+1)
+    }
+  }
+
+  const onMovePrev=async()=>{
+    if(page>=1){
+      setPage(page-1);
+    }
+  }
 
   const onAddOrder = () => {
     navigate("/orders/create");
@@ -72,7 +101,7 @@ const OrderList = () => {
     date: formatDate(new Date(order.date)),
     address: `${order.address}, ${order.pincode}`,
     status: order.status
-  })).reverse();
+  }));
 
   return (
     <MainCard sx={{ width: '100%' }}>
@@ -108,25 +137,63 @@ const OrderList = () => {
               </Button>
             </Box>
           </Stack>
-          <StripedDataGrid
-            rows={rows}
-            columns={columns}
-            getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
-            sx={{
-              '& .MuiDataGrid-columnHeader': { fontSize: '15px', fontWeight: '900' },
-              '& .MuiDataGrid-cell': { fontSize: '14px' },
-              border: 1,
-              borderColor: `${theme.palette.grey[200]}`
-            }}
-            initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
-            pageSizeOptions={[5, 10]}
-            checkboxSelection
-            disableRowSelectionOnClick
-            onRowSelectionModelChange={(selected) => {
-              setSelectedContacts(selected);
-            }}
-            rowSelectionModel={selectedContacts}
-          />
+          <Box
+            sx={{position: "relative"}}
+          >
+            <StripedDataGrid
+              rows={rows}
+              columns={columns}
+              getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
+              sx={{
+                '& .MuiDataGrid-columnHeader': { fontSize: '15px', fontWeight: '900' },
+                '& .MuiDataGrid-cell': { fontSize: '14px' },
+                border: 1,
+                borderColor: `${theme.palette.grey[200]}`
+              }}
+              initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+              // onPageSizeChange={(newPageSize) => {
+              //   setPageSize(newPageSize);
+              // }}
+              // paginationMode="server"
+              // onPageChange={handlePageChange}
+              pageSize={10} 
+              pageSizeOptions={[10]}
+              checkboxSelection
+              disableRowSelectionOnClick
+              onRowSelectionModelChange={(selected) => {
+                setSelectedContacts(selected);
+              }}
+              rowSelectionModel={selectedContacts}
+            />
+            <Box
+              sx={{
+                background:"white", 
+                position: "absolute",
+                bottom: 0, 
+                height: 60,
+                width: "100%",
+                border: 1,
+                borderColor: `${theme.palette.grey[200]}`,
+                display: "flex",
+                justifyContent: "end",
+                px: "20px"
+              }}
+            >
+             <Stack direction={"row"} alignItems={"center"}>
+              <IconButton onClick={onMovePrev}>
+                <ArrowLeftIcon/>
+              </IconButton>
+              <Typography
+                sx={{mx: 1}}
+              >
+                {`${start} - ${end} of ${total}`}
+              </Typography>
+              <IconButton onClick={onMoveNext}>
+                <ArrowRightIcon/>
+              </IconButton>
+             </Stack>
+            </Box>
+          </Box>
         </>
     </MainCard>
   );

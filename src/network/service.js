@@ -25,8 +25,8 @@ export async function createUserAddress({userId, address, pincode}){
 
 // orders
 
-export async function getOrders(){
-  return await axiosClient.get(`/order`);
+export async function getOrders({ page }){
+  return await axiosClient.get(`/order?limit=10&page=${page}`);
 }
 
 export async function createOrder({date, startTime, address, pincode, serviceId, userId, serviceDescription, technicianId, notes, alternativePhone}){
