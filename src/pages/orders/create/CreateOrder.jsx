@@ -164,7 +164,7 @@ const CreateOrder = () => {
                             setFieldValue("pincode", '')
                           }
                         }}
-                        getOptionLabel={(option) => `${option.name}`}
+                        getOptionLabel={(option) => `${option.name} (${option.phone})`}
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -175,7 +175,6 @@ const CreateOrder = () => {
                                   const value = e.target.value;
                                   setFieldValue("userId", null)
                                   setFieldValue("customer", value)
-                                  console.log(value)
                                   handleChange(value);
                                 }}
                                 fullWidth
