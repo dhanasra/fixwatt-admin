@@ -1,7 +1,7 @@
 import { Grid, Skeleton, Stack, Typography } from "@mui/material";
 import MainCard from "../../components/MainCard";
 import CountUp from 'react-countup';
-import { CheckCircleFilled, CheckCircleOutlined, FieldTimeOutlined, LikeOutlined, ToolOutlined } from "@ant-design/icons";
+import { CheckCircleFilled, CheckCircleOutlined, FieldTimeOutlined, LikeFilled, LikeOutlined, ToolFilled, ToolOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
 const Dashboard = ()=>{
@@ -11,7 +11,7 @@ const Dashboard = ()=>{
           id: "total",
           name: "Total Orders",
           count: 0,
-          icon: <ToolOutlined style={{fontSize: "32px", color: "grey"}} />
+          icon: <ToolFilled style={{fontSize: "32px", color: "grey"}} />
       },
       {
           id: "pending",
@@ -23,13 +23,13 @@ const Dashboard = ()=>{
           id: "approved",
           name: "Approved Orders",
           count: 0,
-          icon: <CheckCircleOutlined style={{fontSize: "32px", color: "orange"}} />
+          icon: <CheckCircleFilled style={{fontSize: "32px", color: "orange"}} />
       },
       {
           id: "completed",
           name: "Completed Orders",
           count: 0,
-          icon: <LikeOutlined style={{fontSize: "32px", color: "green"}} />
+          icon: <LikeFilled style={{fontSize: "32px", color: "green"}} />
       }
   ]);
 
@@ -39,7 +39,7 @@ const Dashboard = ()=>{
       {
         insights.map((insight)=>{
           return (
-            <Grid item xs={3} key={insight.id}>
+            <Grid item xs={6} sm={3} md={3} xl={2} key={insight.id}>
                 <MainCard>
                   <Stack>
                     <Typography variant="subtitle1" color={"grey"}>{insight.name}</Typography>
