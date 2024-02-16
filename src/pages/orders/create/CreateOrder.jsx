@@ -3,7 +3,7 @@ import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell,
 import MainCard from "../../../components/MainCard";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { createOrder, createUser, createUserAddress, getServices, getTechnicians, getUsers } from "../../../network/service";
+import { createOrder, createUser, createUserAddress, getCategories, getServices, getTechnicians, getUsers } from "../../../network/service";
 import ServiceTable from "./ServiceTable";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
@@ -17,6 +17,9 @@ const CreateOrder = () => {
 
   const [users, setUsers] = useState([]);
   const [services, setServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [category, selectCategory] = useState(null);
   const [technicians, setTechnicians] = useState([]);
 
   const navigate = useNavigate();
@@ -26,19 +29,32 @@ const CreateOrder = () => {
       try {
         const data = await Promise.all([
           getUsers(),
+          getCategories(),
           getServices(),
           getTechnicians()
         ]);
         setUsers(data[0].users);
-        setServices(data[1].services);
-        setTechnicians(data[2].technicians);
+        setCategories(data[1].categories);
+        setServices(data[2].services);
+        setTechnicians(data[3].technicians);
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
     };
 
     fetch();
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    if(category!=null){
+      const updated = services.filter((s)=>s.category_name==category.name);
+      setSelectedServices(updated);
+      console.log('calling');
+      console.log(updated)
+    }
+  }, [category])
+
+
 
   const tomorrow = new Date((new Date()) + 1);
   const formattedTomorrow = tomorrow.toISOString().slice(0, 10);
@@ -274,10 +290,11 @@ const CreateOrder = () => {
                       <Table>
                         <TableHead>
                           <TableRow style={{ backgroundColor: '#f9fafa' }}>
-                            <TableCell style={{ width: '300px' }} >Service</TableCell>
+                            <TableCell style={{ width: '250px' }} >Category</TableCell>
+                            <TableCell style={{ width: '250px' }} >Service</TableCell>
                             <TableCell style={{ width: 'auto' }} >Description</TableCell>
-                            <TableCell style={{ width: '220px' }} >Date</TableCell>
-                            <TableCell style={{ width: '220px' }} >Time</TableCell>
+                            <TableCell style={{ width: '180px' }} >Date</TableCell>
+                            <TableCell style={{ width: '180px' }} >Time</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -286,8 +303,8 @@ const CreateOrder = () => {
                               <Stack spacing={1}>
                               <Autocomplete
                                 disablePortal
-                                id="service"
-                                options={services}
+                                id="category"
+                                options={categories}
                                 filterOptions={(options, state) =>
                                     options.filter(option =>
                                         option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
@@ -296,7 +313,45 @@ const CreateOrder = () => {
                                     )
                                 }
                                 onChange={(e)=>{
-                                  const service = services[e.target.dataset?.optionIndex];
+                                  const category = categories[e.target.dataset?.optionIndex];
+                                  setFieldValue("category", category?.id)
+                                  selectCategory(category);
+                                }}
+                                getOptionLabel={(option) => `${option.name}`}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        type="text"
+                                        name={"name"}
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        fullWidth
+                                        variant="outlined"
+                                    />
+                                )}
+                              />
+                              {touched.service && errors.service && (
+                                  <FormHelperText error>
+                                    {errors.service}
+                                  </FormHelperText>
+                                )}
+                              </Stack>
+                            </TableCell>
+                            <TableCell style={{ verticalAlign: 'top'}}>
+                              <Stack spacing={1}>
+                              <Autocomplete
+                                disablePortal
+                                id="service"
+                                options={selectedServices}
+                                filterOptions={(options, state) =>
+                                    options.filter(option =>
+                                        option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
+                                        (option.email && option.email.toLowerCase().includes(state.inputValue.toLowerCase())) ||
+                                        (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
+                                    )
+                                }
+                                onChange={(e)=>{
+                                  const service = selectedServices[e.target.dataset?.optionIndex];
                                   setFieldValue("service", service?.id)
                                 }}
                                 getOptionLabel={(option) => `${option.name}`}

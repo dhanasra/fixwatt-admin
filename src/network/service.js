@@ -12,8 +12,8 @@ export async function getUsers(){
   return await axiosClient.get(`/user`);
 }
 
-export async function createUser({name, phone}){
-  const data = {roleId: 2, name, phone}
+export async function createUser({name, phone, email}){
+  const data = {roleId: 2, name, phone, email}
   return await axiosClient.post(`/user`, data);
 }
 

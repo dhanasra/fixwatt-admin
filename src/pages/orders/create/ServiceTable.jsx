@@ -14,6 +14,7 @@ const ServiceTable =({services})=>{
       <Table>
         <TableHead>
           <TableRow style={{ backgroundColor: '#f9fafa' }}>
+            <TableCell style={{ width: '300px' }} >Category</TableCell>
             <TableCell style={{ width: '300px' }} >Service</TableCell>
             <TableCell style={{ width: 'auto' }} >Description</TableCell>
             <TableCell style={{ width: '220px' }} >Date</TableCell>
@@ -22,6 +23,32 @@ const ServiceTable =({services})=>{
         </TableHead>
         <TableBody>
           <TableRow>
+          <TableCell>
+              <Autocomplete
+                disablePortal
+                id="service"
+                options={services}
+                filterOptions={(options, state) =>
+                    options.filter(option =>
+                        option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
+                        (option.email && option.email.toLowerCase().includes(state.inputValue.toLowerCase())) ||
+                        (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
+                    )
+                }
+                getOptionLabel={(option) => `${option.name}`}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        type="text"
+                        name={"name"}
+                        // onBlur={handleBlur}
+                        // onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                    />
+                )}
+              />
+            </TableCell>
             <TableCell>
               <Autocomplete
                 disablePortal

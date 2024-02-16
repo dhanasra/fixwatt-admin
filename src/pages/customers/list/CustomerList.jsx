@@ -7,6 +7,7 @@ import { StripedDataGrid } from "../../../components/grid-styled";
 import { formatDate } from "../../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
+import { getUsers } from "../../../network/service";
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -19,9 +20,10 @@ const CustomerList = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const customersData = await getCustomers();
-        setData(customersData.customers);
-        setCustomers(customersData.customers);
+        const customersData = await getUsers();
+        console.log(customersData)
+        setData(customersData.users);
+        setCustomers(customersData.users);
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
@@ -53,10 +55,12 @@ const CustomerList = () => {
   );
 
   const columns = [
-    { field: 'name', headerName: 'Name', width: 200, renderCell: renderTextCell },
-    { field: 'phone', headerName: 'Phone number', width: 180, renderCell: renderTextCell },
-    { field: 'email', headerName: 'Email Address', width: 180, renderCell: renderTextCell },
+    { field: 'name', headerName: 'Name', width: 180, renderCell: renderTextCell },
+    { field: 'phone', headerName: 'Phone number', width: 160, renderCell: renderTextCell },
+    { field: 'email', headerName: 'Email Address', width: 160, renderCell: renderTextCell },
     { field: 'address', headerName: 'Address', flex: 1, renderCell: renderTextCell },
+    { field: 'gender', headerName: 'Gender', width: 100, renderCell: renderTextCell},
+    { field: 'age', headerName: 'Age', width: 100, renderCell: renderTextCell },
     { field: 'created', headerName: 'Created', width: 120, renderCell: renderTextCell }
   ];
 
@@ -64,10 +68,12 @@ const CustomerList = () => {
     id: customer.id,
     name: customer.name,
     phone: customer.phone,
-    email: customer.email,
-    address: customer.address,
+    email: customer.email??'-',
+    gender: customer.gender??'-',
+    age: customer.age??'-',
+    address: `${customer.addresses[0].address??''}${customer.addresses[0].address!=null ? ',': ''} ${customer.addresses[0].pincode??''}`,
     created: formatDate(customer.created_at)
-  }));
+  })).reverse();
 
   return (
     <MainCard sx={{ width: '100%' }}>
@@ -113,7 +119,7 @@ const CustomerList = () => {
             border: 1,
             borderColor: `${theme.palette.grey[200]}`
           }}
-          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
           pageSizeOptions={[5, 10]}
           checkboxSelection
           disableRowSelectionOnClick
