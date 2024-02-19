@@ -88,18 +88,29 @@ const OrderList = () => {
 
   const renderSingleSelectCell = (params) => (
       <SingleSelect
-        
         id={`status-list-${params.value.id}`}
         handleChange={async(v)=>{
+
+          let order;
+
           if(v=="APPROVED" || v=="REJECTED"){
-            await approveOrder({orderId: params.value.id, status: v})
+            const data = await approveOrder({orderId: params.value.id, status: v})
+            order = data.order;
           }else{
-            await updateOrderStatus({orderId: params.value.id, status: v})
+            const data = await updateOrderStatus({orderId: params.value.id, status: v})
+            order = data.order;
           }
-          
+          if(order){
+            const updatedList = orders.map(item =>
+              item.id === order.id ? { ...item, value: order } : item
+            );
+            setOrders([...updatedList]);
+          }
         }}
+
         value={params.value.status}
         items={[
+          <MenuItem value="PENDING" key={"pending"} disabled>PENDING</MenuItem>,
           <MenuItem value="APPROVED" key={"approved"} >APPROVED</MenuItem>,
           <MenuItem value="REJECTED" key={"rejected"}  >REJECTED</MenuItem>,
           <MenuItem value="CANCELLED" key={"cancelled"}  >CANCELLED</MenuItem>,
