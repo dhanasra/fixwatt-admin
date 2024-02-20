@@ -53,6 +53,16 @@ const modules = {
           sub: true
         },
         {
+          id: 'list_details',
+          title: 'Details',
+          subtitle: 'Orders Details',
+          url: '/orders/d/',
+          type: 'item',
+          breadcrumbs: false,
+          showBack: true,
+          sub: true
+        },
+        {
           id: 'create_order',
           title: 'Create',
           subtitle: 'Create Order',

@@ -11,3 +11,13 @@ export function formatTime(timeString) {
     hour = hour % 12 || 12;
     return `${hour}:${minutes} ${meridiem}`;
 };
+
+export function MoneyConverter({ amount }) {
+    const formattedAmount = (amount).toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+    });
+  
+    return formattedAmount;
+}

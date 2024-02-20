@@ -1,17 +1,19 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 // material-ui
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
-import { Grid, Typography } from '@mui/material';
+import { Grid, IconButton, Stack, Typography } from '@mui/material';
 
 // project imports
 import MainCard from '../MainCard';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 // ==============================|| BREADCRUMBS ||============================== //
 
 const Breadcrumbs = ({ navigation, title, ...others }) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [main, setMain] = useState();
   const [item, setItem] = useState();
@@ -25,9 +27,11 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
           getCollapse(collapse);
         } else if (collapse.type && collapse.type === 'item') {
 
-          if (location.pathname === collapse.url) {
+          const pattern = /^\/orders\/d\/\d+$/;
+          if (location.pathname === collapse.url || ( collapse.url == "/orders/d/" && pattern.test(location.pathname))) {
             setMain(menu);
             setItem(collapse);
+            console.log(menu);
           }
         }
         return false;
@@ -59,7 +63,7 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
   }
 
   // items
-  if (item && item.type === 'item') {
+  if (item && (item.type === 'item' || item.type === 'item-back')) {
     
     itemTitle = item.title;
     itemContent = (
@@ -86,7 +90,16 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
           }
           {title && (
             <Grid item sx={{ mt: item.breadcrumbs !== false ? 1 : 0 }}>
-              <Typography variant="h3">{item.subtitle ?? item.title}</Typography>
+              <Stack direction={"row"} spacing={1} alignItems={"center"}>
+                {
+                  item.showBack && (
+                    <IconButton onClick={()=>{navigate(-1)}}>
+                      <ArrowLeftOutlined/>
+                    </IconButton>
+                  )
+                }
+                <Typography variant="h3">{item.subtitle ?? item.title}</Typography>
+              </Stack>
             </Grid>
           )}
         </Grid>

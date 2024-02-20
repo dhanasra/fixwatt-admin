@@ -9,6 +9,8 @@ import MainCard from "../../../components/MainCard";
 import { approveOrder, getOrders, getServices, updateOrderStatus } from "../../../network/service";
 import { ArrowLeftIcon, ArrowRightIcon } from "@mui/x-date-pickers";
 import SingleSelect from "../../../components/@extended/SingleSelect";
+import OptionsMenu from "./OptionsMenu";
+import { renderActionsCell } from "@mui/x-data-grid";
 
 const OrderList = () => {
   const navigate = useNavigate();
@@ -86,6 +88,10 @@ const OrderList = () => {
     </Stack>
   );
 
+  const renderOptionsCell = (params) => (
+    <OptionsMenu orderId={params.value}/>
+  );
+
   const renderSingleSelectCell = (params) => (
       <SingleSelect
         id={`status-list-${params.value.id}`}
@@ -120,17 +126,20 @@ const OrderList = () => {
   );
 
   const columns = [
-    { field: 'service', headerName: 'Service', flex: 1, renderCell: renderTextCell },
+    { field: 'customer', headerName: 'Customer', width: 160, renderCell: renderTextCell },
+    { field: 'service', headerName: 'Service', width: 160, renderCell: renderTextCell },
     { field: 'address', headerName: 'Address', flex: 1, renderCell: renderTextCell },
     { field: 'date', headerName: 'Date', width: 120, renderCell: renderTextCell },
     { field: 'time', headerName: 'Time', width: 120, renderCell: renderTextCell },
     { field: 'status', headerName: 'Order Status', width: 160, renderCell: renderSingleSelectCell },
+    { field: 'id', headerName: '', width: 60, renderCell: renderOptionsCell },
   ];
 
   const rows = orders.map((order) => ({
     id: order.id,
     name: order.user_id,
     service: services.find((v)=>v.id==order.service_id)?.name,
+    customer: order.user.name,
     time: formatTime(order.start_time),
     date: formatDate(new Date(order.date)),
     address: `${order.address}, ${order.pincode}`,
