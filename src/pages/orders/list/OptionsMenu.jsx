@@ -13,11 +13,11 @@ const OptionsMenu =({orderId, style})=>{
         id: "view", 
         icon: <EyeOutlined style={{fontSize: "18px"}}/>
       }, 
-      {
-        name: "Edit Order", 
-        id: "edit", 
-        icon: <EditOutlined style={{fontSize: "18px"}}/>
-      } 
+    //   {
+    //     name: "Edit Order", 
+    //     id: "edit", 
+    //     icon: <EditOutlined style={{fontSize: "18px"}}/>
+    //   } 
     ]
 
     const [anchorEl, setAnchorEl] = useState(null);
