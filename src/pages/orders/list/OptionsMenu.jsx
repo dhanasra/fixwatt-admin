@@ -3,7 +3,7 @@ import { Box, IconButton, ListItem, ListItemIcon, ListItemText, Menu, MenuItem }
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const OptionsMenu =({orderId, style})=>{
+const OptionsMenu =({order, style})=>{
 
     const navigate = useNavigate();
 
@@ -13,11 +13,11 @@ const OptionsMenu =({orderId, style})=>{
         id: "view", 
         icon: <EyeOutlined style={{fontSize: "18px"}}/>
       }, 
-    //   {
-    //     name: "Edit Order", 
-    //     id: "edit", 
-    //     icon: <EditOutlined style={{fontSize: "18px"}}/>
-    //   } 
+      {
+        name: "Edit Order", 
+        id: "edit", 
+        icon: <EditOutlined style={{fontSize: "18px"}}/>
+      } 
     ]
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -33,9 +33,9 @@ const OptionsMenu =({orderId, style})=>{
     
     const handleOptionClick = async(option) => {
         if(option['id']=='view'){
-          navigate(`/orders/d/${orderId}`)
+            navigate(`/orders/d/${order.id}`)
         }else if(option['id']=='edit'){
-          
+            navigate(`/orders/e/${order.id}`, { state: { data: {order} }  })
         }
         handleClose();
     };

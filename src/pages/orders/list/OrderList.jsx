@@ -89,7 +89,7 @@ const OrderList = () => {
   );
 
   const renderOptionsCell = (params) => (
-    <OptionsMenu orderId={params.value}/>
+    <OptionsMenu order={params.value}/>
   );
 
   const renderSingleSelectCell = (params) => (
@@ -133,11 +133,12 @@ const OrderList = () => {
     { field: 'date', headerName: 'Date', width: 120, renderCell: renderTextCell },
     { field: 'time', headerName: 'Time', width: 120, renderCell: renderTextCell },
     { field: 'status', headerName: 'Order Status', width: 160, renderCell: renderSingleSelectCell },
-    { field: 'id', headerName: '', width: 60, renderCell: renderOptionsCell },
+    { field: 'order', headerName: '', width: 60, renderCell: renderOptionsCell },
   ];
 
   const rows = orders.map((order) => ({
     id: order.id,
+    order: order,
     name: order.user_id,
     service: services.find((v)=>v.id==order.service_id)?.name,
     customer: order.user.name,
