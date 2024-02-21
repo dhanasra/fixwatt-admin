@@ -127,8 +127,9 @@ const OrderList = () => {
 
   const columns = [
     { field: 'customer', headerName: 'Customer', width: 160, renderCell: renderTextCell },
-    { field: 'service', headerName: 'Service', width: 160, renderCell: renderTextCell },
-    { field: 'address', headerName: 'Address', flex: 1, renderCell: renderTextCell },
+    { field: 'phone', headerName: 'Phone Number', width: 160, renderCell: renderTextCell },
+    { field: 'service', headerName: 'Service', flex: 1, renderCell: renderTextCell },
+    // { field: 'address', headerName: 'Address', flex: 1, renderCell: renderTextCell },
     { field: 'date', headerName: 'Date', width: 120, renderCell: renderTextCell },
     { field: 'time', headerName: 'Time', width: 120, renderCell: renderTextCell },
     { field: 'status', headerName: 'Order Status', width: 160, renderCell: renderSingleSelectCell },
@@ -140,6 +141,7 @@ const OrderList = () => {
     name: order.user_id,
     service: services.find((v)=>v.id==order.service_id)?.name,
     customer: order.user.name,
+    phone: order.user.phone,
     time: formatTime(order.start_time),
     date: formatDate(new Date(order.date)),
     address: `${order.address}, ${order.pincode}`,

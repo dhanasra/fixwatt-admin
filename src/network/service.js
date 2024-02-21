@@ -37,6 +37,10 @@ export async function getOrder({ orderId }){
   return await axiosClient.get(`/order/${orderId}`);
 }
 
+export async function deleteOrder({ orderId }){
+  return await axiosClient.delete(`/order/${orderId}`);
+}
+
 export async function createOrder({date, startTime, address, pincode, serviceId, userId, serviceDescription, technicianId, notes, alternativePhone}){
   const data = {
     date,

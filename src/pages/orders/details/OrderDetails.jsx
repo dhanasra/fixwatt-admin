@@ -1,21 +1,31 @@
-import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
-import { Box, Button, Divider, Grid, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
-import { useParams } from 'react-router-dom';
+import { DeleteOutlined, EditOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
+import { Box, Button, Divider, Grid, IconButton, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
+import { useNavigate, useParams } from 'react-router-dom';
 import MainCard from "../../../components/MainCard";
 import { useEffect, useState } from "react";
-import { getOrder } from "../../../network/service";
+import { deleteOrder, getOrder } from "../../../network/service";
 import ServiceInfoTable from "./ServiceInfoTable";
 import { MdCurrencyRupee } from "react-icons/md";
 import { MoneyConverter } from "../../../utils/utils";
+import ConfirmDialog from "../../../components/dialogs/ConfirmDialog";
 
 const OrderDetails = ()=>{
   const location = useParams();
+  const navigate = useNavigate();
   const [order, setOrder] = useState(null);
 
   const [amountReceived, setAmountReceived] = useState(0);
   const [additionalCharges, setAdditionalCharges] = useState(0);
   const [technicianPayment, setTechnicianPayment] = useState(0);
   const [profit, setProfit] = useState(0);
+
+  const [openDelete, setOpenDelete] = useState(false);
+
+  const handleDeleteClick = async()=>{
+    await deleteOrder({orderId: order?.id})
+    setOpenDelete(false);
+    navigate(-1);
+  }
 
   useEffect(()=>{
     const fetchOrder = async()=>{
@@ -35,13 +45,32 @@ const OrderDetails = ()=>{
       headerBorder
       title={
         <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
-          <Typography>ORDER_23</Typography>
-          <Button onClick={()=>{}} variant="contained" >
-            <Typography>{order?.status}</Typography>
-          </Button>
+          <Typography>{`ORDER_${order?.id}`}</Typography>
+          <Stack direction={"row"} spacing={1}>
+            <IconButton>
+              <EditOutlined/>
+            </IconButton>
+            <IconButton onClick={()=>setOpenDelete(true)}>
+              <DeleteOutlined style={{color: "red"}}/>
+            </IconButton>
+            <Box width={6}/>
+            <Button onClick={()=>{}} variant="contained" >
+              <Typography>{order?.status}</Typography>
+            </Button>
+          </Stack>
         </Stack>
       }
     >
+      <ConfirmDialog
+        open={openDelete} 
+        onOk={handleDeleteClick} 
+        onCancel={()=>{
+          setOpenDelete(false)
+        }} 
+        btnTxt={"Delete"}
+        title={"Are you sure you want to delete?"}   
+        content={`By deleting this order, this record will be completely deleted.`}
+      />
       <Grid container spacing={4}>
         <Grid item xs={12} md={4} sm={5.5}>
           <MainCard>
@@ -183,7 +212,7 @@ const OrderDetails = ()=>{
                   </Grid>
                   <Grid item xs={6} sx={{alignItems: "center", display: "flex"}} >
                     <Box>
-                    <Typography variant="h5">Profit for Fixwatt</Typography>
+                    <Typography variant="h5">Revenue for Fixwatt</Typography>
                     </Box>
                   </Grid>
                   <Grid item xs={6}>
