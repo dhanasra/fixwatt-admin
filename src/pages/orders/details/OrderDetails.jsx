@@ -47,7 +47,7 @@ const OrderDetails = ()=>{
         <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
           <Typography>{`ORDER_${order?.id}`}</Typography>
           <Stack direction={"row"} spacing={1}>
-            <IconButton>
+            <IconButton onClick={()=>navigate(`/orders/e/${order?.id}`, { state: { data: {order} } })}>
               <EditOutlined/>
             </IconButton>
             <IconButton onClick={()=>setOpenDelete(true)}>

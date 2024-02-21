@@ -63,6 +63,16 @@ const modules = {
           sub: true
         },
         {
+          id: 'edit_order',
+          title: 'Edit',
+          subtitle: 'Edit Order',
+          url: '/orders/e/',
+          type: 'item',
+          breadcrumbs: false,
+          showBack: true,
+          sub: true
+        },
+        {
           id: 'create_order',
           title: 'Create',
           subtitle: 'Create Order',

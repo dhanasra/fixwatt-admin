@@ -58,6 +58,21 @@ export async function createOrder({date, startTime, address, pincode, serviceId,
   return await axiosClient.post(`/order`, data);
 }
 
+export async function editOrder({orderId, date, startTime, address, pincode, serviceId, serviceDescription, technicianId, notes, alternativePhone}){
+  const data = {
+    date,
+    start_time: startTime,
+    address,
+    pincode,
+    service_id: serviceId,
+    service_description: serviceDescription,
+    technician_id: technicianId,
+    notes: notes,
+    alternative_phone: alternativePhone
+  }
+  return await axiosClient.put(`/order/${orderId}`, data);
+}
+
 export async function updateOrderStatus({ status, orderId }){
   const path = status=="COMPLETED" ? "complete": status=="CANCELLED" ? "cancel": ""
   return await axiosClient.put(`/order/${orderId}/${path}`);

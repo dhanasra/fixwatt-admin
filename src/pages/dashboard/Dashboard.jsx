@@ -3,7 +3,7 @@ import MainCard from "../../components/MainCard";
 import CountUp from 'react-countup';
 import { CheckCircleFilled, CheckCircleOutlined, FieldTimeOutlined, LikeFilled, LikeOutlined, ToolFilled, ToolOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { getOrdersInfo } from "../../network/service";
+import { getCategories, getOrdersInfo } from "../../network/service";
 
 const Dashboard = ()=>{
 
@@ -37,11 +37,18 @@ const Dashboard = ()=>{
   useEffect(() => {
     const fetchInfo = async () => {
       try {
-        const data = await getOrdersInfo();
+
+        const data = await Promise.all([
+          getOrdersInfo(),
+          getCategories()
+        ]);
+
+        localStorage.setItem('categories', JSON.stringify(data[1]))
+
         let total = 0;
 
         const updatedInsights = insights.map((insight) => {
-          const matchingStatus = data.info.find((info) => info.status === insight.id.toUpperCase());
+          const matchingStatus = data[0].info.find((info) => info.status === insight.id.toUpperCase());
           console.log(matchingStatus)
           if(matchingStatus){
             total = total + matchingStatus.total;

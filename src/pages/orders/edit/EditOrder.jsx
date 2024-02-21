@@ -3,19 +3,26 @@ import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell,
 import MainCard from "../../../components/MainCard";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { createOrder, createUser, createUserAddress, getCategories, getServices, getTechnicians, getUsers } from "../../../network/service";
+import { createOrder, createUser, createUserAddress, editOrder, getCategories, getOrder, getServices, getTechnicians, getUsers } from "../../../network/service";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 
-const CreateOrder = () => {
+const EditOrder = () => {
+
+  const location = useLocation();
+  const { data } = location.state || {};
+  const order = data.order;
+  const categories = JSON.parse(localStorage.getItem('categories')).categories??[];
+  console.log(categories)
+  // const [order, setOrder] = useState(data.order);
 
   const [users, setUsers] = useState([]);
   const [services, setServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [category, selectCategory] = useState(null);
   const [technicians, setTechnicians] = useState([]);
 
@@ -26,14 +33,13 @@ const CreateOrder = () => {
       try {
         const data = await Promise.all([
           getUsers(),
-          getCategories(),
           getServices(),
-          getTechnicians()
+          getTechnicians(),
         ]);
         setUsers(data[0].users);
-        setCategories(data[1].categories);
-        setServices(data[2].services);
-        setTechnicians(data[3].technicians);
+        setServices(data[1].services);
+        setTechnicians(data[2].technicians);
+
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
@@ -46,8 +52,6 @@ const CreateOrder = () => {
     if(category!=null){
       const updated = services.filter((s)=>s.category_name==category.name);
       setSelectedServices(updated);
-      console.log('calling');
-      console.log(updated)
     }
   }, [category])
 
@@ -62,22 +66,22 @@ const CreateOrder = () => {
         <Formik
           initialValues={{ 
             customer: null,
-            userId: null,
-            phone: null,
-            altPhone: null,
-            technician: null,
-            technicianPhone: null,
-            techPhone: null,
-            address: null,
-            pincode: null,
-            notes: null,
-            serviceDesc: null,
-            service: null,
-            date: formattedTomorrow,
-            time: dayjs().set('hour', 10).set('minute', 0).set('second', 0).format("HH:mm:ss")
+            category: categories?.find((c)=>c.name==order?.service?.category_name),
+            userId: order?.user?.id,
+            phone: order?.user?.phone,
+            altPhone: order?.alternative_phone,
+            techn: order?.technician,
+            technician: order?.technician?.id,
+            techPhone: order?.technician?.phone,
+            address: order?.address,
+            pincode: order?.pincode,
+            notes: order?.notes,
+            serviceDesc: order?.service_description,
+            service: order?.service?.id,
+            date: order?.date,
+            time: dayjs().set('hour', order?.start_time?.split(':')[0]).set('minute', order?.start_time?.split(':')[1]).set('second', order?.start_time?.split(':')[2])
           }}
           validationSchema={Yup.object().shape({
-            customer: Yup.string().max(255).required("Customer is required"),
             technician: Yup.string().max(255).required("Technician is required"),
             phone: Yup.string()
               .matches(
@@ -102,10 +106,11 @@ const CreateOrder = () => {
             try {
 
               const data = {
+                orderId: order.id,
                 date: values.date,
-                startTime: values.time,
                 address: values.address, 
                 pincode: values.pincode,
+                startTime: values.time,
                 serviceId: values.service,
                 serviceDescription: values.serviceDesc,
                 technicianId: values.technician,
@@ -113,16 +118,7 @@ const CreateOrder = () => {
                 alternativePhone: values.altPhone
               };
 
-              if(values.userId){
-                data.userId = values.userId;
-                await createOrder(data)
-              }else{
-                const result = await createUser({name: values.customer, phone: values.phone});
-                const user = result.user
-                await createUserAddress({address: values.address, pincode: values.pincode, userId: user.id})
-                data.userId = user.id;
-                await createOrder(data)
-              }
+              await editOrder(data)
             
               setStatus({ success: true });
               setSubmitting(false); 
@@ -130,6 +126,7 @@ const CreateOrder = () => {
               navigate('/orders');
               
             } catch (err) {
+              console.log('Error is')
               console.log(err)
               setStatus({ success: false });
               setErrors({ submit: err.message });
@@ -143,66 +140,27 @@ const CreateOrder = () => {
                 <Grid item xs={12}>
                   <Typography variant="h5" sx={{my: 0.6}}>Customer Details</Typography>
                 </Grid>
-                <Grid item xs={12}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"user"}>Customer</InputLabel>
-                    <Autocomplete
-                        freeSolo
-                        disablePortal
-                        id="user"
-                        options={users.map((user, index) => ({
-                            ...user,
-                            key: user.id 
-                        }))}
-                        filterOptions={(options, state) =>
-                            options.filter(option =>
-                                option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
-                                (option.email && option.email.toLowerCase().includes(state.inputValue.toLowerCase())) ||
-                                (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
-                            )
-                        }
-                        onChange={(e)=>{
-                          const user = users[e.target.dataset?.optionIndex];
-                          setFieldValue("phone", user?.phone)
-                          
-                          setFieldValue("userId", user?.id)
-                          setFieldValue("customer", user?.id)
+                <Grid item xs={12} md={4} sm={5.5} mb={2}>
+                  <MainCard>
+                    <Stack spacing={1}>
+                      <Typography variant="h5">{order?.user?.name}</Typography>
+                      <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                        <PhoneOutlined/>
+                        <Typography variant="h6">{order?.user?.phone}</Typography>
+                      </Stack>
+                      {
+                        order?.alternative_phone && <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                          <PhoneOutlined/>
+                          <Typography variant="h6">{order?.alternative_phone}</Typography>
+                        </Stack>
+                      }
+                    </Stack>
 
-                          if(user.addresses?.length>0){
-                            setFieldValue("address", user?.addresses[0]?.address)
-                            setFieldValue("pincode", user?.addresses[0]?.pincode)
-                            setFieldValue("userId", user?.id)
-                          }else{
-                            setFieldValue("address", '')
-                            setFieldValue("pincode", '')
-                          }
-                        }}
-                        getOptionLabel={(option) => `${option.name} (${option.phone})`}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                type="text"
-                                name={"customer"}
-                                onBlur={handleBlur}
-                                onChange={(e)=>{
-                                  const value = e.target.value;
-                                  setFieldValue("userId", null)
-                                  setFieldValue("customer", value)
-                                  handleChange(value);
-                                }}
-                                fullWidth
-                                variant="outlined"
-                            />
-                        )}
-                    />
-                    {touched.customer && errors.customer && (
-                        <FormHelperText error>
-                          {errors.customer}
-                        </FormHelperText>
-                      )}
-                  </Stack>
+                  </MainCard>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6}/>
+
+                <Grid item xs={4}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor={"address"}>Address</InputLabel>
                     <OutlinedInput
@@ -221,7 +179,7 @@ const CreateOrder = () => {
                     )}
                   </Stack>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor={"pincode"}>Pincode</InputLabel>
                     <OutlinedInput
@@ -240,26 +198,8 @@ const CreateOrder = () => {
                     )}
                   </Stack>
                 </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"phone"}>Phone number</InputLabel>
-                    <OutlinedInput
-                      id={"phone"}
-                      type="text"
-                      name={"phone"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.phone}
-                      fullWidth
-                    />
-                    {touched.phone && errors.phone && (
-                      <FormHelperText error>
-                        {errors.phone}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
+                
+                <Grid item xs={4}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor={"altPhone"}>Alternative Phone number</InputLabel>
                     <OutlinedInput
@@ -301,7 +241,9 @@ const CreateOrder = () => {
                               <Autocomplete
                                 disablePortal
                                 id="category"
+                                value={values?.category}
                                 options={categories}
+                                isOptionEqualToValue={(option, value) => option.id === value?.id}
                                 filterOptions={(options, state) =>
                                     options.filter(option =>
                                         option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
@@ -339,6 +281,8 @@ const CreateOrder = () => {
                               <Autocomplete
                                 disablePortal
                                 id="service"
+                                value={order?.service}
+                                isOptionEqualToValue={(option, value) => option.id === value?.id}
                                 options={selectedServices}
                                 filterOptions={(options, state) =>
                                     options.filter(option =>
@@ -392,7 +336,7 @@ const CreateOrder = () => {
                             <TableCell style={{ verticalAlign: 'top'}}>
                               <Stack spacing={1}>
                                 <DatePicker
-                                  value={dayjs(values.date)}
+                                  value={dayjs(values?.date)}
                                   format="MMM DD, YYYY"
                                   onChange={(v)=>{
                                     setFieldValue("date", v.format("YYYY-MM-DD"))
@@ -408,7 +352,7 @@ const CreateOrder = () => {
                             <TableCell style={{ verticalAlign: 'top'}}>
                               <Stack spacing={1}>
                                 <TimePicker
-                                  value={dayjs().set('hour', 10).set('minute', 0).set('second', 0)}
+                                  value={values?.time}
                                   onChange={(v)=>{
                                     setFieldValue("time", v.format("HH:mm:ss"))
                                   }}
@@ -435,6 +379,8 @@ const CreateOrder = () => {
                     <Autocomplete
                       disablePortal
                       id="technician"
+                      value={values?.techn}
+                      isOptionEqualToValue={(option, value) => option.id === value?.id}
                       options={technicians}
                       filterOptions={(options, state) =>
                           options.filter(option =>
@@ -507,8 +453,8 @@ const CreateOrder = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={4} direction={"row-reverse"} sx={{pt: 4, pb: 2}}>
-                    <Button disabled={isSubmitting} variant="contained" sx={{px: 5, py: 1.2}} type="submit">Create</Button>
-                    <Button disabled={isSubmitting} sx={{px: 5, py: 1.2, color: "red"}} >Cancel</Button>
+                    <Button variant="contained" sx={{px: 5, py: 1.2}} type="submit" >Save</Button>
+                    <Button disabled={isSubmitting} sx={{px: 5, py: 1.2, color: "red"}} onClick={()=>{navigate(-1)}} >Cancel</Button>
                   </Stack>
                 </Grid>
               </Grid>
@@ -520,4 +466,4 @@ const CreateOrder = () => {
   );
 };
 
-export default CreateOrder;
+export default EditOrder;

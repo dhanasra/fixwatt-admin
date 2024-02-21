@@ -27,8 +27,12 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
           getCollapse(collapse);
         } else if (collapse.type && collapse.type === 'item') {
 
-          const pattern = /^\/orders\/d\/\d+$/;
-          if (location.pathname === collapse.url || ( collapse.url == "/orders/d/" && pattern.test(location.pathname))) {
+          const odPattern = /^\/orders\/d\/\d+$/;
+          const oePattern = /^\/orders\/e\/\d+$/;``
+          if (location.pathname === collapse.url 
+              || ( collapse.url == "/orders/d/" && odPattern.test(location.pathname))
+              || ( collapse.url == "/orders/e/" && oePattern.test(location.pathname))
+          ) {
             setMain(menu);
             setItem(collapse);
             console.log(menu);
