@@ -28,14 +28,17 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
         } else if (collapse.type && collapse.type === 'item') {
 
           const odPattern = /^\/orders\/d\/\d+$/;
-          const oePattern = /^\/orders\/e\/\d+$/;``
+          const oePattern = /^\/orders\/e\/\d+$/;
+          const cdPattern = /^\/customers\/d\/\d+$/;
+          const cePattern = /^\/customers\/e\/\d+$/;
           if (location.pathname === collapse.url 
               || ( collapse.url == "/orders/d/" && odPattern.test(location.pathname))
               || ( collapse.url == "/orders/e/" && oePattern.test(location.pathname))
+              || ( collapse.url == "/customers/d/" && cdPattern.test(location.pathname))
+              || ( collapse.url == "/customers/e/" && cePattern.test(location.pathname))
           ) {
             setMain(menu);
             setItem(collapse);
-            console.log(menu);
           }
         }
         return false;

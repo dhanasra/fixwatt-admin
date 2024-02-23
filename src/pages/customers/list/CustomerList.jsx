@@ -2,12 +2,12 @@ import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Box, Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCustomers } from "../../../network/service/customerService";
 import { StripedDataGrid } from "../../../components/grid-styled";
 import { formatDate } from "../../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
 import { getUsers } from "../../../network/service";
+import OptionsMenu from "./OptionsMenu";
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -48,6 +48,10 @@ const CustomerList = () => {
     setCustomers(filtered);
   };
 
+  const renderOptionsCell = (params) => (
+    <OptionsMenu customer={params.value}/>
+  );
+
   const renderTextCell = (params) => (
     <Stack>
       <Typography variant="title">{params.value}</Typography>
@@ -57,11 +61,9 @@ const CustomerList = () => {
   const columns = [
     { field: 'name', headerName: 'Name', width: 180, renderCell: renderTextCell },
     { field: 'phone', headerName: 'Phone number', width: 160, renderCell: renderTextCell },
-    { field: 'email', headerName: 'Email Address', width: 160, renderCell: renderTextCell },
     { field: 'address', headerName: 'Address', flex: 1, renderCell: renderTextCell },
-    { field: 'gender', headerName: 'Gender', width: 100, renderCell: renderTextCell},
-    { field: 'age', headerName: 'Age', width: 100, renderCell: renderTextCell },
-    { field: 'created', headerName: 'Created', width: 120, renderCell: renderTextCell }
+    { field: 'created', headerName: 'Created', width: 120, renderCell: renderTextCell },
+    { field: 'customer', headerName: '', width: 60, renderCell: renderOptionsCell },
   ];
 
   const rows = customers.map((customer) => ({
@@ -72,7 +74,8 @@ const CustomerList = () => {
     gender: customer.gender??'-',
     age: customer.age??'-',
     address: `${customer.addresses[0].address??''}${customer.addresses[0].address!=null ? ',': ''} ${customer.addresses[0].pincode??''}`,
-    created: formatDate(customer.created_at)
+    created: formatDate(customer.created_at),
+    customer: customer
   })).reverse();
 
   return (

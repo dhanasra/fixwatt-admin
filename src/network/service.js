@@ -12,15 +12,37 @@ export async function getUsers(){
   return await axiosClient.get(`/user`);
 }
 
+export async function getUser(){
+  return await axiosClient.get(`/user`);
+}
+
+export async function getUserById(id){
+  return await axiosClient.get(`/user/${id}`);
+}
+
+export async function deleteUser(id){
+  return await axiosClient.delete(`/user/${id}`);
+}
+
 export async function createUser({name, phone, email}){
   const data = {roleId: 2, name, phone, email}
   return await axiosClient.post(`/user`, data);
 }
 
+export async function updateUser({userId, name, phone, email, age, gender, category, segment, roleId, status}){
+  const data = {name, phone, email, age, gender, category, segment, roleId, status}
+  return await axiosClient.put(`/user/${userId}`, data);
+}
+
+
 // user address
 
-export async function createUserAddress({userId, address, pincode}){
-  return await axiosClient.post(`/user-address`, {userId, address, pincode});
+export async function createUserAddress({userId, address, pincode, type}){
+  return await axiosClient.post(`/user-address`, {userId, address, pincode, type});
+}
+
+export async function removeUserAddress(id){
+  return await axiosClient.delete(`/user-address/${id}`);
 }
 
 // orders

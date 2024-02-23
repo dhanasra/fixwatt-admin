@@ -16,7 +16,6 @@ const NavGroup = ({ item }) => {
 
   const renderChildren = (children) => {
     return children.map((childItem) => {
-      console.log(childItem)
       switch (childItem.type) {
         case 'item':
           return !childItem.showBack ? <NavItem key={childItem.id} item={childItem} level={1} /> : <></>;

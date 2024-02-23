@@ -11,7 +11,6 @@ import MainCard from "../../../components/MainCard";
 import PlaceholderImg from "../../../assets/welcome.png";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { createCustomer } from "../../../network/service/customerService";
 import { createUser } from "../../../network/service";
 
 const CreateCustomer = () => {

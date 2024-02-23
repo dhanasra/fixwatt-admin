@@ -1,6 +1,12 @@
 1. Integrate Payment Info api
 2. Add Export / Import to excel option
 3. SMS for customers & technicians -> send sms btn for technicians
+
+// 22 Feb
+
 4. Add filter & search in order list
-5. Order edit & delete option
 6. Category add option
+
+// Bizcard
+
+List out pending works

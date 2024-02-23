@@ -29,6 +29,26 @@ const modules = {
           sub: true
         },
         {
+          id: 'customer_details',
+          title: 'Details',
+          subtitle: 'Customer Details',
+          url: '/customers/d/',
+          type: 'item',
+          breadcrumbs: false,
+          showBack: true,
+          sub: true
+        },
+        {
+          id: 'edit_customer',
+          title: 'Edit',
+          subtitle: 'Edit Customer',
+          url: '/customers/e/',
+          type: 'item',
+          breadcrumbs: false,
+          showBack: true,
+          sub: true
+        },
+        {
           id: 'create_customer',
           title: 'Create',
           subtitle: 'Create Customer',
@@ -53,9 +73,9 @@ const modules = {
           sub: true
         },
         {
-          id: 'list_details',
+          id: 'order_details',
           title: 'Details',
-          subtitle: 'Orders Details',
+          subtitle: 'Order Details',
           url: '/orders/d/',
           type: 'item',
           breadcrumbs: false,

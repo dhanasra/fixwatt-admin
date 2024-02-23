@@ -10,7 +10,6 @@ import { approveOrder, getOrders, getServices, updateOrderStatus } from "../../.
 import { ArrowLeftIcon, ArrowRightIcon } from "@mui/x-date-pickers";
 import SingleSelect from "../../../components/@extended/SingleSelect";
 import OptionsMenu from "./OptionsMenu";
-import { renderActionsCell } from "@mui/x-data-grid";
 
 const OrderList = () => {
   const navigate = useNavigate();
