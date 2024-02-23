@@ -1,8 +1,9 @@
 import { Box, Divider, Drawer, IconButton, InputLabel, List, OutlinedInput, Stack, Typography, Button, FormHelperText, Autocomplete, TextField } from "@mui/material";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 import { updateTechnician } from "../../network/service";
+import ImagePicker from "../../components/ImagePicker";
 
 const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, categories }) => {
 
@@ -65,6 +66,20 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
                 <Divider sx={{ my: "8px" }} />
                 <List sx={{p: "16px"}}>
                   <Stack spacing={2}>
+                    <Stack spacing={2} display={"flex"}>
+                        <InputLabel>Image</InputLabel>
+                        <ImagePicker
+                          tag={'image'}
+                          icon={<UserOutlined style={{fontSize: "36px"}}/>}
+                          value={values?.image}
+                          onChange={(v)=>setFieldValue("imageBlob", v)}
+                        />
+                        {touched.imageBlob && errors.imageBlob && (
+                          <FormHelperText error>
+                            {errors.imageBlob}
+                          </FormHelperText>
+                        )}
+                    </Stack>
                     <Stack spacing={1}>
                       <InputLabel htmlFor={"name"}>Technician Name</InputLabel>
                       <OutlinedInput
@@ -136,6 +151,45 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
                           </FormHelperText>
                         )}
                     </Stack>
+                    <Stack direction={"row"} spacing={3}>
+                      <Stack spacing={1} sx={{width: "100%"}}>
+                        <InputLabel htmlFor={"area"}>Area</InputLabel>
+                        <OutlinedInput
+                          id={"area"}
+                          type="text"
+                          name={"area"}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder={"Enter area"}
+                          value={values.area}
+                          fullWidth
+                        />
+                        {touched.area && errors.area && (
+                          <FormHelperText error>
+                            {errors.area}
+                          </FormHelperText>
+                        )}
+                      </Stack>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor={"pincode"}>Pincode</InputLabel>
+                        <OutlinedInput
+                          id={"pincode"}
+                          type="text"
+                          name={"pincode"}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          placeholder={"Enter pincode"}
+                          value={values.pincode}
+                          fullWidth
+                        />
+                        {touched.pincode && errors.pincode && (
+                          <FormHelperText error>
+                            {errors.pincode}
+                          </FormHelperText>
+                        )}
+                      </Stack>
+                    </Stack>
+                
                   </Stack>
                 </List>
               </Box>
