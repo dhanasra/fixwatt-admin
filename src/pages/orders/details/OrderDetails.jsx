@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
-import { Box, Button, Divider, Grid, IconButton, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, FormControlLabel, Grid, IconButton, InputAdornment, MenuItem, OutlinedInput, Radio, RadioGroup, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams } from 'react-router-dom';
 import MainCard from "../../../components/MainCard";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import ServiceInfoTable from "./ServiceInfoTable";
 import { MdCurrencyRupee } from "react-icons/md";
 import { MoneyConverter } from "../../../utils/utils";
 import ConfirmDialog from "../../../components/dialogs/ConfirmDialog";
+import SingleSelect from "../../../components/@extended/SingleSelect";
 
 const OrderDetails = ()=>{
   const location = useParams();
@@ -132,6 +133,7 @@ const OrderDetails = ()=>{
             <Grid container px={4}>
               <Grid item xs={12}>
                 <Grid container spacing={2}>
+                  
                   <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
                     <Box>
                     <Typography >Payment Received From Customer</Typography>
@@ -155,6 +157,25 @@ const OrderDetails = ()=>{
                           <MdCurrencyRupee />
                         </InputAdornment>
                       }
+                    />
+                  </Grid>
+                  <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
+                    <Box>
+                    <Typography >Payment Received By</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <SingleSelect
+                      value={'technician'}
+                      handleChange={(e)=>{
+                        // setFieldValue("technician", e)
+                      }}
+                      name={"technician"}
+                      id={"technician"}
+                      items={[
+                        <MenuItem value="company">Company</MenuItem>,
+                        <MenuItem value="technician">Technician</MenuItem>
+                      ]}
                     />
                   </Grid>
                   <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
@@ -206,6 +227,21 @@ const OrderDetails = ()=>{
                         </InputAdornment>
                       }
                     />
+                  </Grid>
+                  <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
+                    <Box>
+                    <Typography >Paid To Technician</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <RadioGroup
+                      row
+                      defaultValue="n"
+                      name="paid-to-technician"
+                    >
+                      <FormControlLabel value="y" control={<Radio />} label="Yes" />
+                      <FormControlLabel value="n" control={<Radio />} label="No" />
+                    </RadioGroup>
                   </Grid>
                   <Grid xs={12} sx={{alignItems: "center"}}>
                       <Divider sx={{mt: 4, mb: 2}}/>
