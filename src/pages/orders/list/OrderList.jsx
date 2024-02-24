@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { FilterOutlined, PlusOutlined } from "@ant-design/icons";
 import { Box, Button, IconButton, MenuItem, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,7 @@ const OrderList = () => {
   const [services, setServices] = useState([]);
 
   const [page, setPage] = useState(0);
+  const [filter, setFilter] = useState('all');
 
   const [start, setStart] = useState(1);
   const [end, setEnd] = useState(0);
@@ -28,29 +29,35 @@ const OrderList = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const data = await Promise.all([
-          getOrders({page: page+1}),
-          getServices()
-        ]);
-        
-        setOrders(data[0].orders.data);
-        setTotal(data[0].orders.total);
-        setServices(data[1].services);
+        if(page!=-1){
+          const data = await Promise.all([
+            getOrders({page: page+1, filter: filter}),
+            getServices()
+          ]);
+          
+          setOrders(data[0].orders.data);
+          setTotal(data[0].orders.total);
+          setServices(data[1].services);
 
-        const s = (page*10)+1;
-        const isNextEnable = (s+9)<=data[0].orders.total ? true : false;
+          const s = (page*10)+1;
+          const isNextEnable = (s+9)<=data[0].orders.total ? true : false;
 
-        setStart(s)
-    
-        setEnd(isNextEnable ? (s+9) : data[0].orders.total);
-
+          setStart(s)
+      
+          setEnd(isNextEnable ? (s+9) : data[0].orders.total);
+        }
       } catch (error) {
-        console.error("Error fetching customers:", error);
+        console.error("Error fetching orders:", error);
       }
     };
 
     fetchOrders();
-  }, [page]);
+  }, [page, filter]);
+
+  const handleFilter = (e)=>{
+    setFilter(e);
+    setPage(0);
+  }
 
 
   const onMoveNext=async()=>{
@@ -170,11 +177,28 @@ const OrderList = () => {
                 />
               </FormControl> */}
             </Box>
+            <Box sx={{width: "210px"}}>
+              <SingleSelect
+                start={
+                  <FilterOutlined/>
+                }
+                handleChange={(e)=>handleFilter(e)}
+                value={filter}
+                items={[
+                  <MenuItem value={''}>All</MenuItem>,
+                  <MenuItem value={'pending'}>Pending</MenuItem>,
+                  <MenuItem value={'approved'}>Approved</MenuItem>,
+                  <MenuItem value={'rejected'}>Rejected</MenuItem>,
+                  <MenuItem value={'cancelled'}>Cancelled</MenuItem>,
+                  <MenuItem value={'completed'}>Completed</MenuItem>
+                ]}
+              />
+            </Box>
             <Box>
               <Button
                 variant="outlined"
                 size="medium"
-                sx={{ px: 0, width: '140px' }}
+                sx={{ px: 0, py: 0.9, width: '140px' }}
                 onClick={onAddOrder}
                 startIcon={<PlusOutlined style={{ fontSize: '16px' }} />}
               >

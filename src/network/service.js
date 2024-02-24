@@ -51,8 +51,9 @@ export async function getOrdersInfo(){
   return await axiosClient.get(`/order/info`);
 }
 
-export async function getOrders({ page }){
-  return await axiosClient.get(`/order?limit=10&page=${page}`);
+export async function getOrders({ page, filter }){
+  const status = filter=='all' ? '': filter;
+  return await axiosClient.get(`/order?limit=10&page=${page}&status=${status}`);
 }
 
 export async function getOrder({ orderId }){
