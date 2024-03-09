@@ -55,14 +55,9 @@ const CategoriesList = ()=>{
           setCategoryEdit(null);
         }} 
         category={categoryEdit}
-        onEdit={(v)=>{
-          const updated = categories.map((s)=>{
-            if(s.id==v.id){
-              return v;
-            }
-            return s
-          })
-          setCategories(updated);
+        onEdit={async(v)=>{
+          const data = await getCategories()
+          setCategories(data.categories);
           setOpenCreate(false);
         }}
         onSave={(v)=>{
