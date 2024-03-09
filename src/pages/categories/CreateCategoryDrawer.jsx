@@ -20,6 +20,7 @@ const CreateCategoryDrawer = ({ open, onClose, onSave, onEdit, category }) => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
+            console.log(values.imageBlob)
             const categoryToUpdate = {
               name: values.name, 
               imageBlob: values.imageBlob,
@@ -80,7 +81,9 @@ const CreateCategoryDrawer = ({ open, onClose, onSave, onEdit, category }) => {
                           tag={'image'}
                           icon={<UserOutlined style={{fontSize: "36px"}}/>}
                           value={category?.image}
-                          onChange={(v)=>setFieldValue("imageBlob", v)}
+                          onChange={(v)=>{
+                            console.log(v)
+                            setFieldValue("imageBlob", v)}}
                         />
                         {touched.imageBlob && errors.imageBlob && (
                           <FormHelperText error>

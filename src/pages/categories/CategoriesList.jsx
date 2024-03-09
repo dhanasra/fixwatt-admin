@@ -56,18 +56,18 @@ const CategoriesList = ()=>{
         }} 
         category={categoryEdit}
         onEdit={(v)=>{
-          // const updated = services.map((s)=>{
-          //   if(s.id==v.id){
-          //     return v;
-          //   }
-          //   return s
-          // })
-          // setServices(updated);
-          // setOpenCreate(false);
+          const updated = categories.map((s)=>{
+            if(s.id==v.id){
+              return v;
+            }
+            return s
+          })
+          setCategories(updated);
+          setOpenCreate(false);
         }}
         onSave={(v)=>{
-          // setServices([...services, v])
-          // setOpenCreate(false);
+          setCategories([...categories, v])
+          setOpenCreate(false);
         }}
       />
       <ConfirmDialog
