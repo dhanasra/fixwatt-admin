@@ -93,14 +93,9 @@ const ServicesList = () => {
       }} 
       categories={categories}
       service={serviceEdit}
-      onEdit={(v)=>{
-        const updated = services.map((s)=>{
-          if(s.id==v.id){
-            return v;
-          }
-          return s
-        })
-        setServices(updated);
+      onEdit={async(v)=>{
+        const data = await getServices();
+        setServices(data.services);
         setOpenCreate(false);
       }}
       onSave={(v)=>{

@@ -14,7 +14,7 @@ const CreateServiceDrawer = ({ open, onClose, onSave, onEdit, categories, servic
       <Formik
         initialValues={{
           name: service?.name,
-          category: 'Electrical service',
+          category: category?.name,
           price: service?.price,
           iconBlob: service? 'icon': null,
           imageBlob: service? 'image': null
@@ -28,6 +28,8 @@ const CreateServiceDrawer = ({ open, onClose, onSave, onEdit, categories, servic
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
+
+            console.log(values)
 
             var category = categories.find((item)=>item['name']==values.category);
             if(category){
