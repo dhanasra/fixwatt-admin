@@ -5,6 +5,7 @@ import axiosClient from "../network/axiosClient";
 import { Box, CircularProgress, IconButton, Skeleton, Stack } from "@mui/material";
 import { CloseOutlined } from "@ant-design/icons";
 import { useTheme } from "@emotion/react";
+import { formatImage } from "../utils/utils";
 
 function ImagePicker({tag, onChange, icon, value, type}) {
 
@@ -12,7 +13,7 @@ function ImagePicker({tag, onChange, icon, value, type}) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(value);
+  const [croppedImage, setCroppedImage] = useState(formatImage(value));
   // const [loading, setLoading] = useState(false);
 
   const handleOpen = () => {
