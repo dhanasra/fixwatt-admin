@@ -40,7 +40,7 @@ axiosClient.interceptors.response.use(
             showSnackbar(data?.errors[0]?.msg ?? message, { variant: 'error' });
             return null;
         }else if(res.status === 200){
-            showSnackbar(message, { variant: 'success' });
+            // showSnackbar(message, { variant: 'success' });
         }
 
         return data;

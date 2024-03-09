@@ -96,6 +96,17 @@ export async function editOrder({orderId, date, startTime, address, pincode, ser
   return await axiosClient.put(`/order/${orderId}`, data);
 }
 
+export async function updatePaymentInfo({orderId, paidToTechnician, additionalCharges, paymentReceivedFromCustomer, paymentReceivedBy, paymentForTechnician}){
+  const data = {
+    payment_for_technician: paymentForTechnician,
+    additional_charges: additionalCharges,
+    payment_received_by: paymentReceivedBy,
+    payment_received_from_customer: paymentReceivedFromCustomer,
+    paid_to_technician: paidToTechnician
+  }
+  return await axiosClient.put(`/order/${orderId}`, data);
+}
+
 export async function updateOrderStatus({ status, orderId }){
   const path = status=="COMPLETED" ? "complete": status=="CANCELLED" ? "cancel": ""
   return await axiosClient.put(`/order/${orderId}/${path}`);
@@ -131,6 +142,26 @@ export async function updateTechnician({name, phone, categoryId, technician}){
 
 export async function getCategories(){
   return await axiosClient.get(`/category`);
+}
+
+export async function deleteCategory(id){
+  return await axiosClient.delete(`/category/${id}`);
+}
+
+export async function updateCategory({name, imageBlob, category}){
+
+  console.log(imageBlob)
+
+  const formDataToSend = new FormData();
+  formDataToSend.append('name', name)
+  if(typeof imageBlob !== 'string'){
+    formDataToSend.append('image', imageBlob, 'image.jpeg')
+  }
+
+  console.log(formDataToSend)
+  return category 
+    ? await axiosClient.put(`/category/${category?.id}`, formDataToSend)
+    : await axiosClient.post(`/category`, formDataToSend);
 }
 
 // service

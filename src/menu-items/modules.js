@@ -1,12 +1,13 @@
 // assets
-import { UserOutlined, FieldTimeOutlined, ToolOutlined, TeamOutlined } from '@ant-design/icons';
+import { UserOutlined, FieldTimeOutlined, ToolOutlined, TeamOutlined, AppstoreOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
   UserOutlined,
   FieldTimeOutlined,
   ToolOutlined,
-  TeamOutlined
+  TeamOutlined,
+  AppstoreOutlined
 };
 
 const modules = {
@@ -109,6 +110,14 @@ const modules = {
       url: '/team',
       subtitle: 'Technicians List',
       icon: icons.TeamOutlined
+    },
+    {
+      id: 'categories',
+      title: 'Categories',
+      type: 'item',
+      url: '/categories',
+      subtitle: 'Categories List',
+      icon: icons.AppstoreOutlined
     },
     {
       id: 'services',

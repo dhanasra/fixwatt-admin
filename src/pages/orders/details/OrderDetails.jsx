@@ -3,7 +3,7 @@ import { Box, Button, Divider, FormControlLabel, Grid, IconButton, InputAdornmen
 import { useNavigate, useParams } from 'react-router-dom';
 import MainCard from "../../../components/MainCard";
 import { useEffect, useState } from "react";
-import { deleteOrder, getOrder } from "../../../network/service";
+import { deleteOrder, getOrder, updatePaymentInfo } from "../../../network/service";
 import ServiceInfoTable from "./ServiceInfoTable";
 import { MdCurrencyRupee } from "react-icons/md";
 import { MoneyConverter } from "../../../utils/utils";
@@ -15,9 +15,11 @@ const OrderDetails = ()=>{
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
 
-  const [amountReceived, setAmountReceived] = useState(0);
-  const [additionalCharges, setAdditionalCharges] = useState(0);
-  const [technicianPayment, setTechnicianPayment] = useState(0);
+  const [paymentReceivedFromCustomer, setPaymentReceivedFromCustomer] = useState(order?.payment_received_from_customer ?? 0);
+  const [additionalCharges, setAdditionalCharges] = useState(order?.additional_charges ?? 0);
+  const [paymentForTechnician, setPaymentForTechnician] = useState(order?.payment_for_technician ?? 0);
+  const [paidToTechnician, setPaidToTechnician] = useState(order?.paid_to_technician ?? false);
+  const [paymentReceivedBy, setPaymentReceivedBy] = useState(order?.payment_received_by);
   const [profit, setProfit] = useState(0);
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -37,9 +39,16 @@ const OrderDetails = ()=>{
   }, [])
 
   useEffect(()=>{
-    const p = amountReceived - additionalCharges - technicianPayment;
+    const p = paymentReceivedFromCustomer - additionalCharges - paymentForTechnician;
     setProfit(p);
-  }, [amountReceived, additionalCharges, technicianPayment])
+  }, [paymentReceivedFromCustomer, additionalCharges, paymentForTechnician])
+
+  const savePaymentInfo =async()=>{
+    const result = await updatePaymentInfo({
+      orderId: order.id,
+      paidToTechnician, paymentForTechnician, paymentReceivedFromCustomer, additionalCharges, paymentReceivedBy})
+    setOrder(result.order)
+  }
 
   return (
     <MainCard
@@ -149,8 +158,8 @@ const OrderDetails = ()=>{
                           textAlign: "end !important"
                         }
                       }}
-                      onChange={(e)=>setAmountReceived(e.target.value)}
-                      value={amountReceived}
+                      onChange={(e)=>setPaymentReceivedFromCustomer(e.target.value)}
+                      value={paymentReceivedFromCustomer}
                       type="number"
                       startAdornment={
                         <InputAdornment position="start">
@@ -173,6 +182,7 @@ const OrderDetails = ()=>{
                       name={"technician"}
                       id={"technician"}
                       items={[
+                        <MenuItem value={null}></MenuItem>,
                         <MenuItem value="company">Company</MenuItem>,
                         <MenuItem value="technician">Technician</MenuItem>
                       ]}
@@ -218,8 +228,8 @@ const OrderDetails = ()=>{
                           textAlign: "end !important"
                         }
                       }}
-                      onChange={(e)=>setTechnicianPayment(e.target.value)}
-                      value={technicianPayment}
+                      onChange={(e)=>setPaymentForTechnician(e.target.value)}
+                      value={paymentForTechnician}
                       type="number"
                       startAdornment={
                         <InputAdornment position="start">
@@ -236,11 +246,15 @@ const OrderDetails = ()=>{
                   <Grid item xs={6}>
                     <RadioGroup
                       row
-                      defaultValue="n"
+                      defaultValue={false}
+                      value={paidToTechnician}
                       name="paid-to-technician"
+                      onChange={(e)=>{
+                        setPaidToTechnician(e.target.value)
+                      }}
                     >
-                      <FormControlLabel value="y" control={<Radio />} label="Yes" />
-                      <FormControlLabel value="n" control={<Radio />} label="No" />
+                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
+                      <FormControlLabel value={false} control={<Radio />} label="No" />
                     </RadioGroup>
                   </Grid>
                   <Grid xs={12} sx={{alignItems: "center"}}>
@@ -256,7 +270,11 @@ const OrderDetails = ()=>{
                       {`${MoneyConverter({amount: profit})} /-`}
                     </Typography>
                   </Grid>
-                </Grid>
+
+                  <Grid item xs={12} sx={{mt: 2, mb: 2}}>
+                    <Button variant="contained" fullWidth sx={{p: 1.2}} onClick={savePaymentInfo}>Save</Button>
+                  </Grid>
+                </Grid>         
               </Grid>
             </Grid>
           </Stack>

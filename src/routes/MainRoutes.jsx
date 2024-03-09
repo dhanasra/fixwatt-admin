@@ -11,6 +11,7 @@ import OrderDetails from "../pages/orders/details/OrderDetails";
 import EditOrder from "../pages/orders/edit/EditOrder";
 import CustomerDetails from "../pages/customers/details/CustomerDetails";
 import EditCustomer from "../pages/customers/edit/EditCustomer";
+import CategoriesList from "../pages/categories/CategoriesList";
 
 const MainRoutes = {
     path: '/',
@@ -55,6 +56,10 @@ const MainRoutes = {
         {
             path: '/services',
             element: <ServicesList/>
+        },
+        {
+            path: '/categories',
+            element: <CategoriesList/>
         },
         {
             path: '/team',
