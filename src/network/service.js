@@ -150,20 +150,12 @@ export async function deleteCategory(id){
 
 export async function updateCategory({name, imageBlob, category}){
 
-  console.log('I am heer')
-  console.log(name)
-  console.log(imageBlob)
-
-
   const formDataToSend = new FormData();
   formDataToSend.append('name', name)
-  formDataToSend.append('image', imageBlob, 'image.jpeg')
   if(typeof imageBlob !== 'string'){
-    console.log('I am heer calling')
-    
+    formDataToSend.append('image', imageBlob, 'image.jpeg')
   }
 
-  console.log(formDataToSend.get('image'))
   return category 
     ? await axiosClient.put(`/category/${category?.id}`, formDataToSend)
     : await axiosClient.post(`/category`, formDataToSend);
