@@ -6,6 +6,7 @@ import OptionsMenu from "./OptionsMenu";
 import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
 import CreateCategoryDrawer from "./CreateCategoryDrawer";
 import { PlusOutlined } from "@ant-design/icons";
+import { formatImage } from "../../utils/utils";
 
 const CategoriesList = ()=>{
 
@@ -88,7 +89,7 @@ const CategoriesList = ()=>{
                     <OptionsMenu onClick={handleClick} category={cat}/>
                   </Stack>}
                 >
-                  <Box component={'img'} src={cat.image} width={"100%"} height={"200px"} style={{ objectFit: 'cover' }}/>
+                  <Box component={'img'} src={formatImage(cat.image)} width={"100%"} height={"200px"} style={{ objectFit: 'cover' }}/>
                 </MainCard>
               </Grid>
             )

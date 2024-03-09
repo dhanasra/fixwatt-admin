@@ -21,3 +21,10 @@ export function MoneyConverter({ amount }) {
   
     return formattedAmount;
 }
+
+export function formatImage(image) {
+  if (originalUrl.startsWith("http://13.233.244.254/")) {
+    return originalUrl.replaceFirst("http://13.233.244.254/", "https://spiderlings.in/");
+  }
+  return originalUrl;
+}
