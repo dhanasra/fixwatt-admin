@@ -23,6 +23,7 @@ export function MoneyConverter({ amount }) {
 }
 
 export function formatImage(originalUrl) {
+  if(!originalUrl){return null}
   if (originalUrl.startsWith("http://13.233.244.254/")) {
     return originalUrl.replaceFirst("http://13.233.244.254/", "https://spiderlings.in/");
   }
