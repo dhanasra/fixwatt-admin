@@ -100,7 +100,7 @@ const EditCustomer = () => {
               category: values.category
             };
 
-            // await updateUser(customerData);
+            await updateUser(customerData);
 
             setStatus({ success: true });
             setSubmitting(false); 
