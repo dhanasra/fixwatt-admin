@@ -24,8 +24,7 @@ export async function deleteUser(id){
   return await axiosClient.delete(`/user/${id}`);
 }
 
-export async function createUser({name, phone, email}){
-  const data = {roleId: 2, name, phone, email}
+export async function createUser(data){
   return await axiosClient.post(`/user`, data);
 }
 

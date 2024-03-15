@@ -33,7 +33,7 @@ const CustomerList = () => {
   }, []);
 
   const onAddCustomer = () => {
-    navigate("/customer/create");
+    navigate("/customers/create");
   };
 
   const handleSearch = async (event) => {

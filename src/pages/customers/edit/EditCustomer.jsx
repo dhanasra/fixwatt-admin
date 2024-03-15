@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   FormHelperText,
   Grid,
   IconButton,
@@ -14,7 +13,7 @@ import {
 import MainCard from "../../../components/MainCard";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { createUser, createUserAddress, removeUserAddress, updateUser } from "../../../network/service";
+import { createUserAddress, removeUserAddress } from "../../../network/service";
 import { useLocation } from "react-router-dom";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
