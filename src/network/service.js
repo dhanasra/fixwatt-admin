@@ -128,12 +128,19 @@ export async function deleteTechnician(id){
   return await axiosClient.delete(`/technician/${id}`);
 }
 
-export async function updateTechnician({name, phone, categoryId, technician}){
+export async function updateTechnician({name, phone, categoryId, imageBlob, technician}){
   const data = { name, phone, category_id: categoryId };
+  const formDataToSend = new FormData();
+  formDataToSend.append('name', name)
+  formDataToSend.append('phone', phone)
+  formDataToSend.append('category_id', categoryId)
+  if(typeof imageBlob !== 'string'){
+    formDataToSend.append('image', imageBlob, 'technician.jpeg')
+  }
   if(technician){
-    return await axiosClient.put(`/technician/${technician.id}`, data);
+    return await axiosClient.put(`/technician/${technician.id}`, formDataToSend);
   }else{
-    return await axiosClient.post(`/technician`, data);
+    return await axiosClient.post(`/technician`, formDataToSend);
   }
 }
 

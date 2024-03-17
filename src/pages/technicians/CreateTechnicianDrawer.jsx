@@ -17,12 +17,14 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
         initialValues={{
           name: technician?.name,
           phoneNumber: technician?.phone,
-          category: technician?.category
+          category: technician?.category,
+          imageBlob: category? 'image': null
         }}
         validationSchema={Yup.object().shape({
           name: Yup.string().required('Name is required'),
           phoneNumber: Yup.string().required('Phone number is required'),
-          category: Yup.string().required('Category is required')
+          category: Yup.string().required('Category is required'),
+          imageBlob: Yup.string().required('Image is required'),
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
@@ -33,6 +35,7 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
                 name: values.name, 
                 phone: values.phoneNumber, 
                 categoryId: category.id, 
+                imageBlob: values.imageBlob,
                 technician
               }
               const data = await updateTechnician(technicianToUpdate)
