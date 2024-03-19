@@ -408,8 +408,9 @@ const CreateOrder = () => {
                             <TableCell style={{ verticalAlign: 'top'}}>
                               <Stack spacing={1}>
                                 <TimePicker
-                                  value={dayjs().set('hour', 10).set('minute', 0).set('second', 0)}
+                                  value={dayjs().set('hour', values.time.split(':')[0]).set('minute', values.time.split(':')[1]).set('second', values.time.split(':')[2])}
                                   onChange={(v)=>{
+                                    console.log(v.format("HH:mm:ss"))
                                     setFieldValue("time", v.format("HH:mm:ss"))
                                   }}
                                 />
