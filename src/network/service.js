@@ -128,12 +128,14 @@ export async function deleteTechnician(id){
   return await axiosClient.delete(`/technician/${id}`);
 }
 
-export async function updateTechnician({name, phone, categoryId, imageBlob, technician}){
+export async function updateTechnician({name, phone, categoryId, area, pincode, imageBlob, technician}){
   const data = { name, phone, category_id: categoryId };
   const formDataToSend = new FormData();
   formDataToSend.append('name', name)
   formDataToSend.append('phone', phone)
   formDataToSend.append('category_id', categoryId)
+  formDataToSend.append('area', area)
+  formDataToSend.append('pincode', pincode)
   if(typeof imageBlob !== 'string'){
     formDataToSend.append('image', imageBlob, 'technician.jpeg')
   }

@@ -18,6 +18,8 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
           name: technician?.name,
           phoneNumber: technician?.phone,
           category: technician?.category,
+          area: technician?.area,
+          pincode: technician?.pincode,
           imageBlob: category? 'image': null
         }}
         validationSchema={Yup.object().shape({
@@ -36,6 +38,8 @@ const CreateTechnicianDrawer = ({ open, onClose, onSave, onEdit, technician, cat
                 phone: values.phoneNumber, 
                 categoryId: category.id, 
                 imageBlob: values.imageBlob,
+                area: values.area,
+                pincode: values.pincode,
                 technician
               }
               const data = await updateTechnician(technicianToUpdate)

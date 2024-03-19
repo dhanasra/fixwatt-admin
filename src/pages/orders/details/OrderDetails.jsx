@@ -190,7 +190,7 @@ const OrderDetails = ()=>{
                   </Grid>
                   <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
                     <Box>
-                    <Typography >Additional Charges</Typography>
+                    <Typography >Material Charges</Typography>
                     </Box>
                   </Grid>
                   <Grid item xs={6}>
