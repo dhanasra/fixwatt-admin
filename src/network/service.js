@@ -97,11 +97,11 @@ export async function editOrder({orderId, date, startTime, address, pincode, ser
 
 export async function updatePaymentInfo({orderId, paidToTechnician, additionalCharges, paymentReceivedFromCustomer, paymentReceivedBy, paymentForTechnician}){
   const data = {
-    payment_for_technician: paymentForTechnician,
-    additional_charges: additionalCharges,
+    payment_for_technician: parseInt(paymentForTechnician),
+    additional_charges: parseInt(additionalCharges),
     payment_received_by: paymentReceivedBy,
-    payment_received_from_customer: paymentReceivedFromCustomer,
-    paid_to_technician: paidToTechnician
+    payment_received_from_customer: parseInt(paymentReceivedFromCustomer),
+    paid_to_technician: `${paidToTechnician}`
   }
   return await axiosClient.put(`/order/${orderId}`, data);
 }

@@ -9,17 +9,18 @@ import { MdCurrencyRupee } from "react-icons/md";
 import { MoneyConverter } from "../../../utils/utils";
 import ConfirmDialog from "../../../components/dialogs/ConfirmDialog";
 import SingleSelect from "../../../components/@extended/SingleSelect";
+import { showSnackbar } from "../../../utils/snackbar-utils";
 
 const OrderDetails = ()=>{
   const location = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
 
-  const [paymentReceivedFromCustomer, setPaymentReceivedFromCustomer] = useState(order?.payment_received_from_customer ?? 0);
-  const [additionalCharges, setAdditionalCharges] = useState(order?.additional_charges ?? 0);
-  const [paymentForTechnician, setPaymentForTechnician] = useState(order?.payment_for_technician ?? 0);
-  const [paidToTechnician, setPaidToTechnician] = useState(order?.paid_to_technician ?? false);
-  const [paymentReceivedBy, setPaymentReceivedBy] = useState(order?.payment_received_by);
+  const [paymentReceivedFromCustomer, setPaymentReceivedFromCustomer] = useState(0);
+  const [additionalCharges, setAdditionalCharges] = useState(0);
+  const [paymentForTechnician, setPaymentForTechnician] = useState(0);
+  const [paidToTechnician, setPaidToTechnician] = useState(false);
+  const [paymentReceivedBy, setPaymentReceivedBy] = useState(null);
   const [profit, setProfit] = useState(0);
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -33,7 +34,14 @@ const OrderDetails = ()=>{
   useEffect(()=>{
     const fetchOrder = async()=>{
       const result = await getOrder(location);
-      setOrder(result.order);
+      const order = result.order;
+      setOrder(order);
+      console.log(order?.payment_received_from_customer)
+      setPaymentReceivedFromCustomer(order?.payment_received_from_customer??0);
+      setAdditionalCharges(order?.additional_charges??0);
+      setPaymentForTechnician(order?.payment_for_technician ?? 0);
+      setPaymentReceivedBy(order?.payment_received_by);
+      setPaidToTechnician(order?.paid_to_technician=="true" ?? false)
     }
     fetchOrder();
   }, [])
@@ -48,6 +56,7 @@ const OrderDetails = ()=>{
       orderId: order.id,
       paidToTechnician, paymentForTechnician, paymentReceivedFromCustomer, additionalCharges, paymentReceivedBy})
     setOrder(result.order)
+    showSnackbar("Payment is updated successfully", { variant: 'success' });
   }
 
   return (
@@ -175,9 +184,9 @@ const OrderDetails = ()=>{
                   </Grid>
                   <Grid item xs={6}>
                     <SingleSelect
-                      value={'technician'}
+                      value={paymentReceivedBy}
                       handleChange={(e)=>{
-                        // setFieldValue("technician", e)
+                        setPaymentReceivedBy(e)
                       }}
                       name={"technician"}
                       id={"technician"}
