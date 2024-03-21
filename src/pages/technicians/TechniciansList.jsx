@@ -69,11 +69,10 @@ const TechniciansList = () => {
       const category = categories.find((cat) => cat.id == categoryId);
       return category ? category.name : null;
     });
-    items = items?.filter(Boolean).join(',');
-
+    items = items?.filter(Boolean).join(', ');
     return (
       <Stack>
-        <Typography variant="title">{items}</Typography>
+        <Typography variant="title" sx={{textOverflow: "ellipsis"}}>{items}</Typography>
       </Stack>
     )
   };
