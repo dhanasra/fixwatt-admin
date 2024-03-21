@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Box, Button, FormControl, IconButton, InputAdornment, OutlinedInput, Stack, Tooltip, Typography } from "@mui/material";
+import { Avatar, Box, Button, Chip, FormControl, IconButton, InputAdornment, OutlinedInput, Stack, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { StripedDataGrid } from "../../components/grid-styled";
 import { useTheme } from "@emotion/react";
@@ -51,7 +51,6 @@ const TechniciansList = () => {
   };
 
   const handleDeleteClick = async()=>{
-    console.log(deleteId)
     await deleteTechnician(deleteId);
     const updated = technicians.filter((i)=>i.id!=deleteId);
     setTechnicians(updated)
@@ -61,6 +60,27 @@ const TechniciansList = () => {
   const renderTextCell = (params) => (
     <Stack>
       <Typography variant="title">{params.value}</Typography>
+    </Stack>
+  );
+
+  const renderChipsCell = (params) => {
+
+    let items = params.value?.split?.(',').map((categoryId) => {
+      const category = categories.find((cat) => cat.id == categoryId);
+      return category ? category.name : null;
+    });
+    items = items?.filter(Boolean).join(',');
+
+    return (
+      <Stack>
+        <Typography variant="title">{items}</Typography>
+      </Stack>
+    )
+  };
+
+  const renderImageCell = (params) => (
+    <Stack>
+      <Avatar alt="picture" src={params.value??''} sx={{ width: 32, height: 32 }} />
     </Stack>
   );
 
@@ -93,11 +113,12 @@ const TechniciansList = () => {
 
 
   const columns = [
+    { field: 'picture', headerName: 'Picture', width: 80, renderCell: renderImageCell },
     { field: 'name', headerName: 'Name', flex: 1, renderCell: renderTextCell },
-    { field: 'category_name', headerName: 'Category', flex: 1, renderCell: renderTextCell },
-    { field: 'phone', headerName: 'Phone number', flex: 1, renderCell: renderTextCell },
+    { field: 'category_id', headerName: 'Category', flex: 1, renderCell: renderChipsCell },
     { field: 'area', headerName: 'Area', flex: 1, renderCell: renderTextCell },
-    { field: 'pincode', headerName: 'Pincode', flex: 1, renderCell: renderTextCell },
+    { field: 'pincode', headerName: 'Pincode', width: 130, renderCell: renderTextCell },
+    { field: 'phone', headerName: 'Phone number', width: 130, renderCell: renderTextCell },
     { field: 'id', headerName: 'actions', width: 180, renderCell: renderActionsCell }
   ];
 
