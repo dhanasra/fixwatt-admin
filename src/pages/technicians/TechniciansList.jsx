@@ -28,7 +28,6 @@ const TechniciansList = () => {
           getCategories(),
           getTechnicians()
         ]);
-        console.log(data);
         setCategories(data[0].categories);
         setTechnicians(data[1].technicians)
       } catch (error) {
@@ -79,7 +78,7 @@ const TechniciansList = () => {
         <EditOutlined />
       </IconButton>
       </Tooltip>
-      {/* <Tooltip title="Make Inactive">
+      <Tooltip title="Make Inactive">
       <IconButton sx={{background: "#efefef"}} onClick={
         ()=>{
           setOpenDelete(true);
@@ -88,7 +87,7 @@ const TechniciansList = () => {
       >
         <DeleteOutlined/>
       </IconButton>
-      </Tooltip> */}
+      </Tooltip>
     </Stack>
   );
 
@@ -97,6 +96,8 @@ const TechniciansList = () => {
     { field: 'name', headerName: 'Name', flex: 1, renderCell: renderTextCell },
     { field: 'category_name', headerName: 'Category', flex: 1, renderCell: renderTextCell },
     { field: 'phone', headerName: 'Phone number', flex: 1, renderCell: renderTextCell },
+    { field: 'area', headerName: 'Area', flex: 1, renderCell: renderTextCell },
+    { field: 'pincode', headerName: 'Pincode', flex: 1, renderCell: renderTextCell },
     { field: 'id', headerName: 'actions', width: 180, renderCell: renderActionsCell }
   ];
 
