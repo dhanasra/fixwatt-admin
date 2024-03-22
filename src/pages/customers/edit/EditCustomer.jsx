@@ -13,8 +13,8 @@ import {
 import MainCard from "../../../components/MainCard";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { createUserAddress, removeUserAddress } from "../../../network/service";
-import { useLocation } from "react-router-dom";
+import { createUserAddress, removeUserAddress, updateUser } from "../../../network/service";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import SingleSelect from "../../../components/@extended/SingleSelect";
@@ -23,9 +23,10 @@ const EditCustomer = () => {
   const location = useLocation();
   const { data } = location.state || {};
   const customer = data.customer;
-
+  const navigate = useNavigate();
 
   const [addresses, setAddresses] = useState(customer.addresses ?? [])
+  console.log(addresses)
 
   const [addressType, setAddressType] = useState('')
   const [address, setAddress] = useState('')
@@ -34,6 +35,7 @@ const EditCustomer = () => {
   const addUserAddress = async()=>{
     if(addressType && address && pincode){
       const result = await createUserAddress({address, pincode, type: addressType, userId: customer.id})
+      console.log(result)
       const created = result.userAddress;
 
       if(addresses?.length==1 && !addresses[0].address){
@@ -45,6 +47,7 @@ const EditCustomer = () => {
   }
 
   const removeAddress = async(id)=>{
+    console.log(addresses)
     if(id){
       await removeUserAddress(id)
       const updated = addresses.filter((a)=>a.id!=id);
@@ -95,10 +98,13 @@ const EditCustomer = () => {
               phone: values.phone,
               email: values.email,
               gender: values.gender,
-              age: values.age!="" ? values.age : null,
               segment: values.segment,
               category: values.category
             };
+
+            if(values.age && values.age!=""){
+              customerData['age'] = values.age;
+            }
 
             await updateUser(customerData);
 
@@ -107,6 +113,7 @@ const EditCustomer = () => {
 
             navigate('/customers');
           } catch (err) {
+            console.log(err)
             setStatus({ success: false });
             setErrors({ submit: err.message });
             setSubmitting(false);
