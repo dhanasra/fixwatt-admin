@@ -1,3 +1,4 @@
+import { formatFilterDate } from "../utils/utils";
 import axiosClient from "./axiosClient";
 
 // authentication
@@ -46,8 +47,13 @@ export async function removeUserAddress(id){
 
 // orders
 
-export async function getOrdersInfo(){
-  return await axiosClient.get(`/order/info`);
+export async function getOrdersInfo(startDate, endDate){
+  let sd = formatFilterDate(startDate);
+  sd = sd=="1970-01-01" ? '': sd;
+  let ed = formatFilterDate(endDate);
+  ed = ed=="1970-01-01" ? '': ed;
+
+  return await axiosClient.get(`/order/info?startDate=${sd}&endDate=${ed}`);
 }
 
 export async function getOrders({ page, filter }){
