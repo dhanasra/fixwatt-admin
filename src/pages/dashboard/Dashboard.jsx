@@ -64,11 +64,17 @@ const Dashboard = ()=>{
         localStorage.setItem('categories', JSON.stringify(data[1]))
 
         let total = 0;
+        let total_payment_received = 0;
+        let total_payment_for_technician = 0;
+        let total_additional_charges = 0;
 
         const updatedInsights = insights.map((insight) => {
           const matchingStatus = data[0].info.find((info) => info.status === insight.id.toUpperCase());
           if(matchingStatus){
             total = total + matchingStatus.total;
+            total_payment_received = total_payment_received + matchingStatus.total_payment_received;
+            total_payment_for_technician = total_payment_for_technician + matchingStatus.total_payment_for_technician;
+            total_additional_charges = total_additional_charges + matchingStatus.total_additional_charges;
           }
           return {
             ...insight,
@@ -82,6 +88,9 @@ const Dashboard = ()=>{
         updatedInsights.map((d)=>{
           if(d.id=="total"){
             d.count = total;
+            d.payment_received = total_payment_received;
+            d.payment_for_technician = total_payment_for_technician;
+            d.additional_charges = total_additional_charges;
             return d;
           }
           return d;
@@ -135,6 +144,7 @@ const Dashboard = ()=>{
             <IconButton onClick={handleClearDates}
                 edge="start"
                 color="secondary"
+                disabled={!(startDate!=null && endDate!=null)}
                 sx={{ color: 'text.primary', border: "1px solid #f0f0f0", width: "42px", height: "42px", ml: "0px" }}
          >
               <CloseOutlined/>   
