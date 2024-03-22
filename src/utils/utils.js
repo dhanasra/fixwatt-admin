@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 export function formatDate(dateString) {
     const options = { month: 'short', day: '2-digit' };
     return new Date(dateString).toLocaleDateString('en-US', options);
@@ -10,6 +12,18 @@ export function formatFilterDate(dateString) {
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+
+export function checkCookies(){
+  const accessToken = Cookies.get('token');
+  const refreshToken = Cookies.get('refreshToken');
+
+  if (accessToken && refreshToken) {
+      return true; 
+  } else {
+      return false; 
+  }
 }
 
 export function formatTime(timeString) {

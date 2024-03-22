@@ -10,8 +10,14 @@ class DB {
   }
 
   static getUser() {
+    const user = Cookies.get('user');
+
+    if(user!=null){
+      return JSON.parse(user)
+    }else{
+      return null;
+    }
     
-    return JSON.parse(Cookies.get('user'))
   }
 }
 
