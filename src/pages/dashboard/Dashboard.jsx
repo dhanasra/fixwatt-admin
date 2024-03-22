@@ -155,7 +155,7 @@ const Dashboard = ()=>{
       {
         insights.map((insight)=>{
           return (
-            <Grid item xs={6} sm={6} md={3} xl={2} key={insight.id}>
+            <Grid item xs={12} sm={6} md={3} xl={2} key={insight.id}>
                 <MainCard>
                   <Stack >
                     <Typography variant="subtitle1" color={"grey"}>{insight.name}</Typography>
