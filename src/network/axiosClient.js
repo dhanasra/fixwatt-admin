@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { showSnackbar } from '../utils/snackbar-utils';
 import Cookies from 'js-cookie';
+import { clearCookies } from '../utils/utils';
 
 const axiosClient = axios.create({
     // baseURL: `http://13.233.244.254/test/v1`,
@@ -36,7 +37,7 @@ axiosClient.interceptors.response.use(
 
         const data = res["data"];
         const message = res["message"];
-
+        
         if(res.status === 422){
             showSnackbar(data?.errors[0]?.msg ?? message, { variant: 'error' });
             return null;
@@ -47,6 +48,14 @@ axiosClient.interceptors.response.use(
         return data;
     },
     error=>{
+        const originalRequest = error.config;
+        console.log(originalRequest)
+        if (
+            error.response.status === 401
+        ) {
+          clearCookies();
+          window.location.href = 'https://fixwatt-admin.web.app/';
+        }
         return Promise.reject(error)
     }
 )

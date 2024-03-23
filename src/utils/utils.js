@@ -26,6 +26,11 @@ export function checkCookies(){
   }
 }
 
+export function clearCookies(){
+  Cookies.remove('token');
+  Cookies.remove('refreshToken');
+}
+
 export function formatTime(timeString) {
     const [hours, minutes] = timeString?.split(':');
     
