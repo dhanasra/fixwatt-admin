@@ -3,7 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { deleteUser, getUserById } from "../../../network/service";
 import ConfirmDialog from "../../../components/dialogs/ConfirmDialog";
 import MainCard from "../../../components/MainCard";
-import { Button, Grid, Stack, Typography } from "@mui/material";
+import { Button, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const CustomerDetails =()=>{
   const location = useParams();
@@ -33,6 +34,9 @@ const CustomerDetails =()=>{
         <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
           <Typography>{`CUSTOMER_${customer?.id}`}</Typography>
           <Stack direction={"row"} spacing={1}>
+            <IconButton onClick={()=>setOpenDelete(true)}>
+              <DeleteOutlined style={{color: "red"}}/>
+            </IconButton>
             <Button onClick={()=>navigate(`/customers/e/${customer?.id}`, { state: { data: {customer} } })}>
               Edit
             </Button>
