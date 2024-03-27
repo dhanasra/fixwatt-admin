@@ -124,7 +124,7 @@ const OrderList = () => {
         items={[
           <MenuItem value="PENDING" key={"pending"} disabled>PENDING</MenuItem>,
           <MenuItem value="APPROVED" key={"approved"} >APPROVED</MenuItem>,
-          <MenuItem value="REJECTED" key={"rejected"}  >REJECTED</MenuItem>,
+          <MenuItem value="REJECTED" key={"rejected"}  >ON GOING</MenuItem>,
           <MenuItem value="CANCELLED" key={"cancelled"}  >CANCELLED</MenuItem>,
           <MenuItem value="COMPLETED" key={"completed"}  >COMPLETED</MenuItem>
         ]}
