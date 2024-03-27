@@ -188,7 +188,7 @@ const OrderList = () => {
                   <MenuItem value={''}>All</MenuItem>,
                   <MenuItem value={'pending'}>Pending</MenuItem>,
                   <MenuItem value={'approved'}>Approved</MenuItem>,
-                  <MenuItem value={'rejected'}>Rejected</MenuItem>,
+                  <MenuItem value={'rejected'}>On Going</MenuItem>,
                   <MenuItem value={'cancelled'}>Cancelled</MenuItem>,
                   <MenuItem value={'completed'}>Completed</MenuItem>
                 ]}
