@@ -26,7 +26,7 @@ export async function deleteUser(id){
 }
 
 export async function createUser(data){
-  return await axiosClient.post(`/user`, data);
+  return await axiosClient.post(`/user`, { ...data, roleId: 2 });
 }
 
 export async function updateUser({userId, name, phone, email, age, gender, category, segment, roleId, status}){
@@ -37,8 +37,8 @@ export async function updateUser({userId, name, phone, email, age, gender, categ
 
 // user address
 
-export async function createUserAddress({userId, address, pincode, type}){
-  return await axiosClient.post(`/user-address`, {userId, address, pincode, type});
+export async function createUserAddress({userId, address, pincode, type, alternative_phone}){
+  return await axiosClient.post(`/user-address`, {userId, address, pincode, type, alternative_phone });
 }
 
 export async function removeUserAddress(id){
@@ -46,6 +46,23 @@ export async function removeUserAddress(id){
 }
 
 // orders
+
+export async function createOrderTechnician(orderId, technician_id){
+  return await axiosClient.post(`/order/${orderId}/technician`, { technician_id })
+}
+
+export async function getOrderTechnicians(orderId){
+  return await axiosClient.get(`/order/${orderId}/technician`);
+}
+
+export async function updateOrderTechnician(orderId, technician_id, data){
+  return await axiosClient.put(`/order/${orderId}/technician/${technician_id}`, data);
+}
+
+export async function removeOrderTechnician(orderId, technician_id){
+  return await axiosClient.delete(`/order/${orderId}/technician/${technician_id}`);
+}
+
 
 export async function getOrdersInfo(startDate, endDate){
   let sd = formatFilterDate(startDate);
@@ -69,19 +86,16 @@ export async function deleteOrder({ orderId }){
   return await axiosClient.delete(`/order/${orderId}`);
 }
 
-export async function createOrder({date, startTime, address, pincode, serviceId, userId, serviceDescription, technicianId, notes, alternativePhone}){
+export async function createOrder({date, startTime, serviceId, userId, serviceDescription, notes, userAddressId}){
   const data = {
     date,
     start_time: startTime,
-    address,
     quantity: 1,
-    pincode,
     service_id: serviceId,
     user_id: userId,
     service_description: serviceDescription,
-    technician_id: technicianId,
     notes: notes,
-    alternative_phone: alternativePhone
+    user_address_id: userAddressId
   }
   return await axiosClient.post(`/order`, data);
 }

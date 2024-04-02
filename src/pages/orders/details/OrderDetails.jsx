@@ -13,6 +13,7 @@ import { showSnackbar } from "../../../utils/snackbar-utils";
 
 const OrderDetails = ()=>{
   const location = useParams();
+  console.log(location)
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
 

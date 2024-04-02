@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, InputLabel, OutlinedInput, Stack, TextField, Typography, FormHelperText } from "@mui/material";
+import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, InputLabel, OutlinedInput, Stack, TextField, Typography, FormHelperText, IconButton, Chip, MenuItem, Checkbox, FormControlLabel, Switch } from "@mui/material";
 import MainCard from "../../../components/MainCard";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { createOrder, createUser, createUserAddress, getCategories, getServices, getTechnicians, getUsers } from "../../../network/service";
+import { createOrder, createOrderTechnician, createUser, createUserAddress, getCategories, getServices, getTechnicians, getUsers } from "../../../network/service";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useNavigate } from "react-router-dom";
+import { CloseOutlined } from "@ant-design/icons";
+import SingleSelect from "../../../components/@extended/SingleSelect";
+import OrderAddress from "./OrderAddress";
+import OrderTechnicians from "./OrderTechnicians";
 
 const CreateOrder = () => {
 
@@ -18,6 +22,8 @@ const CreateOrder = () => {
   const [categories, setCategories] = useState([]);
   const [category, selectCategory] = useState(null);
   const [technicians, setTechnicians] = useState([]);
+
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
@@ -51,10 +57,13 @@ const CreateOrder = () => {
     }
   }, [category])
 
-
-
   const tomorrow = new Date((new Date()) + 1);
   const formattedTomorrow = tomorrow.toISOString().slice(0, 10);
+
+  const [addedTechnicians, setAddedTechnicians] = useState([]);
+  const handleTechniciansChange = (e)=>{
+    setAddedTechnicians(e);
+  }
 
   return (
     <Box>
@@ -64,21 +73,24 @@ const CreateOrder = () => {
             customer: null,
             userId: null,
             phone: null,
-            altPhone: null,
             technician: null,
             technicianPhone: null,
             techPhone: null,
-            address: null,
-            pincode: null,
             notes: null,
             serviceDesc: null,
             service: null,
             date: formattedTomorrow,
-            time: dayjs().set('hour', 10).set('minute', 0).set('second', 0).format("HH:mm:ss")
+            time: dayjs().set('hour', 10).set('minute', 0).set('second', 0).format("HH:mm:ss"),
+
+            addressId: null,
+            addressType: null,
+            address: null,
+            pincode: null,
+            altPhone: null,
           }}
           validationSchema={Yup.object().shape({
             customer: Yup.string().max(255).required("Customer is required"),
-            technician: Yup.string().max(255).required("Technician is required"),
+            // technician: Yup.string().max(255).required("Technician is required"),
             phone: Yup.string()
               .matches(
                 /^(?:[0-9] ?){6,14}[0-9]$/,
@@ -91,7 +103,8 @@ const CreateOrder = () => {
                 "Invalid phone number"
               ).notRequired(),
             address: Yup.string().max(255).required("Address is required"),
-            pincode: Yup.string().max(255).required("Phone number is required"),
+            addressType: Yup.string().max(255).required("Address type is required"),
+            pincode: Yup.string().max(255).required("Pincode is required"),
             notes: Yup.string().max(255).notRequired(),
             serviceDesc: Yup.string().max(255).notRequired(),
             service: Yup.string().required("Service is required"),
@@ -99,36 +112,44 @@ const CreateOrder = () => {
             time: Yup.string().required("Time is required"),
           })}
           onSubmit={async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
+            
             try {
 
+              let userId = values.userId;
+
+              if(!userId){
+                const result = await createUser({name: values.customer, phone: values.phone});
+                userId = result.user.id;
+              }
+
+              let userAddressId = values.addressId;
+              if(!userAddressId){
+                const { addressType, pincode, address, altPhone } = values;
+                const result = await createUserAddress({ userId, pincode, address, type: addressType, alternative_phone: altPhone });
+                userAddressId = result.userAddress.id;
+              }
+             
               const data = {
+                userId,
+                userAddressId,
                 date: values.date,
                 startTime: values.time,
-                address: values.address, 
-                pincode: values.pincode,
                 serviceId: values.service,
                 serviceDescription: values.serviceDesc,
-                technicianId: values.technician,
-                notes: values.notes,
-                alternativePhone: values.altPhone
+                notes: values.notes
               };
 
-              if(values.userId){
-                data.userId = values.userId;
-                await createOrder(data)
-              }else{
-                const result = await createUser({name: values.customer, phone: values.phone});
-                const user = result.user
-                await createUserAddress({address: values.address, pincode: values.pincode, userId: user.id})
-                data.userId = user.id;
-                await createOrder(data)
-              }
-            
-              setStatus({ success: true });
-              setSubmitting(false); 
+              const result = await createOrder(data)
+              const orderId = result.order.id;
+
+              await Promise.all(addedTechnicians.map(async(id)=>{
+                await createOrderTechnician(orderId, id)
+              }))
+
+              // setStatus({ success: true });
+              // setSubmitting(false); 
               
-              navigate('/orders');
-              
+              // navigate('/orders');
             } catch (err) {
               console.log(err)
               setStatus({ success: false });
@@ -163,18 +184,25 @@ const CreateOrder = () => {
                         }
                         onChange={(e)=>{
                           const user = users[e.target.dataset?.optionIndex];
+
+                          // set user fields
                           setFieldValue("phone", user?.phone)
-                          
                           setFieldValue("userId", user?.id)
                           setFieldValue("customer", user?.id)
+                          setUser(user);
 
-                          if(user.addresses?.length>0){
+                          if(user?.addresses?.length>0){
+                            setFieldValue("addressId", user?.addresses[0]?.id)
                             setFieldValue("address", user?.addresses[0]?.address)
+                            setFieldValue("addressType", user?.addresses[0]?.type)
                             setFieldValue("pincode", user?.addresses[0]?.pincode)
+                            setFieldValue("altPhone", user?.addresses[0]?.alternative_phone)
                             setFieldValue("userId", user?.id)
                           }else{
+                            setFieldValue("addressId", null)
                             setFieldValue("address", '')
                             setFieldValue("pincode", '')
+                            setFieldValue("addressType", '')
                           }
                         }}
                         getOptionLabel={(option) => `${option.name} (${option.phone})`}
@@ -202,82 +230,7 @@ const CreateOrder = () => {
                       )}
                   </Stack>
                 </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"address"}>Address</InputLabel>
-                    <OutlinedInput
-                      id={"address"}
-                      type="text"
-                      name={"address"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.address}
-                      fullWidth
-                    />
-                    {touched.address && errors.address && (
-                      <FormHelperText error>
-                        {errors.address}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"pincode"}>Pincode</InputLabel>
-                    <OutlinedInput
-                      id={"pincode"}
-                      type="text"
-                      name={"pincode"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.pincode}
-                      fullWidth
-                    />
-                    {touched.pincode && errors.pincode && (
-                      <FormHelperText error>
-                        {errors.pincode}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"phone"}>Phone number</InputLabel>
-                    <OutlinedInput
-                      id={"phone"}
-                      type="text"
-                      name={"phone"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.phone}
-                      fullWidth
-                    />
-                    {touched.phone && errors.phone && (
-                      <FormHelperText error>
-                        {errors.phone}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"altPhone"}>Alternative Phone number</InputLabel>
-                    <OutlinedInput
-                      id={"altPhone"}
-                      type="text"
-                      name={"altPhone"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.altPhone}
-                      fullWidth
-                    />
-                    {touched.altPhone && errors.altPhone && (
-                      <FormHelperText error>
-                        {errors.altPhone}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
+                <OrderAddress {...{ handleBlur, handleChange, setFieldValue, values, touched, errors, user }} />
                 <Grid item xs={12}>
                   <Typography variant="h5" sx={{my: 0.6}}>Service</Typography>
                 </Grid>
@@ -427,62 +380,7 @@ const CreateOrder = () => {
                     </TableContainer>
                     </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h5" sx={{my: 0.6}}>Technician</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"technician"}>Name</InputLabel>
-                    <Autocomplete
-                      disablePortal
-                      id="technician"
-                      options={technicians}
-                      filterOptions={(options, state) =>
-                          options.filter(option =>
-                              option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
-                              (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
-                          )
-                      }
-                      onChange={(e)=>{
-                        const technician = technicians[e.target.dataset?.optionIndex];
-                        setFieldValue("technician", technician?.id)
-                        setFieldValue("techPhone", technician?.phone)
-                      }}
-                      getOptionLabel={(option) => `${option.name}`}
-                      renderInput={(params) => (
-                          <TextField
-                              {...params}
-                              type="text"
-                              name={"name"}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              fullWidth
-                              variant="outlined"
-                          />
-                      )}
-                    />
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"techPhone"}>Phone number</InputLabel>
-                    <OutlinedInput
-                      id={"techPhone"}
-                      type="text"
-                      name={"techPhone"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.techPhone}
-                      readOnly
-                      fullWidth
-                    />
-                    {touched.techPhone && errors.techPhone && (
-                      <FormHelperText error>
-                        {errors.techPhone}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
+                <OrderTechnicians {...{ technicians }} handleChange={handleTechniciansChange}/>
                 <Grid item xs={12}>
                   <Divider sx={{py: 1}}/>
                 </Grid>

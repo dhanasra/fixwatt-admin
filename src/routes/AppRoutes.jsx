@@ -7,11 +7,10 @@ import { useEffect } from "react";
 const CheckAuth = ({ children }) => {
     const navigate = useNavigate();
     const currentLocation = useLocation();
-  
+
     useEffect(() => {
         const isLoggedIn = checkCookies();
         const isUnAuthRoute = ['/'].includes(currentLocation.pathname);
-
         
         console.log(isLoggedIn)
   

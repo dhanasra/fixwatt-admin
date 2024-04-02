@@ -6,7 +6,12 @@ export default function OutlinedInput(theme) {
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
-          padding: '10.5px 14px 10.5px 12px'
+          padding: '10.5px 14px 10.5px 12px',
+          '&:disabled': {
+            "-webkit-text-fill-color": "#6f6f6f",
+            background: "#efefef",
+            borderRadius: "4px"
+          }
         },
         notchedOutline: {
           borderColor: theme.palette.grey[300]
@@ -31,7 +36,7 @@ export default function OutlinedInput(theme) {
                 border: `1px solid ${theme.palette.error.light}`
               }
             }
-          }
+          },
         },
         inputSizeSmall: {
           padding: '7.5px 8px 7.5px 12px'
