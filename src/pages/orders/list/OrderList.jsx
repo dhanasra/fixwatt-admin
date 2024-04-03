@@ -98,13 +98,11 @@ const OrderList = () => {
     <OptionsMenu order={params.value}/>
   );
 
-  const renderSingleSelectCell = (params) => (
-      <SingleSelect
+  const renderSingleSelectCell = (params) => {
+      return <SingleSelect
         id={`status-list-${params.value.id}`}
         handleChange={async(v)=>{
-
           let order;
-
           if(v=="APPROVED" || v=="REJECTED"){
             const data = await approveOrder({orderId: params.value.id, status: v})
             order = data.order;
@@ -113,13 +111,12 @@ const OrderList = () => {
             order = data.order;
           }
           if(order){
-            const updatedList = orders.map(item =>
-              item.id === order.id ? { ...item, value: order } : item
-            );
+            const updatedList = orders.map(item =>{
+              return item.id === order.id ? { ...item, status: v } : item
+            });
             setOrders([...updatedList]);
           }
         }}
-
         value={params.value.status}
         items={[
           <MenuItem value="PENDING" key={"pending"} disabled>PENDING</MenuItem>,
@@ -129,7 +126,7 @@ const OrderList = () => {
           <MenuItem value="COMPLETED" key={"completed"}  >COMPLETED</MenuItem>
         ]}
       />
-  );
+  };
 
   const columns = [
     { field: 'customer', headerName: 'Customer', width: 160, renderCell: renderTextCell },
@@ -142,18 +139,20 @@ const OrderList = () => {
     { field: 'order', headerName: '', width: 60, renderCell: renderOptionsCell },
   ];
 
-  const rows = orders.map((order) => ({
-    id: order.id,
-    order: order,
-    name: order.user_id,
-    service: services.find((v)=>v.id==order.service_id)?.name,
-    customer: order.user.name,
-    phone: order.user.phone,
-    time: formatTime(order.start_time),
-    date: formatDate(new Date(order.date)),
-    address: `${order.address}, ${order.pincode}`,
-    status: order
-  }));
+  const rows = orders.map((order) => {
+    return {
+      id: order.id,
+      order: order,
+      name: order.user_id,
+      service: services.find((v)=>v.id==order.service_id)?.name,
+      customer: order.user.name,
+      phone: order.user.phone,
+      time: formatTime(order.start_time),
+      date: formatDate(new Date(order.date)),
+      address: `${order.address}, ${order.pincode}`,
+      status: order
+    }
+  });
 
   return (
     <MainCard sx={{ width: '100%' }}>
