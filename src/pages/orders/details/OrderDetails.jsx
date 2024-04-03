@@ -166,7 +166,7 @@ const OrderDetails = ()=>{
         <Grid item xs={12}>
           <Stack spacing={2}>
             <Typography variant="h5">Technicians</Typography>
-            <TechnicianInfoTable orderId={order.id} technicians={technicians}/>
+            <TechnicianInfoTable orderId={order?.id} technicians={technicians}/>
           </Stack>
         </Grid>
         <Grid item xs={7}>
