@@ -11,6 +11,7 @@ import ConfirmDialog from "../../../components/dialogs/ConfirmDialog";
 import SingleSelect from "../../../components/@extended/SingleSelect";
 import { showSnackbar } from "../../../utils/snackbar-utils";
 import { ArrowRightIcon } from "@mui/x-date-pickers";
+import TechnicianInfoTable from "./TecnicianInfoTable";
 
 const OrderDetails = ()=>{
   const location = useParams();
@@ -155,29 +156,17 @@ const OrderDetails = ()=>{
           </MainCard>
         </Grid>
         <Grid item xs={0} md={4} sm={1}/>
-        <Grid item xs={12} md={4} sm={5.5}>
-          {
-            technicians.map((i, idx)=>{
-              return (
-                <MainCard sx={{mb: 1}}>
-                <Stack spacing={1} >
-                  <Typography>{`Technician ${idx+1}`}</Typography>
-                  <Typography variant="h5">{i?.name}</Typography>
-                  <Typography variant="h6">{i?.area}</Typography>
-                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                    <PhoneOutlined/>
-                    <Typography variant="h6">{i?.phone}</Typography>
-                  </Stack>
-                </Stack>
-              </MainCard>
-              )
-            })
-          }
-        </Grid>
+        <Grid item xs={12} md={4} sm={5.5}/>
         <Grid item xs={12}>
           <Stack spacing={2}>
             <Typography variant="h5">Service</Typography>
             <ServiceInfoTable order={order}/>
+          </Stack>
+        </Grid>
+        <Grid item xs={12}>
+          <Stack spacing={2}>
+            <Typography variant="h5">Technicians</Typography>
+            <TechnicianInfoTable technicians={technicians}/>
           </Stack>
         </Grid>
         <Grid item xs={7}>
