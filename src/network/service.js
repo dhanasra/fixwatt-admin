@@ -115,13 +115,15 @@ export async function editOrder({orderId, date, startTime, address, pincode, ser
   return await axiosClient.put(`/order/${orderId}`, data);
 }
 
-export async function updatePaymentInfo({orderId, paidToTechnician, additionalCharges, paymentReceivedFromCustomer, paymentReceivedBy, paymentForTechnician}){
+export async function updateOrder(orderId, data){
+  return await axiosClient.put(`/order/${orderId}`, data);
+}
+
+export async function updatePaymentInfo({orderId, additionalCharges, paymentReceivedFromCustomer, paymentReceivedBy}){
   const data = {
-    payment_for_technician: parseInt(paymentForTechnician),
     additional_charges: parseInt(additionalCharges),
     payment_received_by: paymentReceivedBy,
     payment_received_from_customer: parseInt(paymentReceivedFromCustomer),
-    paid_to_technician: `${paidToTechnician}`
   }
   return await axiosClient.put(`/order/${orderId}`, data);
 }

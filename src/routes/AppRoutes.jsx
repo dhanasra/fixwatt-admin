@@ -8,23 +8,23 @@ const CheckAuth = ({ children }) => {
     const navigate = useNavigate();
     const currentLocation = useLocation();
 
-    useEffect(() => {
-        const isLoggedIn = checkCookies();
-        const isUnAuthRoute = ['/'].includes(currentLocation.pathname);
+    // useEffect(() => {
+    //     const isLoggedIn = checkCookies();
+    //     const isUnAuthRoute = ['/'].includes(currentLocation.pathname);
         
-        console.log(isLoggedIn)
+    //     console.log(isLoggedIn)
   
-        if(isLoggedIn){
-          if(isUnAuthRoute && currentLocation.pathname!='/dashboard'){
-            navigate('/dashboard');
-          }
-        }else{
-          if(!isUnAuthRoute){
-            navigate('/')
-          }
-        }
+    //     if(isLoggedIn){
+    //       if(isUnAuthRoute && currentLocation.pathname!='/dashboard'){
+    //         navigate('/dashboard');
+    //       }
+    //     }else{
+    //       if(!isUnAuthRoute){
+    //         navigate('/')
+    //       }
+    //     }
   
-    }, [navigate, currentLocation]);
+    // }, [navigate, currentLocation]);
   
     return <>{children}</>;
   };

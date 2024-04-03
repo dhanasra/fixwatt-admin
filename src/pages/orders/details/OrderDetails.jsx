@@ -3,28 +3,31 @@ import { Box, Button, Divider, FormControlLabel, Grid, IconButton, InputAdornmen
 import { useNavigate, useParams } from 'react-router-dom';
 import MainCard from "../../../components/MainCard";
 import { useEffect, useState } from "react";
-import { deleteOrder, getOrder, updatePaymentInfo } from "../../../network/service";
+import { deleteOrder, getOrder, getTechnicians, updateOrder, updateOrderTechnician, updatePaymentInfo } from "../../../network/service";
 import ServiceInfoTable from "./ServiceInfoTable";
 import { MdCurrencyRupee } from "react-icons/md";
 import { MoneyConverter } from "../../../utils/utils";
 import ConfirmDialog from "../../../components/dialogs/ConfirmDialog";
 import SingleSelect from "../../../components/@extended/SingleSelect";
 import { showSnackbar } from "../../../utils/snackbar-utils";
+import { ArrowRightIcon } from "@mui/x-date-pickers";
 
 const OrderDetails = ()=>{
   const location = useParams();
-  console.log(location)
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
+  const [technicians, setTechnicians] = useState([]);
+  const [orderAddress, setOrderAddress] = useState(null);
 
   const [paymentReceivedFromCustomer, setPaymentReceivedFromCustomer] = useState(0);
   const [additionalCharges, setAdditionalCharges] = useState(0);
   const [paymentForTechnician, setPaymentForTechnician] = useState(0);
-  const [paidToTechnician, setPaidToTechnician] = useState(false);
   const [paymentReceivedBy, setPaymentReceivedBy] = useState(null);
   const [profit, setProfit] = useState(0);
 
   const [openDelete, setOpenDelete] = useState(false);
+  const [orderTechnicians, setOrderTechnicians] = useState([]);
+
 
   const handleDeleteClick = async()=>{
     await deleteOrder({orderId: order?.id})
@@ -34,15 +37,27 @@ const OrderDetails = ()=>{
 
   useEffect(()=>{
     const fetchOrder = async()=>{
-      const result = await getOrder(location);
-      const order = result.order;
+      const result = await Promise.all([ 
+        getOrder(location),
+        getTechnicians()
+      ]);
+
+      const order = result[0].order;
       setOrder(order);
-      console.log(order?.payment_received_from_customer)
+
+      const technicianIds = order.technicians.map(item => item.technician_id);
+      const filteredTechnicians = result[1].technicians.filter((tech)=>technicianIds.includes(tech.id));
+      setTechnicians(filteredTechnicians);
+
+      const userAddresses = order?.user?.addresses??[];
+      const orderAddress = userAddresses.find((ua)=>ua.id==order.user_address_id);
+
+      setOrderAddress(orderAddress);
+      setOrderTechnicians(order.technicians);
       setPaymentReceivedFromCustomer(order?.payment_received_from_customer??0);
       setAdditionalCharges(order?.additional_charges??0);
       setPaymentForTechnician(order?.payment_for_technician ?? 0);
       setPaymentReceivedBy(order?.payment_received_by);
-      setPaidToTechnician(order?.paid_to_technician=="true" ?? false)
     }
     fetchOrder();
   }, [])
@@ -53,10 +68,23 @@ const OrderDetails = ()=>{
   }, [paymentReceivedFromCustomer, additionalCharges, paymentForTechnician])
 
   const savePaymentInfo =async()=>{
-    const result = await updatePaymentInfo({
-      orderId: order.id,
-      paidToTechnician, paymentForTechnician, paymentReceivedFromCustomer, additionalCharges, paymentReceivedBy})
-    setOrder(result.order)
+    await Promise.all(orderTechnicians.map(async(ot)=>{
+      await updateOrderTechnician(order.id, ot.id, {
+        paid_to_technician: `${ot.paid_to_technician}`,
+        payment_for_technician: ot.payment_for_technician,
+      }) 
+    }))
+
+    await Promise.all([
+      updateOrder(order.id, { additional_charges: additionalCharges }),
+      updateOrder(order.id, { payment_received_from_customer: paymentReceivedFromCustomer }),
+      updateOrder(order.id, { payment_received_by: paymentReceivedBy }),
+    ])
+
+    const result = await getOrder(location);
+    const updatedOrder = result.order;
+    setOrder(updatedOrder);
+
     showSnackbar("Payment is updated successfully", { variant: 'success' });
   }
 
@@ -98,8 +126,9 @@ const OrderDetails = ()=>{
             <Stack spacing={1} sx={{mt: 2}}>
               <Typography variant="h5">{order?.user?.name}</Typography>
               <Stack>
-                <Typography variant="h6">{order?.address}</Typography>
-                <Typography variant="h6">{order?.pincode}</Typography>
+                <Typography variant="h6">{orderAddress?.address}</Typography>
+                <Typography variant="h6">{orderAddress?.pincode}</Typography>
+                <Typography variant="h6">{orderAddress?.alternative_phone}</Typography>
               </Stack>
               <Stack direction={"row"} alignItems={"center"} spacing={1}>
                 <PhoneOutlined/>
@@ -123,17 +152,23 @@ const OrderDetails = ()=>{
         </Grid>
         <Grid item xs={0} md={4} sm={1}/>
         <Grid item xs={12} md={4} sm={5.5}>
-          <MainCard sx={{height: "100%"}}>
-              <Typography>Technician</Typography>
-              <Stack spacing={1} sx={{mt: 2}}>
-                <Typography variant="h5">{order?.technician?.name}</Typography>
-                <Typography variant="h6">{order?.technician?.category_name}</Typography>
-                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                  <PhoneOutlined/>
-                  <Typography variant="h6">{order?.technician?.phone}</Typography>
+          {
+            technicians.map((i, idx)=>{
+              return (
+                <MainCard sx={{mb: 1}}>
+                <Stack spacing={1} >
+                  <Typography>{`Technician ${idx+1}`}</Typography>
+                  <Typography variant="h5">{i?.name}</Typography>
+                  <Typography variant="h6">{i?.area}</Typography>
+                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                    <PhoneOutlined/>
+                    <Typography variant="h6">{i?.phone}</Typography>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </MainCard>
+              </MainCard>
+              )
+            })
+          }
         </Grid>
         <Grid item xs={12}>
           <Stack spacing={2}>
@@ -193,7 +228,7 @@ const OrderDetails = ()=>{
                       id={"technician"}
                       items={[
                         <MenuItem value={null}></MenuItem>,
-                        <MenuItem value="company">Company</MenuItem>,
+                        <MenuItem value="organization">Company</MenuItem>,
                         <MenuItem value="technician">Technician</MenuItem>
                       ]}
                     />
@@ -223,50 +258,88 @@ const OrderDetails = ()=>{
                       }
                     />
                   </Grid>
-                  <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
-                    <Box>
-                    <Typography >Payment For Technician</Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <OutlinedInput 
-                      fullWidth
-                      sx={{
-                        fontSize: "24px",
-                        textAlign: "center",
-                        "& input": {
-                          textAlign: "end !important"
-                        }
-                      }}
-                      onChange={(e)=>setPaymentForTechnician(e.target.value)}
-                      value={paymentForTechnician}
-                      type="number"
-                      startAdornment={
-                        <InputAdornment position="start">
-                          <MdCurrencyRupee />
-                        </InputAdornment>
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
-                    <Box>
-                    <Typography >Paid To Technician</Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <RadioGroup
-                      row
-                      defaultValue={false}
-                      value={paidToTechnician}
-                      name="paid-to-technician"
-                      onChange={(e)=>{
-                        setPaidToTechnician(e.target.value)
-                      }}
-                    >
-                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
-                      <FormControlLabel value={false} control={<Radio />} label="No" />
-                    </RadioGroup>
-                  </Grid>
+                  {
+                    orderTechnicians.map((technician, idx)=>{
+
+                      const technicianInfo = technicians.find((e)=>e.id==technician.technician_id);
+
+                      return (
+                        <>
+                        <Grid item xs={12}>
+                          <Stack direction={"row"}>
+                            <ArrowRightIcon></ArrowRightIcon>
+                            <Stack>
+                              <Typography >{`${technicianInfo.name}`}</Typography>
+                              <Typography sx={{fontSize: "10px"}}>{`Technician ${idx+1}`}</Typography>
+                            </Stack>
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
+                          <Box>
+                          <Typography >Payment For Technician</Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <OutlinedInput 
+                            fullWidth
+                            sx={{
+                              fontSize: "24px",
+                              textAlign: "center",
+                              "& input": {
+                                textAlign: "end !important"
+                              }
+                            }}
+                            onChange={(e)=>{
+                              const payment = e.target.value;
+                              const updated = orderTechnicians.map((e)=>{
+                                if(e.id==technician.id){
+                                  return { ...technician, payment_for_technician: payment }
+                                }else{
+                                  return e;
+                                }
+                              })
+                              setOrderTechnicians(updated);
+                            }}
+                            value={technician.payment_for_technician ?? 0}
+                            type="number"
+                            startAdornment={
+                              <InputAdornment position="start">
+                                <MdCurrencyRupee />
+                              </InputAdornment>
+                            }
+                          />
+                        </Grid>
+                        <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
+                          <Box>
+                          <Typography >Paid To Technician</Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <RadioGroup
+                            row
+                            defaultValue={false}
+                            value={technician.paid_to_technician=="true"}
+                            name="paid-to-technician"
+                            onChange={(e)=>{
+                              const paid = e.target.value;
+                              const updated = orderTechnicians.map((e)=>{
+                                if(e.id==technician.id){
+                                  return { ...technician, paid_to_technician: paid }
+                                }else{
+                                  return e;
+                                }
+                              })
+                              setOrderTechnicians(updated);
+                            }}
+                          >
+                            <FormControlLabel value={true} control={<Radio />} label="Yes" />
+                            <FormControlLabel value={false} control={<Radio />} label="No" />
+                          </RadioGroup>
+                        </Grid>
+                        </>
+                      )
+                    })
+                  }
                   <Grid xs={12} sx={{alignItems: "center"}}>
                       <Divider sx={{mt: 4, mb: 2}}/>
                   </Grid>

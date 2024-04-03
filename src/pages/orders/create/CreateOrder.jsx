@@ -146,10 +146,10 @@ const CreateOrder = () => {
                 await createOrderTechnician(orderId, id)
               }))
 
-              // setStatus({ success: true });
-              // setSubmitting(false); 
+              setStatus({ success: true });
+              setSubmitting(false); 
               
-              // navigate('/orders');
+              navigate('/orders');
             } catch (err) {
               console.log(err)
               setStatus({ success: false });
