@@ -25,6 +25,8 @@ const OrderDetails = ()=>{
   const [paymentReceivedBy, setPaymentReceivedBy] = useState(null);
   const [profit, setProfit] = useState(0);
 
+  const [invId, setInvId] = useState(null);
+
   const [openDelete, setOpenDelete] = useState(false);
   const [orderTechnicians, setOrderTechnicians] = useState([]);
 
@@ -54,6 +56,7 @@ const OrderDetails = ()=>{
 
       setOrderAddress(orderAddress);
       setOrderTechnicians(order.technicians);
+      setInvId(order.invoice_id);
       setPaymentReceivedFromCustomer(order?.payment_received_from_customer??0);
       setAdditionalCharges(order?.additional_charges??0);
       setPaymentForTechnician(order?.payment_for_technician ?? 0);
@@ -79,6 +82,7 @@ const OrderDetails = ()=>{
       updateOrder(order.id, { additional_charges: additionalCharges }),
       updateOrder(order.id, { payment_received_from_customer: paymentReceivedFromCustomer }),
       updateOrder(order.id, { payment_received_by: paymentReceivedBy }),
+      updateOrder(order.id, { invoice_id: invId }),
     ])
 
     const result = await getOrder(location);
@@ -340,6 +344,23 @@ const OrderDetails = ()=>{
                       )
                     })
                   }
+                  <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
+                    <Box>
+                    <Typography >Invoice Id</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <OutlinedInput 
+                      fullWidth
+                      sx={{
+                        fontSize: "24px",
+                      }}
+                      onChange={(e)=>{
+                        setInvId(e.target.value);
+                      }}
+                      value={invId ?? ''}
+                    />
+                  </Grid>
                   <Grid xs={12} sx={{alignItems: "center"}}>
                       <Divider sx={{mt: 4, mb: 2}}/>
                   </Grid>
