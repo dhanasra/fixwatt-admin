@@ -1,29 +1,45 @@
 import { Avatar, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Stack, Switch, Typography } from "@mui/material";
 import SingleSelect from "../../../components/@extended/SingleSelect";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainCard from "../../../components/MainCard";
 import { CloseOutlined } from "@ant-design/icons";
+import { createOrderTechnician, getOrderTechnicians } from "../../../network/service";
 
-const OrderTechnicians = ({ technicians, handleChange })=>{
+const OrderTechnicians = ({ technicians, handleChange, value, orderId })=>{
 
   const [technicianId, setTechnicianId] = useState(null);
   const [addedTechnicians, setAddedTechnicians] = useState([]);
 
-  const addTechnician = ()=>{
+  useEffect(()=>{
+    if(value && technicians.length>0){
+      const ids = value.map((e)=>e.technician_id);
+      setAddedTechnicians(ids);
+    }
+  })
+
+  const addTechnician = async()=>{
     if(technicianId!=null){
       const added = addedTechnicians.find((id)=>id==technicianId)
       if(added==null){
         const updated = [ ...addedTechnicians,  technicianId];
         setAddedTechnicians(updated);
         handleChange(updated)
+        if(orderId){
+          await createOrderTechnician(orderId, technicianId);
+        }
       }
     }
   }
 
-  const removeTechnician = (id)=>{
+  const removeTechnician = async(id)=>{
     const updated = addedTechnicians.filter((e)=>e!=id);
     setAddedTechnicians([ ...updated]);
     handleChange([ ...updated])
+    if(orderId){
+      const ots = await getOrderTechnicians(orderId);
+      const ot = ots.find((i)=>i.technician_id==technicianId);
+      await createOrderTechnician(orderId, ot.id);
+    }
   }
 
   return <>

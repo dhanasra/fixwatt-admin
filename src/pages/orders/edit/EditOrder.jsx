@@ -9,14 +9,15 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
+import { MailOutlined, PhoneOutlined, PushpinOutlined } from "@ant-design/icons";
+import OrderTechnicians from "../create/OrderTechnicians";
 
 const EditOrder = () => {
 
   const location = useLocation();
   const { data } = location.state || {};
   const order = data.order;
-  const categories = JSON.parse(localStorage.getItem('categories')).categories??[];
+  const categories = [];
   console.log(categories)
   // const [order, setOrder] = useState(data.order);
 
@@ -27,6 +28,11 @@ const EditOrder = () => {
   const [technicians, setTechnicians] = useState([]);
 
   const navigate = useNavigate();
+
+  const [addedTechnicians, setAddedTechnicians] = useState([]);
+  const handleTechniciansChange = (e)=>{
+    setAddedTechnicians(e);
+  }
 
   useEffect(() => {
     const fetch = async () => {
@@ -39,6 +45,11 @@ const EditOrder = () => {
         setUsers(data[0].users);
         setServices(data[1].services);
         setTechnicians(data[2].technicians);
+
+        if(order.technicians){
+          const ids = order.technicians.map((e)=>e.technician_id);
+          setAddedTechnicians(ids);
+        }
 
       } catch (error) {
         console.error("Error fetching customers:", error);
@@ -108,18 +119,14 @@ const EditOrder = () => {
               const data = {
                 orderId: order.id,
                 date: values.date,
-                address: values.address, 
-                pincode: values.pincode,
                 startTime: values.time,
                 serviceId: values.service,
                 serviceDescription: values.serviceDesc,
-                technicianId: values.technician,
-                notes: values.notes,
-                alternativePhone: values.altPhone
+                notes: values.notes
               };
 
               await editOrder(data)
-            
+
               setStatus({ success: true });
               setSubmitting(false); 
               
@@ -145,78 +152,16 @@ const EditOrder = () => {
                     <Stack spacing={1}>
                       <Typography variant="h5">{order?.user?.name}</Typography>
                       <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                        <PhoneOutlined/>
-                        <Typography variant="h6">{order?.user?.phone}</Typography>
+                        <PushpinOutlined />
+                        <Typography variant="h6">{`${order?.userAddress?.address}, ${order?.userAddress?.pincode}`}</Typography>
                       </Stack>
-                      {
-                        order?.alternative_phone && <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                          <PhoneOutlined/>
-                          <Typography variant="h6">{order?.alternative_phone}</Typography>
-                        </Stack>
-                      }
+                      <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                        <PhoneOutlined/>
+                        <Typography variant="h6">{`${order?.user?.phone}, ${order?.userAddress?.alternative_phone}`}</Typography>
+                      </Stack>
                     </Stack>
 
                   </MainCard>
-                </Grid>
-                <Grid item xs={6}/>
-
-                <Grid item xs={4}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"address"}>Address</InputLabel>
-                    <OutlinedInput
-                      id={"address"}
-                      type="text"
-                      name={"address"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.address}
-                      fullWidth
-                    />
-                    {touched.address && errors.address && (
-                      <FormHelperText error>
-                        {errors.address}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={4}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"pincode"}>Pincode</InputLabel>
-                    <OutlinedInput
-                      id={"pincode"}
-                      type="text"
-                      name={"pincode"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.pincode}
-                      fullWidth
-                    />
-                    {touched.pincode && errors.pincode && (
-                      <FormHelperText error>
-                        {errors.pincode}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
-                
-                <Grid item xs={4}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"altPhone"}>Alternative Phone number</InputLabel>
-                    <OutlinedInput
-                      id={"altPhone"}
-                      type="text"
-                      name={"altPhone"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.altPhone}
-                      fullWidth
-                    />
-                    {touched.altPhone && errors.altPhone && (
-                      <FormHelperText error>
-                        {errors.altPhone}
-                      </FormHelperText>
-                    )}
-                  </Stack>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="h5" sx={{my: 0.6}}>Service</Typography>
@@ -370,64 +315,7 @@ const EditOrder = () => {
                     </TableContainer>
                     </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h5" sx={{my: 0.6}}>Technician</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"technician"}>Name</InputLabel>
-                    <Autocomplete
-                      disablePortal
-                      id="technician"
-                      value={values?.techn}
-                      isOptionEqualToValue={(option, value) => option.id === value?.id}
-                      options={technicians}
-                      filterOptions={(options, state) =>
-                          options.filter(option =>
-                              option.name.toLowerCase().includes(state.inputValue.toLowerCase()) ||
-                              (option.phone && option.phone.toLowerCase().includes(state.inputValue.toLowerCase()))
-                          )
-                      }
-                      onChange={(e)=>{
-                        const technician = technicians[e.target.dataset?.optionIndex];
-                        setFieldValue("technician", technician?.id)
-                        setFieldValue("techPhone", technician?.phone)
-                      }}
-                      getOptionLabel={(option) => `${option.name}`}
-                      renderInput={(params) => (
-                          <TextField
-                              {...params}
-                              type="text"
-                              name={"name"}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              fullWidth
-                              variant="outlined"
-                          />
-                      )}
-                    />
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor={"techPhone"}>Phone number</InputLabel>
-                    <OutlinedInput
-                      id={"techPhone"}
-                      type="text"
-                      name={"techPhone"}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.techPhone}
-                      readOnly
-                      fullWidth
-                    />
-                    {touched.techPhone && errors.techPhone && (
-                      <FormHelperText error>
-                        {errors.techPhone}
-                      </FormHelperText>
-                    )}
-                  </Stack>
-                </Grid>
+                <OrderTechnicians {...{ technicians }} handleChange={handleTechniciansChange} value={order.technicians} orderId={order.id}/>
                 <Grid item xs={12}>
                   <Divider sx={{py: 1}}/>
                 </Grid>

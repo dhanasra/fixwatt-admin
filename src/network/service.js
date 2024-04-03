@@ -51,6 +51,10 @@ export async function createOrderTechnician(orderId, technician_id){
   return await axiosClient.post(`/order/${orderId}/technician`, { technician_id })
 }
 
+export async function deleteOrderTechnician(orderId, orderTechnicianId){
+  return await axiosClient.delete(`/order/${orderId}/technician/${orderTechnicianId}`)
+}
+
 export async function getOrderTechnicians(orderId){
   return await axiosClient.get(`/order/${orderId}/technician`);
 }
