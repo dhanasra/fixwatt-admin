@@ -55,6 +55,10 @@ export async function getOrderTechnicians(orderId){
   return await axiosClient.get(`/order/${orderId}/technician`);
 }
 
+export async function notifyTechnicians(orderId, phoneNumber){
+  return await axiosClient.post(`/order/${orderId}/send-customer-info/${phoneNumber}`);
+}
+
 export async function updateOrderTechnician(orderId, technician_id, data){
   return await axiosClient.put(`/order/${orderId}/technician/${technician_id}`, data);
 }

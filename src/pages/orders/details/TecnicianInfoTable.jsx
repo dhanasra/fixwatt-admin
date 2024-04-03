@@ -2,8 +2,15 @@ import { Avatar, Box, Button, Stack, Table, TableBody, TableCell, TableContainer
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { MessageOutlined } from "@ant-design/icons";
+import { notifyTechnicians } from "../../../network/service";
+import { showSnackbar } from "../../../utils/snackbar-utils";
 
-const TechnicianInfoTable =({technicians})=>{
+const TechnicianInfoTable =({orderId, technicians})=>{
+
+  const sendCustomerInfo = async(phoneNumber)=>{
+    await notifyTechnicians(orderId, phoneNumber);
+    showSnackbar("Order Information Sent Successfully!", { variant: 'success' });
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -15,6 +22,7 @@ const TechnicianInfoTable =({technicians})=>{
             <TableCell style={{ width: 'auto', textAlign: "start" }} >Area</TableCell>
             <TableCell style={{ width: '180px' }} >Pincode</TableCell>
             <TableCell style={{ width: '180px' }} >Services</TableCell>
+            <TableCell style={{ width: '180px' }} >Phone Number</TableCell>
             <TableCell style={{ width: '100px' }} ></TableCell>
           </TableRow>
         </TableHead>
@@ -39,8 +47,11 @@ const TechnicianInfoTable =({technicians})=>{
                     <Typography>{technician.category_name}</Typography> 
                   </TableCell>
                   <TableCell>
+                    <Typography>{technician.phone}</Typography> 
+                  </TableCell>
+                  <TableCell>
                     <Stack alignItems={"end"}>
-                      <Button variant="outlined" startIcon={<MessageOutlined style={{fontSize: "16px"}}/>} sx={{px: 2}}>Notify</Button>  
+                      <Button onClick={()=>sendCustomerInfo(technician.phone)} variant="outlined" startIcon={<MessageOutlined style={{fontSize: "16px"}}/>} sx={{px: 2}}>Notify</Button>  
                     </Stack>
                   </TableCell>
                 </TableRow>
