@@ -22,7 +22,6 @@ const OrderDetails = ()=>{
 
   const [paymentReceivedFromCustomer, setPaymentReceivedFromCustomer] = useState(0);
   const [additionalCharges, setAdditionalCharges] = useState(0);
-  const [paymentForTechnician, setPaymentForTechnician] = useState(0);
   const [paymentReceivedBy, setPaymentReceivedBy] = useState(null);
   const [profit, setProfit] = useState(0);
 
@@ -60,16 +59,24 @@ const OrderDetails = ()=>{
       setInvId(order.invoice_id);
       setPaymentReceivedFromCustomer(order?.payment_received_from_customer??0);
       setAdditionalCharges(order?.additional_charges??0);
-      setPaymentForTechnician(order?.payment_for_technician ?? 0);
       setPaymentReceivedBy(order?.payment_received_by);
     }
     fetchOrder();
   }, [])
 
   useEffect(()=>{
-    const p = paymentReceivedFromCustomer - additionalCharges - paymentForTechnician;
+
+    const technicianPayments = orderTechnicians.reduce((total, e) => {
+      if (e.payment_for_technician) {
+        return total + parseInt(e.payment_for_technician);
+      } else {
+        return total;
+      }
+    }, 0)
+
+    const p = paymentReceivedFromCustomer - additionalCharges - technicianPayments;
     setProfit(p);
-  }, [paymentReceivedFromCustomer, additionalCharges, paymentForTechnician])
+  }, [paymentReceivedFromCustomer, additionalCharges, orderTechnicians ])
 
   const savePaymentInfo =async()=>{
     await Promise.all(orderTechnicians.map(async(ot)=>{
