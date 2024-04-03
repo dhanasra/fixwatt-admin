@@ -3,19 +3,25 @@ import SingleSelect from "../../../components/@extended/SingleSelect";
 import { useEffect, useState } from "react";
 import MainCard from "../../../components/MainCard";
 import { CloseOutlined } from "@ant-design/icons";
-import { createOrderTechnician, getOrderTechnicians } from "../../../network/service";
+import { createOrderTechnician, deleteOrderTechnician, getOrderTechnicians } from "../../../network/service";
 
 const OrderTechnicians = ({ technicians, handleChange, value, orderId })=>{
 
   const [technicianId, setTechnicianId] = useState(null);
   const [addedTechnicians, setAddedTechnicians] = useState([]);
 
+  console.log(value)
+  console.log(technicians)
+
   useEffect(()=>{
+    console.log(technicians.length)
     if(value && technicians.length>0){
+      console.log(value)
       const ids = value.map((e)=>e.technician_id);
       setAddedTechnicians(ids);
+      console.log(ids)
     }
-  })
+  }, [technicians, value])
 
   const addTechnician = async()=>{
     if(technicianId!=null){
@@ -35,10 +41,11 @@ const OrderTechnicians = ({ technicians, handleChange, value, orderId })=>{
     const updated = addedTechnicians.filter((e)=>e!=id);
     setAddedTechnicians([ ...updated]);
     handleChange([ ...updated])
+
     if(orderId){
       const ots = await getOrderTechnicians(orderId);
-      const ot = ots.find((i)=>i.technician_id==technicianId);
-      await createOrderTechnician(orderId, ot.id);
+      const ot = ots.orderTechnicians.find((i)=>i.technician_id==id);
+      await deleteOrderTechnician(orderId, ot.id);
     }
   }
 
@@ -51,7 +58,7 @@ const OrderTechnicians = ({ technicians, handleChange, value, orderId })=>{
         <Stack spacing={1} sx={{width: "30%"}}>
           <SingleSelect
             label={'Select Technician'}
-            value={technicianId}
+            value={technicianId??''}
             handleChange={(e)=>{
               setTechnicianId(e)
             }}

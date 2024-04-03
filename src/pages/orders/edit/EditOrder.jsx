@@ -93,20 +93,12 @@ const EditOrder = () => {
             time: dayjs().set('hour', order?.start_time?.split(':')[0]).set('minute', order?.start_time?.split(':')[1]).set('second', order?.start_time?.split(':')[2])
           }}
           validationSchema={Yup.object().shape({
-            technician: Yup.string().max(255).required("Technician is required"),
             phone: Yup.string()
               .matches(
                 /^(?:[0-9] ?){6,14}[0-9]$/,
                 "Invalid phone number"
               )
               .required("Phone number is required"),
-            altPhone: Yup.string()
-              .matches(
-                /^(?:[0-9] ?){6,14}[0-9]$/,
-                "Invalid phone number"
-              ).notRequired(),
-            address: Yup.string().max(255).required("Address is required"),
-            pincode: Yup.string().max(255).required("Phone number is required"),
             notes: Yup.string().max(255).notRequired(),
             serviceDesc: Yup.string().max(255).notRequired(),
             service: Yup.string().required("Service is required"),
@@ -315,7 +307,7 @@ const EditOrder = () => {
                     </TableContainer>
                     </LocalizationProvider>
                 </Grid>
-                <OrderTechnicians {...{ technicians }} handleChange={handleTechniciansChange} value={order.technicians} orderId={order.id}/>
+                <OrderTechnicians {...{ technicians }} handleChange={handleTechniciansChange} value={order?.technicians} orderId={order?.id}/>
                 <Grid item xs={12}>
                   <Divider sx={{py: 1}}/>
                 </Grid>
