@@ -137,7 +137,7 @@ export async function updatePaymentInfo({orderId, additionalCharges, paymentRece
 }
 
 export async function updateOrderStatus({ status, orderId }){
-  const path = status=="COMPLETED" ? "complete": status=="CANCELLED" ? "cancel": ""
+  const path = status=="COMPLETED" ? "complete": status=="CANCELLED" ? "cancel": "reject"
   return await axiosClient.put(`/order/${orderId}/${path}`);
 }
 

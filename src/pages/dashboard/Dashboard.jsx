@@ -1,17 +1,21 @@
 import { Box, Button, Grid, IconButton, Skeleton, Stack, Typography } from "@mui/material";
 import MainCard from "../../components/MainCard";
 import CountUp from 'react-countup';
-import { CheckCircleFilled, CheckCircleOutlined, CloseOutlined, FieldTimeOutlined, FilterOutlined, LikeFilled, LikeOutlined, ToolFilled, ToolOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, CheckCircleFilled, CheckCircleOutlined, CloseOutlined, FieldTimeOutlined, FilterOutlined, LikeFilled, LikeOutlined, ToolFilled, ToolOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { getCategories, getOrdersInfo } from "../../network/service";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { MdOutlineDoubleArrow } from "react-icons/md";
+
 
 const Dashboard = ()=>{
 
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  const [pendingOrders, setPendingOrders] = useState(0);
 
   const [insights, setInsights] = useState([
       {
@@ -24,8 +28,8 @@ const Dashboard = ()=>{
           icon: <ToolFilled style={{fontSize: "32px", color: "grey"}} />
       },
       {
-          id: "pending",
-          name: "Pending Orders",
+          id: "rejected",
+          name: "OnGoing Orders",
           count: 0,
           payment_received: 0,
           payment_for_technician: 0,
@@ -72,10 +76,17 @@ const Dashboard = ()=>{
           const matchingStatus = data[0].info.find((info) => info.status === insight.id.toUpperCase());
           if(matchingStatus){
             total = total + matchingStatus.total;
-            total_payment_received = total_payment_received + matchingStatus.total_payment_received;
-            total_payment_for_technician = total_payment_for_technician + matchingStatus.total_payment_for_technician;
-            total_additional_charges = total_additional_charges + matchingStatus.total_additional_charges;
+            total_payment_received = total_payment_received + matchingStatus.total_payment_received??0;
+            total_payment_for_technician = total_payment_for_technician + matchingStatus.total_payment_for_technician??0;
+            total_additional_charges = total_additional_charges + matchingStatus.total_additional_charges??0;
           }
+
+          const isPending = data[0].info.find((info) => info.status === "PENDING");
+
+          if(isPending){
+            setPendingOrders(isPending.total);
+          }
+
           return {
             ...insight,
             payment_received: matchingStatus ? matchingStatus.total_payment_received : 0,
@@ -123,34 +134,40 @@ const Dashboard = ()=>{
     <LocalizationProvider dateAdapter={AdapterDayjs}>
     <Grid container spacing={2}> 
       <Grid item xs={12}>
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: "end", verticalAlign: "center" }}>
-          <DatePicker
-            label="From"
-            value={startDate}
-            format="MMM DD, YYYY"
-            onChange={handleStartDateChange}
-            renderInput={(params) => <Box {...params} />}
-            inputFormat="dd/MM/yyyy"
-          />
-          <DatePicker
-            label="To"
-            value={endDate}
-            format="MMM DD, YYYY"
-            onChange={handleEndDateChange}
-            renderInput={(params) => <Box {...params} />}
-            inputFormat="dd/MM/yyyy"
-          />
-          <Box >
-            <IconButton onClick={handleClearDates}
+        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+          { pendingOrders>0 ?  <Stack direction={"row"}>
+                <MdOutlineDoubleArrow style={{fontSize: "24px"}} color="green"/>
+                <Typography variant="h5" sx={{fontWeight: "500"}}>{ `${pendingOrders} orders waiting for you !` }</Typography>
+              </Stack>
+              : <Box/>
+            }
+            <Stack direction={"row"} spacing={2} >
+              <DatePicker
+                label="From"
+                value={startDate}
+                format="MMM DD, YYYY"
+                onChange={handleStartDateChange}
+                renderInput={(params) => <Box {...params} />}
+                inputFormat="dd/MM/yyyy"
+              />
+              <DatePicker
+                label="To"
+                value={endDate}
+                format="MMM DD, YYYY"
+                onChange={handleEndDateChange}
+                renderInput={(params) => <Box {...params} />}
+                inputFormat="dd/MM/yyyy"
+              />
+              <IconButton onClick={handleClearDates}
                 edge="start"
                 color="secondary"
                 disabled={!(startDate!=null && endDate!=null)}
                 sx={{ color: 'text.primary', border: "1px solid #f0f0f0", width: "42px", height: "42px", ml: "0px" }}
-         >
+              >
               <CloseOutlined/>   
             </IconButton>
-          </Box>
-        </Box>
+            </Stack>
+        </Stack>
       </Grid>
       {
         insights.map((insight)=>{
@@ -166,15 +183,15 @@ const Dashboard = ()=>{
                     <Stack spacing={1}>
                     <>
                     <Typography variant="body2" color={"grey"}>Payment From Customer</Typography>
-                    <Typography variant="h6" sx={{textAlign: "end"}}>{ `\u20b9 ${insight.payment_received}`}</Typography>
+                    <Typography variant="h6" sx={{textAlign: "end"}}>{ `\u20b9 ${insight.payment_received??0}`}</Typography>
                     </>
                     <>
                     <Typography variant="body2" color={"grey"}>Payment For Technician</Typography>
-                    <Typography variant="h6" sx={{textAlign: "end"}}>{ `\u20b9 ${insight.payment_for_technician}`}</Typography>
+                    <Typography variant="h6" sx={{textAlign: "end"}}>{ `\u20b9 ${insight.payment_for_technician??0}`}</Typography>
                     </>
                     <>
                     <Typography variant="body2" color={"grey"}>Additional Charges</Typography>
-                    <Typography variant="h6" sx={{textAlign: "end"}}>{ `\u20b9 ${insight.additional_charges}`}</Typography>
+                    <Typography variant="h6" sx={{textAlign: "end"}}>{ `\u20b9 ${insight.additional_charges??0}`}</Typography>
                     </>
                     <>
                     <Typography variant="body2" color={"grey"}>Revenue</Typography>

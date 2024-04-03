@@ -103,7 +103,7 @@ const OrderList = () => {
         id={`status-list-${params.value.id}`}
         handleChange={async(v)=>{
           let order;
-          if(v=="APPROVED" || v=="REJECTED"){
+          if(v=="APPROVED"){
             const data = await approveOrder({orderId: params.value.id, status: v})
             order = data.order;
           }else{

@@ -115,7 +115,7 @@ const OrderDetails = ()=>{
             </IconButton>
             <Box width={6}/>
             <Button onClick={()=>{}} variant="contained" >
-              <Typography>{order?.status}</Typography>
+              <Typography>{order?.status =="REJECTED" ? "ON GOING" : order?.status }</Typography>
             </Button>
           </Stack>
         </Stack>
@@ -185,7 +185,10 @@ const OrderDetails = ()=>{
         <Grid item xs={5}>
           <Stack spacing={2}>
             <Grid container px={4}>
-              <Grid item xs={12}>
+              {
+               order?.status!="PENDING"
+               
+               ? <Grid item xs={12}>
                 <Grid container spacing={2}>
                   
                   <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
@@ -376,6 +379,8 @@ const OrderDetails = ()=>{
                   </Grid>
                 </Grid>         
               </Grid>
+              : <Box/>
+              }
             </Grid>
           </Stack>
         </Grid>
