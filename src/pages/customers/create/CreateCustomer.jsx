@@ -104,7 +104,7 @@ const CreateCustomer = () => {
             const userId = result.user.id;
 
             const promises = addresses.map(a => {
-                return createUserAddress({ userId, address: a.address, pincode: a.pincode, type: a.addressType });
+                return createUserAddress({ userId, address: a.address, pincode: a.pincode, type: a.addressType, alternative_phone: '' });
             });
             await Promise.all(promises);
 

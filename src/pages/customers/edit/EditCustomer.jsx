@@ -34,7 +34,7 @@ const EditCustomer = () => {
 
   const addUserAddress = async()=>{
     if(addressType && address && pincode){
-      const result = await createUserAddress({address, pincode, type: addressType, userId: customer.id})
+      const result = await createUserAddress({address, pincode, type: addressType, userId: customer.id, alternative_phone: ''})
       console.log(result)
       const created = result.userAddress;
 
@@ -44,6 +44,9 @@ const EditCustomer = () => {
         setAddresses([...addresses, created])
       }
     }
+    setAddressType('');
+    setAddress('');
+    setPincode('');
   }
 
   const removeAddress = async(id)=>{
