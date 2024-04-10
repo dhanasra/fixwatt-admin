@@ -1,4 +1,4 @@
-import { Avatar, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Stack, Switch, Typography } from "@mui/material";
+import { Avatar, Box, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Stack, Switch, Typography } from "@mui/material";
 import SingleSelect from "../../../components/@extended/SingleSelect";
 import { useEffect, useState } from "react";
 import MainCard from "../../../components/MainCard";
@@ -80,6 +80,10 @@ const OrderTechnicians = ({ technicians, handleChange, value, orderId })=>{
 
             const techn = technicians?.find((tech)=>tech.id==ot);
 
+            if(!techn){
+              return <Box/>
+            }
+
             return (
               <Grid item xs={3}>
                 <MainCard
@@ -95,11 +99,11 @@ const OrderTechnicians = ({ technicians, handleChange, value, orderId })=>{
                   }
                 >   
                   <Stack direction={"row"}>
-                    <Avatar alt="picture" src={techn.picture??''} sx={{ width: 52, height: 52, mr: 2, mt: 1 }} />
+                    <Avatar alt="picture" src={techn?.picture??''} sx={{ width: 52, height: 52, mr: 2, mt: 1 }} />
                     <Stack spacing={0.2}>
-                      <Typography variant="h4">{`${techn.name}`}</Typography> 
-                      <Typography>{`${techn.phone}`}</Typography>   
-                      <Typography variant="subtitle2">{`${techn.area} - ${techn.pincode}`}</Typography>     
+                      <Typography variant="h4">{`${techn?.name}`}</Typography> 
+                      <Typography>{`${techn?.phone}`}</Typography>   
+                      <Typography variant="subtitle2">{`${techn?.area} - ${techn?.pincode}`}</Typography>     
                     </Stack>
                   </Stack>  
                 </MainCard>
