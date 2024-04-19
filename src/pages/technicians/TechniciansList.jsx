@@ -19,6 +19,7 @@ const TechniciansList = () => {
 
 
   const [technicians, setTechnicians] = useState([]);
+  const [data, setData] = useState([]);
   const [technicianEdit, setTechnicianEdit] = useState(null);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ const TechniciansList = () => {
         ]);
         setCategories(data[0].categories);
         setTechnicians(data[1].technicians)
+        setData(data[1].technicians);
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
@@ -41,13 +43,13 @@ const TechniciansList = () => {
   const handleSearch = async (event) => {
     const query = event.target.value.toLowerCase();
     const filtered = data.filter(
-      (customer) =>
-        customer.name?.toLowerCase()?.includes(query) ||
-        customer.email?.toLowerCase()?.includes(query) ||
-        customer.phone?.includes(query) ||
-        customer.address?.toLowerCase()?.includes(query)
+      (tech) =>
+        tech.name?.toLowerCase()?.includes(query) ||
+        tech.email?.toLowerCase()?.includes(query) ||
+        tech.pincode?.includes(query) ||
+        tech.area?.toLowerCase()?.includes(query)
     );
-    setCustomers(filtered);
+    setTechnicians(filtered);
   };
 
   const handleDeleteClick = async()=>{
