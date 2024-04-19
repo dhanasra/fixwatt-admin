@@ -300,7 +300,8 @@ const CreateOrder = () => {
                                     )
                                 }
                                 onChange={(e)=>{
-                                  const service = selectedServices[e.target.dataset?.optionIndex];
+                                  const data = e.target.innerHTML;
+                                  const service = selectedServices.find((i)=>i.name == data);
                                   setFieldValue("service", service?.id)
                                 }}
                                 getOptionLabel={(option) => `${option.name}`}

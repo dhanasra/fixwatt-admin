@@ -17,15 +17,19 @@ const EditOrder = () => {
   const location = useLocation();
   const { data } = location.state || {};
   const order = data.order;
-  const categories = [];
-  console.log(categories)
   // const [order, setOrder] = useState(data.order);
+  
 
   const [users, setUsers] = useState([]);
   const [services, setServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [category, selectCategory] = useState(null);
+  const [service, selectService] = useState(null);
   const [technicians, setTechnicians] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [orderCategory, setOrderCategory] = useState(null);
+
+  const [index, setIndex] = useState(0);
 
   const navigate = useNavigate();
 
@@ -41,10 +45,18 @@ const EditOrder = () => {
           getUsers(),
           getServices(),
           getTechnicians(),
+          getCategories(),
         ]);
         setUsers(data[0].users);
         setServices(data[1].services);
         setTechnicians(data[2].technicians);
+        setCategories(data[3].categories);
+
+        if(order.service.category_id){
+          const category = data[3].categories.find((c)=>c.id==order.service.category_id);
+          selectCategory(category)
+          selectService(order.service)
+        }
 
         if(order.technicians){
           const ids = order.technicians.map((e)=>e.technician_id);
@@ -63,6 +75,10 @@ const EditOrder = () => {
     if(category!=null){
       const updated = services.filter((s)=>s.category_name==category.name);
       setSelectedServices(updated);
+      if(index!=0){
+        selectService(null);
+      }
+      setIndex(index+1);
     }
   }, [category])
 
@@ -77,7 +93,7 @@ const EditOrder = () => {
         <Formik
           initialValues={{ 
             customer: null,
-            category: categories?.find((c)=>c.name==order?.service?.category_name),
+            category: orderCategory,
             userId: order?.user?.id,
             phone: order?.user?.phone,
             altPhone: order?.alternative_phone,
@@ -178,7 +194,7 @@ const EditOrder = () => {
                               <Autocomplete
                                 disablePortal
                                 id="category"
-                                value={values?.category}
+                                value={category}
                                 options={categories}
                                 isOptionEqualToValue={(option, value) => option.id === value?.id}
                                 filterOptions={(options, state) =>
@@ -189,7 +205,8 @@ const EditOrder = () => {
                                     )
                                 }
                                 onChange={(e)=>{
-                                  const category = categories[e.target.dataset?.optionIndex];
+                                  const data = e.target.innerHTML;
+                                  const category = categories.find((i)=>i.name == data);
                                   setFieldValue("category", category?.id)
                                   selectCategory(category);
                                 }}
@@ -218,7 +235,7 @@ const EditOrder = () => {
                               <Autocomplete
                                 disablePortal
                                 id="service"
-                                value={order?.service}
+                                value={service}
                                 isOptionEqualToValue={(option, value) => option.id === value?.id}
                                 options={selectedServices}
                                 filterOptions={(options, state) =>
@@ -229,7 +246,9 @@ const EditOrder = () => {
                                     )
                                 }
                                 onChange={(e)=>{
-                                  const service = selectedServices[e.target.dataset?.optionIndex];
+                                  const data = e.target.innerHTML;
+                                  const service = selectedServices.find((i)=>i.name == data);
+                                  selectService(service)
                                   setFieldValue("service", service?.id)
                                 }}
                                 getOptionLabel={(option) => `${option.name}`}
@@ -260,7 +279,7 @@ const EditOrder = () => {
                                   name={"serviceDesc"}
                                   onBlur={handleBlur}
                                   onChange={handleChange}
-                                  value={values.serviceDesc}
+                                  value={values?.serviceDesc!='null' ? values.serviceDesc : ''}
                                   fullWidth
                                 />
                                 {touched.serviceDesc && errors.serviceDesc && (
@@ -320,7 +339,7 @@ const EditOrder = () => {
                       name={"notes"}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      value={values.notes}
+                      value={values?.notes!='null' ? values.notes : ''}
                       multiline
                       minRows={2}
                     />
