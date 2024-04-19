@@ -52,8 +52,6 @@ const CreateOrder = () => {
     if(category!=null){
       const updated = services.filter((s)=>s.category_name==category.name);
       setSelectedServices(updated);
-      console.log('calling');
-      console.log(updated)
     }
   }, [category])
 
@@ -263,7 +261,8 @@ const CreateOrder = () => {
                                     )
                                 }
                                 onChange={(e)=>{
-                                  const category = categories[e.target.dataset?.optionIndex];
+                                  const data = e.target.innerHTML;
+                                  const category = categories.find((i)=>i.name == data);
                                   setFieldValue("category", category?.id)
                                   selectCategory(category);
                                 }}

@@ -10,16 +10,10 @@ const OrderTechnicians = ({ technicians, handleChange, value, orderId })=>{
   const [technicianId, setTechnicianId] = useState(null);
   const [addedTechnicians, setAddedTechnicians] = useState([]);
 
-  console.log(value)
-  console.log(technicians)
-
   useEffect(()=>{
-    console.log(technicians.length)
     if(value && technicians.length>0){
-      console.log(value)
       const ids = value.map((e)=>e.technician_id);
       setAddedTechnicians(ids);
-      console.log(ids)
     }
   }, [technicians, value])
 
