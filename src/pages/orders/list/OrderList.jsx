@@ -1,9 +1,9 @@
-import { FilterOutlined, PlusOutlined } from "@ant-design/icons";
+import { ExportOutlined, FilterOutlined, PlusOutlined } from "@ant-design/icons";
 import { Box, Button, IconButton, MenuItem, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StripedDataGrid } from "../../../components/grid-styled";
-import { formatDate, formatTime } from "../../../utils/utils";
+import { exportData, formatDate, formatTime } from "../../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
 import { approveOrder, getOrders, getServices, updateOrderStatus } from "../../../network/service";
@@ -97,6 +97,10 @@ const OrderList = () => {
   const renderOptionsCell = (params) => (
     <OptionsMenu order={params.value}/>
   );
+
+  const onExport = () => {
+    exportData(rows, "orders")
+  };
 
   const renderSingleSelectCell = (params) => {
       return <SingleSelect
@@ -193,7 +197,16 @@ const OrderList = () => {
                 ]}
               />
             </Box>
-            <Box>
+            <Stack direction={"row"} spacing={2}>
+              <Button
+                  variant="outlined"
+                  size="medium"
+                  sx={{ px: 0, width: '140px' }}
+                  onClick={onExport}
+                  startIcon={<ExportOutlined style={{ fontSize: '16px' }} />}
+                >
+                Export
+              </Button>
               <Button
                 variant="outlined"
                 size="medium"
@@ -203,7 +216,7 @@ const OrderList = () => {
               >
                 Create Order
               </Button>
-            </Box>
+            </Stack>
           </Stack>
           <Box
             sx={{position: "relative"}}

@@ -1,9 +1,9 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { ExportOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Box, Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StripedDataGrid } from "../../../components/grid-styled";
-import { formatDate } from "../../../utils/utils";
+import { exportData, formatDate } from "../../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
 import { getUsers } from "../../../network/service";
@@ -34,6 +34,10 @@ const CustomerList = () => {
 
   const onAddCustomer = () => {
     navigate("/customers/create");
+  };
+
+  const onExport = () => {
+    exportData(customers, "customers")
   };
 
   const handleSearch = async (event) => {
@@ -100,7 +104,16 @@ const CustomerList = () => {
               />
             </FormControl>
           </Box>
-          <Box>
+          <Stack direction={"row"} spacing={2}>
+            <Button
+                variant="outlined"
+                size="medium"
+                sx={{ px: 0, width: '140px' }}
+                onClick={onExport}
+                startIcon={<ExportOutlined style={{ fontSize: '16px' }} />}
+              >
+              Export
+            </Button>
             <Button
               variant="outlined"
               size="medium"
@@ -110,7 +123,7 @@ const CustomerList = () => {
             >
               Add Customer
             </Button>
-          </Box>
+          </Stack>
         </Stack>
         <StripedDataGrid
           rows={rows}

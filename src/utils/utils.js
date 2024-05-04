@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import * as XLSX from 'xlsx';
 
 export function formatDate(dateString) {
     const options = { month: 'short', day: '2-digit' };
@@ -61,3 +62,10 @@ export function formatImage(originalUrl) {
   
   return originalUrl;
 }
+
+export const exportData = async (data, filename) => {
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+  XLSX.writeFile(workbook, filename + '.xlsx');
+};
