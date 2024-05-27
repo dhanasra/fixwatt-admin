@@ -6,7 +6,7 @@ import { clearCookies } from '../utils/utils';
 
 const axiosClient = axios.create({
     // baseURL: `http://13.233.244.254/test/v1`,
-    baseURL: `https://spiderlings.in/test/v1`,
+    baseURL: `http://inses-prod-api.spiderlings.in/v1`,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
