@@ -28,8 +28,8 @@ const Dashboard = ()=>{
           icon: <ToolFilled style={{fontSize: "32px", color: "grey"}} />
       },
       {
-          id: "rejected",
-          name: "OnGoing Orders",
+          id: "pending",
+          name: "Pending Orders",
           count: 0,
           payment_received: 0,
           payment_for_technician: 0,
@@ -76,9 +76,9 @@ const Dashboard = ()=>{
           const matchingStatus = data[0].info.find((info) => info.status === insight.id.toUpperCase());
           if(matchingStatus){
             total = total + matchingStatus.total;
-            total_payment_received = total_payment_received + matchingStatus.total_payment_received??0;
-            total_payment_for_technician = total_payment_for_technician + matchingStatus.total_payment_for_technician??0;
-            total_additional_charges = total_additional_charges + matchingStatus.total_additional_charges??0;
+            total_payment_received = total_payment_received + ( matchingStatus.total_payment_received??0 );
+            total_payment_for_technician = total_payment_for_technician + ( matchingStatus.total_payment_for_technician??0 );
+            total_additional_charges = total_additional_charges + ( matchingStatus.total_additional_charges??0 );
           }
 
           const isPending = data[0].info.find((info) => info.status === "PENDING");
