@@ -81,9 +81,9 @@ export async function getOrdersInfo(startDate, endDate){
   return await axiosClient.get(`/order/info?startDate=${sd}&endDate=${ed}`);
 }
 
-export async function getOrders({ page, filter }){
+export async function getOrders({ page, filter, limit }){
   const status = filter=='all' ? '': filter;
-  return await axiosClient.get(`/order?limit=10&page=${page}&status=${status}&admin=1`);
+  return await axiosClient.get(`/order?limit=${limit??10}&page=${page}&status=${status}&admin=1`);
 }
 
 export async function getOrder({ orderId }){

@@ -98,8 +98,37 @@ const OrderList = () => {
     <OptionsMenu order={params.value}/>
   );
 
-  const onExport = () => {
-    exportData(rows, "orders")
+  const onExport = async() => {
+
+    const resp = await getOrders({page: 1, limit: total, filter: 'all'})
+    const data = resp.orders.data;
+    const formatted = data.map((d)=>{
+      return {
+        username: d.user.name,
+        phone: d.user.phone,
+        email: d.user.email,
+        address: d.address,
+        start_time: d.start_time,
+        end_time: d.end_time,
+        date: d.date,
+        invoice_id: d.invoice_id,
+        service_description: d.service_description,
+        quantity: d.quantity,
+        price: d.price,
+        subtotal: d.subtotal,
+        additional_charges: d.additional_charges,
+        total: d.total,
+        payment_received_from_customer: d.payment_received_from_customer,
+        payment_received_by: d.payment_received_by,
+        status: d.status,
+        notes: d.notes,
+        service_name: d.service.name,
+        category_name: d.service.category_name,
+      }
+
+    })
+
+    exportData(formatted, "orders")
   };
 
   const renderSingleSelectCell = (params) => {
@@ -125,7 +154,7 @@ const OrderList = () => {
         items={[
           <MenuItem value="PENDING" key={"pending"} disabled>PENDING</MenuItem>,
           <MenuItem value="APPROVED" key={"approved"} >APPROVED</MenuItem>,
-          <MenuItem value="REJECTED" key={"rejected"}  >ON GOING</MenuItem>,
+          <MenuItem value="ON_GOING" key={"on_going"}  >ON GOING</MenuItem>,
           <MenuItem value="CANCELLED" key={"cancelled"}  >CANCELLED</MenuItem>,
           <MenuItem value="COMPLETED" key={"completed"}  >COMPLETED</MenuItem>
         ]}
@@ -163,22 +192,6 @@ const OrderList = () => {
         <>
           <Stack direction={'row'} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
             <Box sx={{ width: '100%' }}>
-              {/* <FormControl sx={{ width: { xs: '100%', md: 300 } }}>
-                <OutlinedInput
-                  id="header-search"
-                  startAdornment={
-                    <InputAdornment position="start" sx={{ mr: -0.5 }}>
-                      <SearchOutlined />
-                    </InputAdornment>
-                  }
-                  onChange={handleSearch}
-                  placeholder="Search by name, email or phone number"
-                  aria-describedby="header-search-text"
-                  inputProps={{
-                    'aria-label': 'weight'
-                  }}
-                />
-              </FormControl> */}
             </Box>
             <Box sx={{width: "210px"}}>
               <SingleSelect
@@ -191,7 +204,7 @@ const OrderList = () => {
                   <MenuItem value={''}>All</MenuItem>,
                   <MenuItem value={'pending'}>Pending</MenuItem>,
                   <MenuItem value={'approved'}>Approved</MenuItem>,
-                  <MenuItem value={'rejected'}>On Going</MenuItem>,
+                  <MenuItem value={'ON_GOING'}>On Going</MenuItem>,
                   <MenuItem value={'cancelled'}>Cancelled</MenuItem>,
                   <MenuItem value={'completed'}>Completed</MenuItem>
                 ]}
