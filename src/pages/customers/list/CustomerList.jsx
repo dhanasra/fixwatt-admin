@@ -1,4 +1,4 @@
-import { ExportOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { ExportOutlined, ImportOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Box, Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
 import { getUsers } from "../../../network/service";
 import OptionsMenu from "./OptionsMenu";
+import ImportDialog from "../../../components/dialogs/ImportDialog";
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
   const [data, setData] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState([]);
+  const [openImport, setOpenImport] = useState(false);
+
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -30,7 +34,11 @@ const CustomerList = () => {
     };
 
     fetchCustomers();
-  }, []);
+  }, [refresh]);
+
+  const triggerRefresh = () => {
+    setRefresh(prev => !prev);
+  };
 
   const onAddCustomer = () => {
     navigate("/customers/create");
@@ -83,6 +91,11 @@ const CustomerList = () => {
   })).reverse();
 
   return (
+    <>
+    <ImportDialog open={openImport} onCancel={()=>{
+      setOpenImport(false);
+      triggerRefresh();
+    }}/>
     <MainCard sx={{ width: '100%' }}>
       <>
         <Stack direction={'row'} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
@@ -105,6 +118,15 @@ const CustomerList = () => {
             </FormControl>
           </Box>
           <Stack direction={"row"} spacing={2}>
+            <Button
+                variant="outlined"
+                size="medium"
+                sx={{ px: 0, width: '140px' }}
+                onClick={()=>setOpenImport(true)}
+                startIcon={<ImportOutlined style={{ fontSize: '16px' }} />}
+              >
+              Import
+            </Button>
             <Button
                 variant="outlined"
                 size="medium"
@@ -146,6 +168,7 @@ const CustomerList = () => {
         />
       </>
     </MainCard>
+    </>
   );
 };
 

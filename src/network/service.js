@@ -13,6 +13,10 @@ export async function getUsers(){
   return await axiosClient.get(`/user`);
 }
 
+export async function importUsers(users){
+  return await axiosClient.post(`/user/import`, { users });
+}
+
 export async function getUser(){
   return await axiosClient.get(`/user`);
 }
