@@ -1,14 +1,13 @@
-import { DeleteFilled, DeleteOutlined, ImportOutlined } from "@ant-design/icons";
+import { ImportOutlined } from "@ant-design/icons";
 import { Avatar, Button, CircularProgress, Dialog, Stack, Typography } from "@mui/material";
 import MainCard from "../MainCard";
 import { useTheme } from "@emotion/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as XLSX from 'xlsx';
-import axios from "axios";
 import { importUsers } from "../../network/service";
 import { showSnackbar } from "../../utils/snackbar-utils";
 
-const ImportDialog =({open, onCancel})=>{
+const CustomerImportDialog =({open, onCancel})=>{
 
     const theme = useTheme();
 
@@ -46,6 +45,10 @@ const ImportDialog =({open, onCancel})=>{
             
         const modifiedData = sheetData.map(item => ({
             ...item,
+            type: item.type || null,
+            address: item.address || null,
+            pincode: item.pincode || null,
+            alternative_phone: item.alternative_phone || null,
             name: item.name || null,
             category: item.category || null,
             segment: item.segment || null,
@@ -67,8 +70,9 @@ const ImportDialog =({open, onCancel})=>{
 
     const downloadSampleFormat = () => {
         const ws = XLSX.utils.aoa_to_sheet([
-            ["name", "email", "phone", "age", "gender", "segment", "category"],
-            ["Jhon Doe", "john@example.com", "1234567890", 22, "M", "household", "b2c"],
+            ["name", "email", "phone", "age", "gender", "segment", "category", "type", "address", "pincode", "alternative_phone"],
+            ["Jhon Doe", "john@example.com", "1234567890", 22, "M", "household", "b2c", "HOME", "test address", "600000", "673563637"],
+            ["Jacklin", "jacklin@example.com", "672672627", 22, "F", "commercial", "b2b", "HOME", "test address", "600000", "673563637"],
             ["Jacklin", "jacklin@example.com", "672672627", 22, "F", "commercial", "b2b"],
             ["Jacklin", "", "6726f2137", 18, "M",],
         ]);
@@ -136,4 +140,4 @@ const ImportDialog =({open, onCancel})=>{
     </Dialog>
 )}
 
-export default ImportDialog;
+export default CustomerImportDialog;

@@ -8,7 +8,7 @@ import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
 import { getUsers } from "../../../network/service";
 import OptionsMenu from "./OptionsMenu";
-import ImportDialog from "../../../components/dialogs/ImportDialog";
+import CustomerImportDialog from "../../../components/dialogs/CustomerImportDialog";
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -92,7 +92,7 @@ const CustomerList = () => {
 
   return (
     <>
-    <ImportDialog open={openImport} onCancel={()=>{
+    <CustomerImportDialog open={openImport} onCancel={()=>{
       setOpenImport(false);
       triggerRefresh();
     }}/>
