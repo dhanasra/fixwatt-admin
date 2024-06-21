@@ -162,6 +162,10 @@ export async function getTechnicians(){
   return await axiosClient.get(`/technician`);
 }
 
+export async function importTechnicians(technicians){
+  return await axiosClient.post(`/technician/import`, { technicians });
+}
+
 export async function deleteTechnician(id){
   return await axiosClient.delete(`/technician/${id}`);
 }

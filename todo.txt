@@ -1,5 +1,4 @@
 2. Option need - Technician paid to company.
 3. Order list - need search bar.
 5. Customer import with address.
-6. Categories import.
 7. Technician import.

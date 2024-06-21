@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Avatar, Box, Button, Chip, FormControl, IconButton, InputAdornment, OutlinedInput, Stack, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { StripedDataGrid } from "../../components/grid-styled";
@@ -7,6 +7,7 @@ import MainCard from "../../components/MainCard";
 import CreateTechnicianDrawer from "./CreateTechnicianDrawer";
 import { deleteTechnician, getCategories, getTechnicians } from "../../network/service";
 import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
+import TechniciansImportDialog from "../../components/dialogs/TechniciansImportDialog";
 
 const TechniciansList = () => {
   const theme = useTheme();
@@ -16,7 +17,9 @@ const TechniciansList = () => {
 
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [openImport, setOpenImport] = useState(false);
 
+  const [refresh, setRefresh] = useState(false);
 
   const [technicians, setTechnicians] = useState([]);
   const [data, setData] = useState([]);
@@ -38,7 +41,11 @@ const TechniciansList = () => {
     };
 
     fetchCustomers();
-  }, []);
+  }, [refresh]);
+
+  const triggerRefresh = () => {
+    setRefresh(prev => !prev);
+  };
 
   const handleSearch = async (event) => {
     const query = event.target.value.toLowerCase();
@@ -125,6 +132,10 @@ const TechniciansList = () => {
 
   return (
     <>
+    <TechniciansImportDialog open={openImport} onCancel={()=>{
+      setOpenImport(false);
+      triggerRefresh();
+    }}/>
     <CreateTechnicianDrawer
       open={openDrawer} 
       onClose={()=>{
@@ -179,7 +190,16 @@ const TechniciansList = () => {
               />
             </FormControl>
           </Box>
-          <Box>
+          <Stack direction={"row"} spacing={2}>
+            <Button
+                variant="outlined"
+                size="medium"
+                sx={{ px: 0, width: '140px' }}
+                onClick={()=>setOpenImport(true)}
+                startIcon={<ImportOutlined style={{ fontSize: '16px' }} />}
+              >
+              Import
+            </Button>
             <Button
               variant="outlined"
               size="medium"
@@ -189,7 +209,7 @@ const TechniciansList = () => {
             >
               Add Technician
             </Button>
-          </Box>
+          </Stack>
         </Stack>
         <StripedDataGrid
           rows={technicians}
