@@ -45,6 +45,10 @@ export async function createUserAddress({userId, address, pincode, type, alterna
   return await axiosClient.post(`/user-address`, {userId, address, pincode, type, alternative_phone });
 }
 
+export async function importUserAddreses(addresses){
+  return await axiosClient.post(`/user-address/import`, { addresses });
+}
+
 export async function removeUserAddress(id){
   return await axiosClient.delete(`/user-address/${id}`);
 }

@@ -1,11 +1,12 @@
 import { ImportOutlined } from "@ant-design/icons";
-import { Avatar, Button, CircularProgress, Dialog, Stack, Typography } from "@mui/material";
+import { Avatar, Button, CircularProgress, Dialog, FormControlLabel, Radio, RadioGroup, Stack, Typography } from "@mui/material";
 import MainCard from "../MainCard";
 import { useTheme } from "@emotion/react";
 import { useState } from "react";
 import * as XLSX from 'xlsx';
-import { importUsers } from "../../network/service";
+import { importUserAddreses, importUsers } from "../../network/service";
 import { showSnackbar } from "../../utils/snackbar-utils";
+import { exportData } from "../../utils/utils";
 
 const CustomerImportDialog =({open, onCancel})=>{
 
@@ -13,6 +14,8 @@ const CustomerImportDialog =({open, onCancel})=>{
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    const [uploadType, setUploadType] = useState("1");
 
     const pickFile = ()=>{
       document.getElementById(`import-customers`).click();
@@ -24,9 +27,14 @@ const CustomerImportDialog =({open, onCancel})=>{
 
     const importData=async()=>{
       setLoading(true);
-      await importUsers(data);
+      if(uploadType=="1"){
+        await importUsers(data);
+      }else{
+        await importUserAddreses(data);
+      }
       setLoading(false);
       setData(null);
+      setUploadType("1");
       document.getElementById(`import-customers`).value = null;
       showSnackbar("User data imported successfully", { variant: 'success' });
     }
@@ -43,7 +51,9 @@ const CustomerImportDialog =({open, onCancel})=>{
         const firstSheet = workbook.Sheets[firstSheetName];
         const sheetData = XLSX.utils.sheet_to_json(firstSheet);
             
-        const modifiedData = sheetData.map(item => ({
+        const modifiedData = sheetData.map(item => (
+          uploadType==0
+          ? {
             ...item,
             type: item.type || null,
             address: item.address || null,
@@ -58,7 +68,14 @@ const CustomerImportDialog =({open, onCancel})=>{
             email: item.email || null,
             status: "PENDING",
             roleId: 1
-        }));
+          }
+          : {
+            address: item.address || null,
+            pincode: item.pincode || null,
+            alternative_phone: item.alternative_phone || null,
+            phone: item.phone || null
+          }
+        ));
 
         console.log(modifiedData)
         
@@ -69,17 +86,24 @@ const CustomerImportDialog =({open, onCancel})=>{
     };
 
     const downloadSampleFormat = () => {
-        const ws = XLSX.utils.aoa_to_sheet([
-            ["name", "email", "phone", "age", "gender", "segment", "category", "type", "address", "pincode", "alternative_phone"],
-            ["Jhon Doe", "john@example.com", "1234567890", 22, "M", "household", "b2c", "HOME", "test address", "600000", "673563637"],
-            ["Jacklin", "jacklin@example.com", "672672627", 22, "F", "commercial", "b2b", "HOME", "test address", "600000", "673563637"],
-            ["Jacklin", "jacklin@example.com", "672672627", 22, "F", "commercial", "b2b"],
-            ["Jacklin", "", "6726f2137", 18, "M",],
-        ]);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "SampleCustomers");
-
-        XLSX.writeFile(wb, "sample_customers.xlsx");
+      if(uploadType=="1"){
+        const data = [
+          ["name", "email", "phone", "age", "gender", "segment", "category", "type", "address", "pincode", "alternative_phone"],
+          ["Jhon Doe", "john@example.com", "1234567890", 22, "M", "household", "b2c", "HOME", "test address", "600000", "673563637"],
+          ["Jacklin", "jacklin@example.com", "672672627", 22, "F", "commercial", "b2b", "HOME", "test address", "600000", "673563637"],
+          ["Jacklin", "jacklin@example.com", "672672627", 22, "F", "commercial", "b2b"],
+          ["Jacklin", "", "6726f2137", 18, "M",],
+        ];
+        exportData(data, "sample_customers", "SampleCustomers");
+      }else{
+        const data = [
+          ["phone", "address", "pincode", "alternative_phone", "type"],
+          ["1234567890", "test address", "600000", "673563637", "HOME"],
+          ["1234567891", "test address", "600000", "673563637", "OFFICE"],
+          ["1234567892", "test address", "600000", "673563637"],
+        ];
+        exportData(data, "sample_addresses", "SampleAddresses");
+      }
     };
     
     const closeDialog=()=>{
@@ -101,11 +125,29 @@ const CustomerImportDialog =({open, onCancel})=>{
 
                 {
                   data==null
-                  ? <Typography textAlign={"center"} variant="h6">To import customers list upload your XLSX file contains customer data.</Typography>
-                  : <Typography textAlign={"center"} variant="h6">{`File uploaded succesfully. ${data?.length} data found. Click import to upload all data.`}</Typography>
+                  ? <Stack spacing={2}>
+                      <Typography textAlign={"center"} variant="h5">To import customers list upload your XLSX file contains customer data.</Typography>
+                      <Typography textAlign={"center"} variant="body2">Note*: Below each types has different formats to upload. Check and upload.</Typography>
+                      <RadioGroup value={uploadType}>
+                        <FormControlLabel
+                          value="1"
+                          onChange={(e)=>setUploadType(e.target.value)}
+                          control={<Radio />}
+                          label="Customers list ( New customers )"
+                        />
+                        <FormControlLabel
+                          value="2"
+                          onChange={(e)=>setUploadType(e.target.value)}
+                          control={<Radio />}
+                          label="Address list ( Existing customers )"
+                        />
+                      </RadioGroup>
+                    </Stack>
+                  : <Stack spacing={2}>
+                      <Typography textAlign={"center"} variant="h5">{`Importing ${uploadType=="1"? 'Customers': 'Addresses'} List`}</Typography>
+                      <Typography textAlign={"center"} variant="h6">{`File uploaded succesfully. ${data?.length} data found. Click import to upload all data.`}</Typography>
+                    </Stack>
                 }
-
-                
 
                 {
                   loading
