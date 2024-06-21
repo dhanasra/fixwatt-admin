@@ -154,7 +154,7 @@ const OrderList = () => {
         items={[
           <MenuItem value="PENDING" key={"pending"} disabled>PENDING</MenuItem>,
           <MenuItem value="APPROVED" key={"approved"} >APPROVED</MenuItem>,
-          <MenuItem value="ON_GOING" key={"on_going"}  >ON GOING</MenuItem>,
+          <MenuItem value="REJECTED" key={"rejected"}  >ON GOING</MenuItem>,
           <MenuItem value="CANCELLED" key={"cancelled"}  >CANCELLED</MenuItem>,
           <MenuItem value="COMPLETED" key={"completed"}  >COMPLETED</MenuItem>
         ]}
@@ -204,7 +204,7 @@ const OrderList = () => {
                   <MenuItem value={''}>All</MenuItem>,
                   <MenuItem value={'pending'}>Pending</MenuItem>,
                   <MenuItem value={'approved'}>Approved</MenuItem>,
-                  <MenuItem value={'ON_GOING'}>On Going</MenuItem>,
+                  <MenuItem value={'rejected'}>On Going</MenuItem>,
                   <MenuItem value={'cancelled'}>Cancelled</MenuItem>,
                   <MenuItem value={'completed'}>Completed</MenuItem>
                 ]}
