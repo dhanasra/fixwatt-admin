@@ -24,6 +24,7 @@ const OrderDetails = ()=>{
   const [additionalCharges, setAdditionalCharges] = useState(0);
   const [paymentReceivedBy, setPaymentReceivedBy] = useState(null);
   const [profit, setProfit] = useState(0);
+  const [technicianPaidToCompany, setTechnicianPaidToCompany] = useState(false);
 
   const [invId, setInvId] = useState(null);
 
@@ -56,6 +57,7 @@ const OrderDetails = ()=>{
 
       setOrderAddress(orderAddress);
       setOrderTechnicians(order.technicians);
+      setTechnicianPaidToCompany(order?.is_payment_received_from_technician??false);
       setInvId(order.invoice_id);
       setPaymentReceivedFromCustomer(order?.payment_received_from_customer??0);
       setAdditionalCharges(order?.additional_charges??0);
@@ -89,6 +91,7 @@ const OrderDetails = ()=>{
     await Promise.all([
       updateOrder(order.id, { additional_charges: additionalCharges }),
       updateOrder(order.id, { payment_received_from_customer: paymentReceivedFromCustomer }),
+      updateOrder(order.id, { is_payment_received_from_technician: technicianPaidToCompany }),
       updateOrder(order.id, { payment_received_by: paymentReceivedBy }),
       updateOrder(order.id, { invoice_id: invId }),
     ])
@@ -236,6 +239,31 @@ const OrderDetails = ()=>{
                       ]}
                     />
                   </Grid>
+                  <>
+                  {(paymentReceivedBy=="technician") && 
+                  <><Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
+                      <Box>
+                      <Typography >Technician Paid Payment To Company</Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <RadioGroup
+                        row
+                        defaultValue={false}
+                        value={technicianPaidToCompany}
+                        name="technician-paid-to-company"
+                        onChange={(e)=>{
+                          const paid = e.target.value;
+                          setTechnicianPaidToCompany(paid);
+                        }}
+                      >
+                        <FormControlLabel value={true} control={<Radio />} label="Yes" />
+                        <FormControlLabel value={false} control={<Radio />} label="No" />
+                      </RadioGroup>
+                    </Grid>
+                    </>
+                  }
+                  </>
                   <Grid item xs={6} sx={{alignItems: "center", display: "flex"}}>
                     <Box>
                     <Typography >Material Charges</Typography>
