@@ -9,8 +9,6 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useNavigate } from "react-router-dom";
-import { CloseOutlined } from "@ant-design/icons";
-import SingleSelect from "../../../components/@extended/SingleSelect";
 import OrderAddress from "./OrderAddress";
 import OrderTechnicians from "./OrderTechnicians";
 

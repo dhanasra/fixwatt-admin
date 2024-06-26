@@ -1,4 +1,4 @@
-import { ExportOutlined, FilterOutlined, PlusOutlined } from "@ant-design/icons";
+import { ChromeOutlined, ExportOutlined, FilterOutlined, MobileFilled, MobileOutlined, PlusOutlined } from "@ant-design/icons";
 import { Box, Button, IconButton, MenuItem, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import { approveOrder, getOrders, getServices, updateOrderStatus } from "../../.
 import { ArrowLeftIcon, ArrowRightIcon } from "@mui/x-date-pickers";
 import SingleSelect from "../../../components/@extended/SingleSelect";
 import OptionsMenu from "./OptionsMenu";
+import { BsBrowserChrome } from "react-icons/bs";
 
 const OrderList = () => {
   const navigate = useNavigate();
@@ -98,6 +99,16 @@ const OrderList = () => {
     <OptionsMenu order={params.value}/>
   );
 
+  const renderIconCell = (params) => (
+    <Stack marginLeft={"6px"}>
+      {
+        (params.value == 'mobile')
+        ? <MobileOutlined style={{fontSize: "20px"}}/>
+        : <ChromeOutlined style={{fontSize: "20px"}}/> 
+      }  
+    </Stack> 
+  );
+
   const onExport = async() => {
 
     const resp = await getOrders({page: 1, limit: total, filter: 'all'})
@@ -169,6 +180,7 @@ const OrderList = () => {
     { field: 'date', headerName: 'Date', width: 120, renderCell: renderTextCell },
     { field: 'time', headerName: 'Time', width: 120, renderCell: renderTextCell },
     { field: 'status', headerName: 'Order Status', width: 160, renderCell: renderSingleSelectCell },
+    { field: 'env', headerName: 'Env', width: 60, renderCell: renderIconCell },
     { field: 'order', headerName: '', width: 60, renderCell: renderOptionsCell },
   ];
 
@@ -183,7 +195,8 @@ const OrderList = () => {
       time: formatTime(order.start_time),
       date: formatDate(new Date(order.date)),
       address: `${order.address}, ${order.pincode}`,
-      status: order
+      status: order,
+      env: order.env
     }
   });
 
