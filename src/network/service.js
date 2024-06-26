@@ -111,7 +111,8 @@ export async function createOrder({date, startTime, serviceId, userId, serviceDe
     user_id: userId,
     service_description: serviceDescription,
     notes: notes,
-    user_address_id: userAddressId
+    user_address_id: userAddressId,
+    env: "web"
   }
   return await axiosClient.post(`/order`, data);
 }
