@@ -94,6 +94,17 @@ export async function getOrders({ page, filter, limit }){
   return await axiosClient.get(`/order?limit=${limit??10}&page=${page}&status=${status}&admin=1`);
 }
 
+export async function searchOrders({ page, filter, limit, service, searchTerm }){
+  const status = filter=='all' ? '': filter;
+  const addedService = service=='all' ? []: [service];
+
+  const data = {
+    service_id: addedService,
+    user_id: searchTerm
+  }
+  return await axiosClient.post(`/order/search?limit=${limit??10}&page=${page}&status=${status}&admin=1`, data);
+}
+
 export async function getOrder({ orderId }){
   return await axiosClient.get(`/order/${orderId}`);
 }

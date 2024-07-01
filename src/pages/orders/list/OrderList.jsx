@@ -1,12 +1,12 @@
-import { ChromeOutlined, ExportOutlined, FilterOutlined, MobileFilled, MobileOutlined, PlusOutlined } from "@ant-design/icons";
-import { Box, Button, IconButton, MenuItem, Stack, Typography } from "@mui/material";
+import { ChromeOutlined, ExportOutlined, FilterOutlined, MobileFilled, MobileOutlined, PlusOutlined, SearchOutlined, ToolOutlined } from "@ant-design/icons";
+import { Box, Button, FormControl, IconButton, InputAdornment, MenuItem, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StripedDataGrid } from "../../../components/grid-styled";
 import { exportData, formatDate, formatTime } from "../../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
-import { approveOrder, getOrders, getServices, updateOrderStatus } from "../../../network/service";
+import { approveOrder, getOrders, getServices, searchOrders, updateOrderStatus } from "../../../network/service";
 import { ArrowLeftIcon, ArrowRightIcon } from "@mui/x-date-pickers";
 import SingleSelect from "../../../components/@extended/SingleSelect";
 import OptionsMenu from "./OptionsMenu";
@@ -16,12 +16,15 @@ const OrderList = () => {
   const navigate = useNavigate();
   const theme = useTheme();
 
+  const [searching, setSearching] = useState(false);
+
   const [orders, setOrders] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [services, setServices] = useState([]);
 
   const [page, setPage] = useState(0);
   const [filter, setFilter] = useState('all');
+  const [serviceFilter, setServiceFilter] = useState('all');
 
   const [start, setStart] = useState(1);
   const [end, setEnd] = useState(0);
@@ -30,7 +33,8 @@ const OrderList = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        if(page!=-1){
+        if(page!=-1 && !searching){
+          console.log('hello')
           const data = await Promise.all([
             getOrders({page: page+1, filter: filter}),
             getServices()
@@ -60,6 +64,11 @@ const OrderList = () => {
     setPage(0);
   }
 
+  const handleServiceFilter = (e)=>{
+    setServiceFilter(e);
+    setPage(0);
+    handleSearch(e);
+  }
 
   const onMoveNext=async()=>{
     if((start+9)<total){
@@ -77,17 +86,29 @@ const OrderList = () => {
     navigate("/orders/create");
   };
 
-  // const handleSearch = async (event) => {
-  //   const query = event.target.value.toLowerCase();
-  //   const filtered = data.filter(
-  //     (customer) =>
-  //       customer.name?.toLowerCase()?.includes(query) ||
-  //       customer.email?.toLowerCase()?.includes(query) ||
-  //       customer.phone?.includes(query) ||
-  //       customer.address?.toLowerCase()?.includes(query)
-  //   );
-  //   setOrders(filtered);
-  // };
+  const handleSearch = async (event) => {
+
+    if(event?.target?.value || serviceFilter){
+
+      setSearching(true);
+      setPage(0);
+      const res = await searchOrders({page: page+1, filter: filter, searchTerm: event?.target?.value??'', service: serviceFilter});
+
+      const orders = res.orders;
+      setOrders(orders.data);
+      setTotal(orders.total);
+
+      const s = (page*10)+1;
+      const isNextEnable = (s+9)<= orders.total ? true : false;
+
+      setStart(s)
+  
+      setEnd(isNextEnable ? (s+9) : orders.total);
+    }else{
+      setSearching(false);
+      setPage(0);
+    }
+  };
 
   const renderTextCell = (params) => (
     <Stack>
@@ -205,6 +226,37 @@ const OrderList = () => {
         <>
           <Stack direction={'row'} spacing={2} sx={{ mb: 3 }} alignItems={"center"}>
             <Box sx={{ width: '100%' }}>
+              <FormControl sx={{ width: { xs: '100%', md: 300 } }}>
+                <OutlinedInput
+                  id="header-search"
+                  startAdornment={
+                    <InputAdornment position="start" sx={{ mr: -0.5 }}>
+                      <SearchOutlined />
+                    </InputAdornment>
+                  }
+                  onChange={handleSearch}
+                  placeholder="Search by name or phone number"
+                  aria-describedby="header-search-text"
+                  inputProps={{
+                    'aria-label': 'weight'
+                  }}
+                />
+              </FormControl>
+            </Box>
+            <Box sx={{width: "210px"}}>
+              <SingleSelect
+                start={
+                  <ToolOutlined/>
+                }
+                handleChange={(e)=>handleServiceFilter(e)}
+                value={serviceFilter}
+                items={[
+                  <MenuItem value={''}>All</MenuItem>,
+                  ...services.map((e)=>{
+                    return <MenuItem value={e.id}>{e.name}</MenuItem>
+                  })
+                ]}
+              />
             </Box>
             <Box sx={{width: "210px"}}>
               <SingleSelect
