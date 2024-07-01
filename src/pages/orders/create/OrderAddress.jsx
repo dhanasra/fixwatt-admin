@@ -14,10 +14,12 @@ const OrderAddress =({
 
   const [checked, setChecked] = useState(false)
   const [disableSwitch, setDisableSwitch] = useState(false)
-  const userAddresses = user?.addresses ?? [];
+  const userAddresses = user?.addresses?.length>0 ? user?.addresses : [];
+
+  console.log(userAddresses)
 
   useEffect(() => {
-      setChecked(values.userId == null);
+      setChecked(userAddresses.length<=0);
       setDisableSwitch(values.userId == null);
   }, [values.userId]);
 

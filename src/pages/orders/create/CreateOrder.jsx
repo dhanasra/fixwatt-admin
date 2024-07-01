@@ -34,7 +34,10 @@ const CreateOrder = () => {
           getServices(),
           getTechnicians()
         ]);
-        setUsers(data[0].users);
+
+        const users = filterUsersWithValidAddresses(data[0].users);
+        console.log(users)
+        setUsers(users);
         setCategories(data[1].categories);
         setServices(data[2].services);
         setTechnicians(data[3].technicians);
@@ -45,6 +48,15 @@ const CreateOrder = () => {
 
     fetch();
   }, [])
+
+  function filterUsersWithValidAddresses(users) {
+      return users.map(user => {
+          return {
+              ...user,
+              addresses: user.addresses.filter(address => address.id !== null)
+          };
+      });
+  }
 
   useEffect(() => {
     if(category!=null){
@@ -186,6 +198,8 @@ const CreateOrder = () => {
                           setFieldValue("userId", user?.id)
                           setFieldValue("customer", user?.id)
                           setUser(user);
+
+                          console.log(user?.addresses?.length)
 
                           if(user?.addresses?.length>0){
                             setFieldValue("addressId", user?.addresses[0]?.id)
