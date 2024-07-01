@@ -88,7 +88,7 @@ const EditCustomer = () => {
               "Invalid phone number"
             )
             .required("Phone number is required"),
-          email: Yup.string().email("Must be a valid email").max(255),
+          email: Yup.string().email("Must be a valid email").max(255).nullable(),
           address: Yup.string().max(255),
         })}
         onSubmit={async(values, { setErrors, setStatus, setSubmitting, resetForm }) => {
