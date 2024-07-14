@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, InputLabel, OutlinedInput, Stack, TextField, Typography, FormHelperText, IconButton, Chip, MenuItem, Checkbox, FormControlLabel, Switch } from "@mui/material";
+import { Autocomplete, Box, Button, Divider, Grid,  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, InputLabel, OutlinedInput, Stack, TextField, Typography, FormHelperText, IconButton, Chip, MenuItem, Checkbox, FormControlLabel, Switch, CircularProgress } from "@mui/material";
 import MainCard from "../../../components/MainCard";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -22,6 +22,9 @@ const CreateOrder = () => {
   const [technicians, setTechnicians] = useState([]);
 
   const [user, setUser] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -123,6 +126,7 @@ const CreateOrder = () => {
             
             try {
 
+              setLoading(true); 
               let userId = values.userId;
 
               if(!userId){
@@ -156,12 +160,14 @@ const CreateOrder = () => {
 
               setStatus({ success: true });
               setSubmitting(false); 
+              setLoading(false); 
               
               navigate('/orders');
             } catch (err) {
               console.log(err)
               setStatus({ success: false });
               setErrors({ submit: err.message });
+              setLoading(false); 
               setSubmitting(false);
             }
           }}
@@ -418,8 +424,14 @@ const CreateOrder = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={4} direction={"row-reverse"} sx={{pt: 4, pb: 2}}>
-                    <Button disabled={isSubmitting} variant="contained" sx={{px: 5, py: 1.2}} type="submit">Create</Button>
-                    <Button disabled={isSubmitting} sx={{px: 5, py: 1.2, color: "red"}} >Cancel</Button>
+                    <Button disabled={loading} variant="contained" sx={{px: 5, py: 1.2}} type="submit">
+                      {
+                        loading
+                        ? <CircularProgress size="1rem"/>
+                        : 'Submit'
+                      }
+                    </Button>
+                    <Button disabled={loading} sx={{px: 5, py: 1.2, color: "red"}} >Cancel</Button>
                   </Stack>
                 </Grid>
               </Grid>
