@@ -59,6 +59,10 @@ const OrderList = () => {
     fetchOrders();
   }, [page, filter]);
 
+  useEffect(() => {
+    handleSearch(serviceFilter);
+  }, [serviceFilter]);
+
   const handleFilter = (e)=>{
     setFilter(e);
     setPage(0);
@@ -66,8 +70,6 @@ const OrderList = () => {
 
   const handleServiceFilter = (e)=>{
     setServiceFilter(e);
-    setPage(0);
-    handleSearch(e);
   }
 
   const onMoveNext=async()=>{
@@ -90,6 +92,8 @@ const OrderList = () => {
 
     if(event?.target?.value || serviceFilter){
 
+      console.log(serviceFilter)
+
       setSearching(true);
       setPage(0);
       const res = await searchOrders({page: page+1, filter: filter, searchTerm: event?.target?.value??'', service: serviceFilter});
@@ -105,6 +109,7 @@ const OrderList = () => {
   
       setEnd(isNextEnable ? (s+9) : orders.total);
     }else{
+      console.log('error')
       setSearching(false);
       setPage(0);
     }
