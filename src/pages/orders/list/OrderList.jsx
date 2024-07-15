@@ -1,4 +1,4 @@
-import { ChromeOutlined, ExportOutlined, FilterOutlined, MobileFilled, MobileOutlined, PlusOutlined, SearchOutlined, ToolOutlined } from "@ant-design/icons";
+import { ChromeOutlined, DeleteOutlined, ExportOutlined, FilterOutlined, MobileFilled, MobileOutlined, PlusOutlined, SearchOutlined, ToolOutlined } from "@ant-design/icons";
 import { Box, Button, FormControl, IconButton, InputAdornment, MenuItem, OutlinedInput, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,9 +17,11 @@ const OrderList = () => {
   const theme = useTheme();
 
   const [searching, setSearching] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+
 
   const [orders, setOrders] = useState([]);
-  const [selectedContacts, setSelectedContacts] = useState([]);
+  const [selectedOrders, setSelectedOrders] = useState([]);
   const [services, setServices] = useState([]);
 
   const [page, setPage] = useState(0);
@@ -32,6 +34,8 @@ const OrderList = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      console.log(page)
+      console.log(searching)
       try {
         if(page!=-1 && !searching){
           console.log('hello')
@@ -63,10 +67,25 @@ const OrderList = () => {
     handleSearch(serviceFilter);
   }, [serviceFilter]);
 
+  useEffect(() => {
+    if(selectedOrders && selectedOrders.length>0){
+      setShowDelete(true);
+    }else{
+      setShowDelete(false);
+    }
+  }, [selectedOrders]);
+
+  const handleDeleteOrders = ()=>{
+
+    
+
+  }
+
   const handleFilter = (e)=>{
     setFilter(e);
     setPage(0);
   }
+
 
   const handleServiceFilter = (e)=>{
     setServiceFilter(e);
@@ -108,6 +127,7 @@ const OrderList = () => {
       setStart(s)
   
       setEnd(isNextEnable ? (s+9) : orders.total);
+      setSearching(false);
     }else{
       console.log('error')
       setSearching(false);
@@ -248,6 +268,11 @@ const OrderList = () => {
                 />
               </FormControl>
             </Box>
+            <IconButton sx={{background: "#efefef", display: `${showDelete ? 'visible': 'none'}`, border: "1px solid #B0B0BC", height: "39px", width: "39px"}} onClick={
+              ()=>handleDeleteOrders()}
+            >
+              <DeleteOutlined/>
+            </IconButton>
             <Box sx={{width: "210px"}}>
               <SingleSelect
                 start={
@@ -325,9 +350,10 @@ const OrderList = () => {
               checkboxSelection
               disableRowSelectionOnClick
               onRowSelectionModelChange={(selected) => {
-                setSelectedContacts(selected);
+                console.log(selected)
+                setSelectedOrders(selected);
               }}
-              rowSelectionModel={selectedContacts}
+              rowSelectionModel={selectedOrders}
             />
             <Box
               sx={{
