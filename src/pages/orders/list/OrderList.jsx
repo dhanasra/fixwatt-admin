@@ -6,7 +6,7 @@ import { StripedDataGrid } from "../../../components/grid-styled";
 import { exportData, formatDate, formatTime } from "../../../utils/utils";
 import { useTheme } from "@emotion/react";
 import MainCard from "../../../components/MainCard";
-import { approveOrder, getOrders, getServices, searchOrders, updateOrderStatus } from "../../../network/service";
+import { approveOrder, deleteManyOrders, getOrders, getServices, searchOrders, updateOrderStatus } from "../../../network/service";
 import { ArrowLeftIcon, ArrowRightIcon } from "@mui/x-date-pickers";
 import SingleSelect from "../../../components/@extended/SingleSelect";
 import OptionsMenu from "./OptionsMenu";
@@ -25,6 +25,7 @@ const OrderList = () => {
   const [services, setServices] = useState([]);
 
   const [page, setPage] = useState(0);
+  const [refresh, setRefresh] = useState(false);
   const [filter, setFilter] = useState('all');
   const [serviceFilter, setServiceFilter] = useState('all');
 
@@ -37,7 +38,8 @@ const OrderList = () => {
       console.log(page)
       console.log(searching)
       try {
-        if(page!=-1 && !searching){
+        if((page!=-1 && !searching) || refresh){
+          setRefresh(false);
           console.log('hello')
           const data = await Promise.all([
             getOrders({page: page+1, filter: filter}),
@@ -61,7 +63,7 @@ const OrderList = () => {
     };
 
     fetchOrders();
-  }, [page, filter]);
+  }, [page, filter, refresh]);
 
   useEffect(() => {
     handleSearch(serviceFilter);
@@ -75,10 +77,11 @@ const OrderList = () => {
     }
   }, [selectedOrders]);
 
-  const handleDeleteOrders = ()=>{
-
-    
-
+  const handleDeleteOrders = async()=>{
+    if(selectedOrders.length>0){
+      await deleteManyOrders({ ids: selectedOrders });
+      setRefresh(true);
+    } 
   }
 
   const handleFilter = (e)=>{

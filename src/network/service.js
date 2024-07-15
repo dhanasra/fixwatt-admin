@@ -109,6 +109,10 @@ export async function getOrder({ orderId }){
   return await axiosClient.get(`/order/${orderId}`);
 }
 
+export async function deleteManyOrders({ ids }){
+  return await axiosClient.delete(`/order`, { data: { ids } });
+}
+
 export async function deleteOrder({ orderId }){
   return await axiosClient.delete(`/order/${orderId}`);
 }
