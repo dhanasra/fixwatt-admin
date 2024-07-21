@@ -3,6 +3,7 @@ import MainRoutes from "./MainRoutes";
 import AuthRoutes from "./LoginRoutes";
 import { checkCookies } from "../utils/utils";
 import { useEffect } from "react";
+import CustomerRoutes from "./CustomerRoutes";
 
 const CheckAuth = ({ children }) => {
     const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function AppRoutes() {
     return (
         <CheckAuth>
             {
-                useRoutes([AuthRoutes, MainRoutes])
+                useRoutes([AuthRoutes, MainRoutes, CustomerRoutes])
             }
         </CheckAuth>
     );
