@@ -1,28 +1,35 @@
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import CustomerAppBar from "../../../components/customer/CustomerAppBar";
-import MainCard from "../../../components/MainCard";
 import { useEffect, useState } from "react";
-import { getCategories } from "../../../network/service";
-import { formatImage } from "../../../utils/utils";
+import { getCategories, getServices } from "../../../network/service";
 import CategoriesGrid from "../../../components/customer/CategoriesGrid";
 import ImagesGrid from "../../../components/customer/ImagesGrid";
-import { GrUserWorker } from "react-icons/gr";
-import { GroupOutlined, UserOutlined } from "@ant-design/icons";
-import { RiToolsLine } from "react-icons/ri";
-import { BsPeopleFill, BsTools } from "react-icons/bs";
-import { FaPeopleGroup, FaUser } from "react-icons/fa6";
-import { HiOutlineUser, HiOutlineUsers } from "react-icons/hi2";
-import { FaTools } from "react-icons/fa";
+import WorkCount from "../../../components/customer/WorkCount";
+import HorizontalScroller from "../../../components/HorizontalScroller";
+import { groupByCategory } from "../../../utils/utils";
+import MainCard from "../../../components/MainCard";
+import Footer from "../../../components/customer/Footer";
+import Contact from "../../../components/customer/Contact";
+import Faq from "../../../components/customer/Faq";
+import Testimonials from "../../../components/customer/Testimonials";
 
 const CustomerDashboard = ()=>{
 
   const [categories, setCategories] = useState([]);
+  const [servicesGroup, setServicesGroup] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getCategories();
-        setCategories(data.categories);
+        const data = await Promise.all([
+          getCategories(),
+          getServices()
+        ]);
+        setCategories(data[0].categories);
+        const services = data[1].services;        
+        const serviceGroup = groupByCategory(services, "category_name")
+        console.log(serviceGroup)
+        setServicesGroup(serviceGroup);
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
@@ -48,35 +55,102 @@ const CustomerDashboard = ()=>{
           <ImagesGrid/>
         </Grid> 
       </Grid>
-      <Grid container alignItems={"center"} justifyContent={"center"} spacing={2} sx={{background: "rgba(245,245,245,0.80)", p: 2}}>
-        <Grid item xs={3}>
-          <Stack direction={"row"} justifyContent={"center"} alignItems={"center"} spacing={3}>
-            <FaUser style={{fontSize: "40px"}}/>
-            <Stack direction={"column"}>
-              <Typography variant="h3">50+</Typography>
-              <Typography variant="body1">Technicians</Typography>
+      <WorkCount/>
+      {
+        Object.keys(servicesGroup).slice(0, 5).map((key)=>{
+
+          return (
+            <Stack direction={"column"} paddingX={8} paddingY={2} spacing={3}>
+              <Typography variant="h3" fontWeight={600}>{key}</Typography>
+              <HorizontalScroller>
+                {
+                  servicesGroup[key].map((i)=>{
+                    return (
+                        <MainCard >
+                          <Stack >
+                            <Typography variant="h6" fontSize={"15px"} fontWeight={500}>{i.name}</Typography>
+                            <img src={i.image} width={"180px"} height={"180px"} style={{padding: "20px"}}/>
+                          </Stack>
+                        </MainCard>
+                    )
+                  })
+                }
+              </HorizontalScroller>
             </Stack>
-          </Stack>
-        </Grid>
-        <Grid item xs={3}>
-          <Stack direction={"row"} justifyContent={"center"} alignItems={"center"} spacing={3}>
-            <BsPeopleFill style={{fontSize: "50px"}}/>
-            <Stack direction={"column"}>
-              <Typography variant="h3">1450+</Typography>
-              <Typography variant="body1">Customers</Typography>
+          )
+        })
+      }
+
+      <MainCard sx={{margin: "50px 60px"}}>
+        <a href="https://play.google.com/store/apps/details?id=com.spiderlingz.inses" target="_blank">
+          <img src="https://fixwatt.com/wp-content/uploads/2022/09/App-Pages-Palay-store.jpg" width="100%" alt="Banner Steps"/> 
+        </a>
+      </MainCard>
+      
+      {
+        categories.length>5 && Object.keys(servicesGroup).slice(5, 10).map((key)=>{
+
+          return (
+            <Stack direction={"column"} paddingX={8} paddingY={2} spacing={3}>
+              <Typography variant="h3" fontWeight={600}>{key}</Typography>
+              <HorizontalScroller>
+                {
+                  servicesGroup[key].map((i)=>{
+                    return (
+                        <MainCard>
+                          <Stack >
+                            <Typography variant="h6" fontSize={"16px"} fontWeight={500}>{i.name}</Typography>
+                            <img src={i.image} width={"150px"} height={"150px"} style={{paddingTop: "20px"}}/>
+                          </Stack>
+                        </MainCard>
+                    )
+                  })
+                }
+              </HorizontalScroller>
             </Stack>
-          </Stack>
-        </Grid>
-        <Grid item xs={3}>
-          <Stack direction={"row"} justifyContent={"center"} alignItems={"center"} spacing={3}>
-            <FaTools style={{fontSize: "40px"}}/>
-            <Stack direction={"column"}>
-              <Typography variant="h3">4000+</Typography>
-              <Typography variant="body1">Services</Typography>
+          )
+        })
+      }
+
+      <MainCard sx={{margin: "50px 60px"}} >
+          <img src="https://fixwatt.com/wp-content/uploads/2022/09/Fixwatt-Customer-Process-chart.jpg" width="100%" alt="Banner Steps"/>
+      </MainCard>
+
+
+       {
+        categories.length>10 && Object.keys(servicesGroup).slice(10, categories.length).map((key)=>{
+
+          return (
+            <Stack direction={"column"} paddingX={8} paddingY={2} spacing={3}>
+              <Typography variant="h3" fontWeight={600}>{key}</Typography>
+              <HorizontalScroller>
+                {
+                  servicesGroup[key].map((i)=>{
+                    return (
+                        <MainCard>
+                          <Stack >
+                            <Typography variant="h6" fontSize={"17px"} fontWeight={500}>{i.name}</Typography>
+                            <img src={i.image} width={"150px"} height={"150px"} style={{paddingTop: "20px"}}/>
+                          </Stack>
+                        </MainCard>
+                    )
+                  })
+                }
+              </HorizontalScroller>
             </Stack>
-          </Stack>
-        </Grid>
-      </Grid>
+          )
+        })
+      }
+
+      <Testimonials/>
+
+      <Contact/>
+
+      <Faq/>
+
+      <Divider/>
+
+      <Footer/>
     </>
   )
 }

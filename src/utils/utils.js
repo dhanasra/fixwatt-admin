@@ -69,3 +69,14 @@ export const exportData = async (data, filename, sheetName) => {
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName ?? 'Sheet1');
   XLSX.writeFile(workbook, filename + '.xlsx');
 };
+
+export const groupByCategory = (data, field) => {
+  return data.reduce((acc, item) => {
+    const key = item[field];
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(item);
+    return acc;
+  }, {});
+};
