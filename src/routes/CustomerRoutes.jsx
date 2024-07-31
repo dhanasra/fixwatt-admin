@@ -1,6 +1,6 @@
-import MainLayout from "../layout/main/MainLayout";
 import MinimalLayout from "../layout/minimal/MinimalLayout";
 import CustomerDashboard from "../pages/customer-app/dashboard/CustomerDashboard";
+import ServiceAddScreen from "../pages/customer-app/service/ServiceAddScreen";
 
 const CustomerRoutes = {
     path: '/',
@@ -9,6 +9,10 @@ const CustomerRoutes = {
         {
             path: '/customer',
             element: <CustomerDashboard/>
+        },
+        {
+            path: '/c/service',
+            element: <ServiceAddScreen/>
         }
     ]
 }

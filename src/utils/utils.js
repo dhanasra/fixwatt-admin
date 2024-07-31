@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { useLocation } from "react-router-dom";
 import * as XLSX from 'xlsx';
 
 export function formatDate(dateString) {
@@ -79,4 +80,8 @@ export const groupByCategory = (data, field) => {
     acc[key].push(item);
     return acc;
   }, {});
+};
+
+export const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
 };

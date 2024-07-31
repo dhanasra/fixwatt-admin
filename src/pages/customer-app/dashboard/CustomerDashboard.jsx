@@ -12,11 +12,14 @@ import Footer from "../../../components/customer/Footer";
 import Contact from "../../../components/customer/Contact";
 import Faq from "../../../components/customer/Faq";
 import Testimonials from "../../../components/customer/Testimonials";
+import { useNavigate } from "react-router-dom";
 
 const CustomerDashboard = ()=>{
 
   const [categories, setCategories] = useState([]);
   const [servicesGroup, setServicesGroup] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +69,7 @@ const CustomerDashboard = ()=>{
                 {
                   servicesGroup[key].map((i)=>{
                     return (
-                        <MainCard >
+                        <MainCard onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
                           <Stack >
                             <Typography variant="h6" fontSize={"15px"} fontWeight={500}>{i.name}</Typography>
                             <img src={i.image} width={"180px"} height={"180px"} style={{padding: "20px"}}/>
@@ -97,13 +100,13 @@ const CustomerDashboard = ()=>{
                 {
                   servicesGroup[key].map((i)=>{
                     return (
-                        <MainCard>
+                        <MainCard onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
                           <Stack >
                             <Typography variant="h6" fontSize={"16px"} fontWeight={500}>{i.name}</Typography>
                             <img src={i.image} width={"150px"} height={"150px"} style={{paddingTop: "20px"}}/>
                           </Stack>
                         </MainCard>
-                    )
+                    ) 
                   })
                 }
               </HorizontalScroller>
@@ -127,7 +130,7 @@ const CustomerDashboard = ()=>{
                 {
                   servicesGroup[key].map((i)=>{
                     return (
-                        <MainCard>
+                        <MainCard onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
                           <Stack >
                             <Typography variant="h6" fontSize={"17px"} fontWeight={500}>{i.name}</Typography>
                             <img src={i.image} width={"150px"} height={"150px"} style={{paddingTop: "20px"}}/>

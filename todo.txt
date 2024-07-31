@@ -1,2 +1,2 @@
-
-3. Reviews
+1. service info screen
+2. service booking screen

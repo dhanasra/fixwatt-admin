@@ -210,6 +210,10 @@ export async function getCategories(){
   return await axiosClient.get(`/category`);
 }
 
+export async function getCategory(id){
+  return await axiosClient.get(`/category/${id}`);
+}
+
 export async function deleteCategory(id){
   return await axiosClient.delete(`/category/${id}`);
 }
