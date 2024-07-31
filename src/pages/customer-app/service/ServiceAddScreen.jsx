@@ -12,6 +12,7 @@ import CHECK from '../../../assets/check.png'
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem, removeItem } from '../../../store/reducers/cart';
 import { CheckOutlined, TagFilled, TagOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 
 function ServiceAddScreen() {
@@ -19,6 +20,7 @@ function ServiceAddScreen() {
   const [ category, setCategory ] = useState();
   const [ services, setServices ] = useState([])
   const query = useQuery();
+  const navigate = useNavigate();
 
   const { items } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
@@ -127,7 +129,7 @@ function ServiceAddScreen() {
                       </Stack>
                     </Box>
 
-                    <Button variant="contained" sx={{background: "black"}}>
+                    <Button variant="contained" sx={{background: "black"}} onClick={()=>navigate('/c/checkout')}>
                       View Cart
                     </Button>
                   </Stack>
