@@ -9,6 +9,9 @@ import CART from '../../../assets/cart.png'
 import PRICE from '../../../assets/price.png'
 import SAFETY from '../../../assets/safety.png'
 import CHECK from '../../../assets/check.png'
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem, removeItem } from '../../../store/reducers/cart';
+import { CheckOutlined, TagFilled, TagOutlined } from '@ant-design/icons';
 
 
 function ServiceAddScreen() {
@@ -16,6 +19,9 @@ function ServiceAddScreen() {
   const [ category, setCategory ] = useState();
   const [ services, setServices ] = useState([])
   const query = useQuery();
+
+  const { items } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
 
   useEffect(()=>{
 
@@ -52,6 +58,10 @@ function ServiceAddScreen() {
           <MainCard>
             {
               services?.map((service)=>{
+
+                const cartItem = items.find((i)=>i.id==service.id);
+                console.log(cartItem)
+
                 return (
                   <Stack direction={"column"} key={service.id} sx={{mb: 2}}>
                     <Stack direction={"row"}  sx={{justifyContent: "space-between"}} alignItems={"center"}>
@@ -62,7 +72,19 @@ function ServiceAddScreen() {
                           <Typography variant="h5" fontWeight={500}>{`\u20b9 ${service.price}`}</Typography>
                         </Stack>
                       </Stack>
-                      <Button variant="outlined" sx={{height: "30px"}}>Add</Button>
+                      {
+                        cartItem
+                        ? (
+                          <Stack direction={"row"} alignItems={"center"} spacing={2}>
+                            <Button onClick={()=>dispatch(removeItem(service))} variant="outlined" sx={{height: "30px", minWidth: "20px"}}>-</Button>
+                            <Typography variant='h5' fontWeight={"500"}>{cartItem.count}</Typography>
+                            <Button onClick={()=>dispatch(addItem(service))} variant="outlined" sx={{height: "30px", minWidth: "20px"}}>+</Button>
+                          </Stack>
+                        )
+                        : (
+                          <Button onClick={()=>dispatch(addItem(service))} variant="outlined" sx={{height: "30px"}}>Add</Button>
+                        )
+                      }
                     </Stack>
                     <Divider sx={{height: "20px"}}/>
                   </Stack>
@@ -74,10 +96,49 @@ function ServiceAddScreen() {
         <Grid item xs={4} >
           <Stack direction={"column"} spacing={2} sx={{position: "sticky", top: "100px"}}>
             <MainCard>
-              <Stack direction={"column"} sx={{my: 2}} spacing={1} justifyContent={"center"} alignItems={"center"}>
-                <Box component={"img"} src={CART} width={40} height={40}/>
-                <Typography sx={{color: "rgb(117, 117, 117)"}}>No items in your cart</Typography>
-              </Stack>
+              {
+                items.length>0
+                ? (
+                  <Stack spacing={2}>
+                    <Typography variant="h5">Cart</Typography>
+                    <Stack direction={"column"} spacing={1}>
+                      {
+                        items.map((i)=>{
+                          return (
+                            <Stack direction={"row"} justifyContent={"space-between"}>
+                              <Typography>{i.name}</Typography>
+                              <Typography>{`\u20b9${i.price} x ${i.count}`}</Typography>
+                            </Stack>
+                          )
+                        })
+                      }
+                    </Stack>
+
+                    <Box
+                      sx={{
+                        p: 1,
+                        color: "green",
+                        background: "rgb(237, 247, 242)"
+                      }}
+                    >
+                      <Stack direction={"row"} spacing={1} alignItems={"center"}>
+                        <TagFilled/>
+                        <Typography>Material cost will be additional, if any.</Typography>
+                      </Stack>
+                    </Box>
+
+                    <Button variant="contained" sx={{background: "black"}}>
+                      View Cart
+                    </Button>
+                  </Stack>
+                )
+                : (
+                  <Stack direction={"column"} sx={{my: 2}} spacing={1} justifyContent={"center"} alignItems={"center"}>
+                    <Box component={"img"} src={CART} width={40} height={40}/>
+                    <Typography sx={{color: "rgb(117, 117, 117)"}}>No items in your cart</Typography>
+                  </Stack>
+                )
+              }
             </MainCard>
             <MainCard>
               <Stack direction={"column"} spacing={2}>
