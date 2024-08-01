@@ -7,6 +7,7 @@ export function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
+
 export function formatDateOnly(dateString) {
   const options = { day: '2-digit' };
   return new Date(dateString).toLocaleDateString('en-US', options);

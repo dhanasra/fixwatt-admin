@@ -9,6 +9,7 @@ import AddressPicker from '../../../components/dialogs/AddressPicker';
 import SlotPicker from '../../../components/dialogs/SlotPicker';
 import CreateAddressDialog from '../../../components/dialogs/CreateAddressDialog';
 import { formatDate } from '../../../utils/utils';
+import { bookService } from '../../../network/service';
 
 function CheckoutScreen() {
 

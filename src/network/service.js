@@ -136,6 +136,19 @@ export async function createOrder({date, startTime, serviceId, userId, serviceDe
   return await axiosClient.post(`/order`, data);
 }
 
+export async function bookService({date, startTime, serviceId, userId, userAddressId}){
+  const data = {
+    date,
+    start_time: startTime,
+    quantity: 1,
+    service_id: serviceId,
+    user_id: userId,
+    user_address_id: userAddressId,
+    env: "web"
+  }
+  return await axiosClient.post(`/order`, data);
+}
+
 export async function editOrder({orderId, date, startTime, address, pincode, serviceId, serviceDescription, technicianId, notes, alternativePhone}){
   const data = {
     date,
