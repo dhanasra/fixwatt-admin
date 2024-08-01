@@ -19,6 +19,10 @@ class DB {
     }
     
   }
+
+  static updateUser(user) {
+    Cookies.set('user', JSON.stringify(user));
+  }
 }
 
 export default DB;

@@ -20,6 +20,7 @@ function CheckoutScreen() {
   const [ selectedDate, setSelectedDate ] = useState(null);
   const [ selectedTime, setSelectedTime ] = useState(null);
 
+  const [ editAddress, setEditAddress ] = useState(null);
   const [ pickAddress, setPickAddress ] = useState(false);
   const [ openAddress, setOpenAddress ] = useState(false);
   const [ pickSlot, setPickSlot ] = useState(false);
@@ -30,12 +31,48 @@ function CheckoutScreen() {
 
   return (
     <>
-      <CreateAddressDialog open={openAddress} onCancel={()=>setOpenAddress(false)}/>
+      <CreateAddressDialog 
+        userId={user?.id} 
+        open={openAddress} 
+        address={editAddress}
+        onCancel={()=>setOpenAddress(false)}
+        onUpdated={(ua)=>{
+          const updatedAddress = user?.addresses.map((a)=>{
+            if(a.id==ua.id){
+              return ua;
+            }
+            return a;
+          })
+          const updated = { ...user, addresses: updatedAddress };
+          DB.updateUser(updated);
+          setUser(updated);
+          setOpenAddress(false);
+          setPickAddress(false);
+          setSelectedAddress(ua);
+          setPickSlot(true);
+        }}
+        onCreated={(ua)=>{
+          const updated = { ...user, addresses: [ ...user?.addresses, ua ] };
+          DB.updateUser(updated);
+          setUser(updated);
+          setOpenAddress(false);
+          setPickAddress(false);
+          setSelectedAddress(ua);
+          setPickSlot(true);
+        }}  
+      />
       <AddressPicker 
         value={selectedAddress}
         open={pickAddress} 
         addresses={user?.addresses} 
-        onNewAddress={()=>setOpenAddress(true)}
+        onNewAddress={()=>{
+          setEditAddress(null);
+          setOpenAddress(true)
+        }}
+        onEdit={(a)=>{
+          setEditAddress(a);
+          setOpenAddress(true)
+        }}
         onProceed={(a)=>{
           setSelectedAddress(a);
           setPickAddress(false);

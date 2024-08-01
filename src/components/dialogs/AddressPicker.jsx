@@ -1,12 +1,22 @@
-import { Box, Button, Dialog, Divider, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack, Typography } from "@mui/material";
+import { Box, Button, Dialog, Divider, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, Radio, RadioGroup, Stack, Typography } from "@mui/material";
 import MainCard from "../MainCard";
 import { useEffect, useState } from "react";
-import { getUserById } from "../../network/service";
+import { getUserById, removeUserAddress } from "../../network/service";
+import OptionsMenu from "../../pages/customer-app/checkout/OptionsMenu";
+import DB from "../../network/db";
 
-const AddressPicker =({open, addresses, value, onCancel, onProceed, onNewAddress})=>{
+const AddressPicker =({open, addresses, value, onCancel, onEdit, onProceed, onNewAddress})=>{
 
-    const [ uas, setUas ] = useState(null)
-    const [ address, setAddress ] = useState(null)
+    const [ user, setUser ] = useState(DB.getUser())
+    const [ address, setAddress ] = useState(value)
+
+    const deleteAddress =async(a)=>{
+      await removeUserAddress(a.id);
+      const updatedAddresses = user?.addresses.filter(address => address.id !== a.id);
+      const updated = { ...user, addresses: [ ...updatedAddresses ] };
+      DB.updateUser(updated);
+      setUser(updated);
+    }
 
     return(
     <Dialog open={open}>
@@ -25,23 +35,33 @@ const AddressPicker =({open, addresses, value, onCancel, onProceed, onNewAddress
               <RadioGroup
                 aria-label="options"
                 name="options"
-                value={value?.id}
+                value={address?.id}
               >
                 {
-                  addresses?.map((a)=>{
-                    return <FormControlLabel
-                      value={a.id} 
-                      onChange={(v)=>{
-                        setAddress(a)
-                      }}
-                      control={<Radio />} 
-                      label={
-                        <>
-                          <Typography variant="h5" fontSize={"14px"}>{a.type}</Typography>
-                          <Typography>{`${a.address}, ${a.pincode}`}</Typography>
-                        </>
-                      } 
-                    />
+                  user.addresses?.map((a)=>{
+                    return <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+                        <FormControlLabel
+                        value={a.id} 
+                        sx={{my: 1}}
+                        onChange={(v)=>{
+                          setAddress(a)
+                        }}
+                        control={<Radio />} 
+                        label={
+                          <>
+                            <Typography variant="h5" fontSize={"14px"}>{a.type}</Typography>
+                            <Typography>{`${a.address}, ${a.pincode}`}</Typography>
+                          </>
+                        } 
+                      />
+                      <OptionsMenu onClick={async(v)=>{
+                        if(v=="delete"){
+                          await deleteAddress(a);
+                        }else if(v=="edit"){
+                          onEdit(a);
+                        }
+                      }}/>
+                    </Stack>
                   })
                 }
               </RadioGroup>

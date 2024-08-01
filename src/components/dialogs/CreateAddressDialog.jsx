@@ -1,25 +1,22 @@
 import { Box, Button, Dialog, Divider, FormControl, FormControlLabel, FormHelperText, FormLabel, IconButton, InputAdornment, InputLabel, OutlinedInput, Radio, RadioGroup, Stack, Typography } from "@mui/material";
 import MainCard from "../MainCard";
 import { useEffect, useState } from "react";
-import { getUserById } from "../../network/service";
-import { Field, Formik } from "formik";
+import { createUserAddress, getUserById, updateUserAddress } from "../../network/service";
+import { Field, Form, Formik } from "formik";
 import * as Yup from 'yup';
 import { CloseOutlined } from "@ant-design/icons";
 
-const CreateAddressDialog =({open, addresses, onCancel, onOk})=>{
+const CreateAddressDialog =({open, address, userId, onCancel, onCreated, onUpdated})=>{
 
-    const [ uas, setUas ] = useState(null)
-    const [ addressType, setAddressType ] = useState("home")
-
-    console.log(addresses)
+    const [ addressType, setAddressType ] = useState( address?.type ?? "home")
 
     return(
     <Dialog open={open}>
       <Formik 
         initialValues={{
-          address: '',
-          pincode: '',
-          addressType: 'Home'
+          address: address?.address,
+          pincode: address?.pincode,
+          addressType: address?.type ?? 'Home'
         }}
         validationSchema={Yup.object().shape({
           address: Yup.string().required('Address is required'),
@@ -28,7 +25,18 @@ const CreateAddressDialog =({open, addresses, onCancel, onOk})=>{
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            
+            if(address){
+              const updated = await updateUserAddress({
+                userId, addressId: address.id, address: values.address, pincode: values.pincode, type: values.addressType, alternative_phone: ''
+              })
+              onUpdated(updated.userAddress);
+
+            }else{
+              const created = await createUserAddress({
+                userId, address: values.address, pincode: values.pincode, type: values.addressType, alternative_phone: ''
+              })
+              onCreated(created.userAddress);
+            }
 
             setStatus({ success: true });
             setSubmitting(false);
@@ -41,13 +49,14 @@ const CreateAddressDialog =({open, addresses, onCancel, onOk})=>{
       >
         {
           (({ errors, touched, isSubmitting })=>(
+            <Form noValidate>
             <MainCard
                 borderRadius={1}
                 headerBorder
                 sx={{maxWidth: "460px", minWidth: "400px" }}
                 title={
                   <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-                    <Typography variant="h4">Add Address</Typography>
+                    <Typography variant="h4">{ `${address!=null ? "Edit Address": "Add Address"}` }</Typography>
                     <IconButton onClick={()=>onCancel()}>
                       <CloseOutlined/>
                     </IconButton>
@@ -89,9 +98,10 @@ const CreateAddressDialog =({open, addresses, onCancel, onOk})=>{
                           setAddressType("home")
                         }}
                         sx={
-                          addressType!="home"
-                          ? { color: "grey", border: "1px solid grey", opacity: 0.5, fontWeight: 600 }
-                          : { fontWeight: 600  }
+                          addressType=="home"
+                          ? { fontWeight: 600  }
+                          : { color: "grey", border: "1px solid grey", opacity: 0.5, fontWeight: 600 }
+                          
                         }
                         >Home</Button>
                       <Button 
@@ -100,9 +110,10 @@ const CreateAddressDialog =({open, addresses, onCancel, onOk})=>{
                           setAddressType("other")
                         }}
                         sx={
-                          addressType!="other"
-                          ? { color: "grey", border: "1px solid grey", opacity: 0.5, fontWeight: 600  }
-                          : { fontWeight: 600  }
+                          addressType!="home"
+                          ? { fontWeight: 600  }
+                          : { color: "grey", border: "1px solid grey", opacity: 0.5, fontWeight: 600  }
+                           
                         }
                         >Other</Button>
                     </Stack>
@@ -120,9 +131,10 @@ const CreateAddressDialog =({open, addresses, onCancel, onOk})=>{
                   </Stack>
                 </Stack>
                 <Box/>
-                <Button variant="contained">Save and proceed to slots</Button>
+                <Button disabled={isSubmitting} type="submit" variant="contained">Save and proceed to slots</Button>
               </Stack>
             </MainCard>
+            </Form>
           ))
         }
       </Formik>
