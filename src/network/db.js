@@ -2,11 +2,11 @@ import Cookies from "js-cookie";
 
 class DB {
 
-  static initialize(data) {
+  static initialize(data, user) {
 
     Cookies.set('token', data.token.token);
     Cookies.set('refreshToken', data.token.refreshToken);
-    Cookies.set('user', JSON.stringify(data.user));
+    Cookies.set('user', JSON.stringify(user));
   }
 
   static getUser() {

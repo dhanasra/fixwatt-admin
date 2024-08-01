@@ -5,7 +5,7 @@ import { Button, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, O
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import AuthWrapper from '../AuthWrapper';
 import AnimateButton from '../../../components/@extended/AnimateButton';
-import { getOrders, login } from '../../../network/service';
+import { getOrders, getUserById, login } from '../../../network/service';
 import { useNavigate } from 'react-router-dom';
 import DB from '../../../network/db';
 
@@ -34,7 +34,9 @@ const Login = () => {
           try {
             
             const data = await login({phone: values.phone, password: values.password});
-            DB.initialize(data);
+            const uData = await getUserById(data.user.id)
+
+            DB.initialize(data, uData.user);
 
             setStatus({ success: true });
             setSubmitting(false);
