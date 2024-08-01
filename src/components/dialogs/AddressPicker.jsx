@@ -3,7 +3,7 @@ import MainCard from "../MainCard";
 import { useEffect, useState } from "react";
 import { getUserById } from "../../network/service";
 
-const AddressPicker =({open, addresses, onCancel, onProceed, onNewAddress})=>{
+const AddressPicker =({open, addresses, value, onCancel, onProceed, onNewAddress})=>{
 
     const [ uas, setUas ] = useState(null)
     const [ address, setAddress ] = useState(null)
@@ -25,6 +25,7 @@ const AddressPicker =({open, addresses, onCancel, onProceed, onNewAddress})=>{
               <RadioGroup
                 aria-label="options"
                 name="options"
+                value={value?.id}
               >
                 {
                   addresses?.map((a)=>{

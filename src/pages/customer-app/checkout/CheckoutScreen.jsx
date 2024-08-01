@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import CustomerAppBar from '../../../components/customer/CustomerAppBar'
-import { Box, Button, Divider, Grid, Icon, ListItem, ListItemIcon, ListItemText, Stack, Typography } from '@mui/material'
-import { CheckOutlined, ClockCircleOutlined, EnvironmentOutlined, MessageOutlined, MobileOutlined, PhoneFilled, PhoneOutlined, TagFilled } from '@ant-design/icons'
+import { Box, Button, Divider, Grid, Icon, ListItem, Stack, Typography } from '@mui/material'
+import { CheckOutlined, ClockCircleOutlined, EnvironmentOutlined, MessageOutlined, TagFilled } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux';
 import MainCard from '../../../components/MainCard';
 import DB from '../../../network/db';
-import { LuLocate } from 'react-icons/lu';
-import { BiLocationPlus } from 'react-icons/bi';
-import { CiLocationOn } from 'react-icons/ci';
-import { FaLocationPin, FaMapLocation } from 'react-icons/fa6';
 import AddressPicker from '../../../components/dialogs/AddressPicker';
 import SlotPicker from '../../../components/dialogs/SlotPicker';
 import CreateAddressDialog from '../../../components/dialogs/CreateAddressDialog';
@@ -36,6 +32,7 @@ function CheckoutScreen() {
     <>
       <CreateAddressDialog open={openAddress} onCancel={()=>setOpenAddress(false)}/>
       <AddressPicker 
+        value={selectedAddress}
         open={pickAddress} 
         addresses={user?.addresses} 
         onNewAddress={()=>setOpenAddress(true)}
@@ -75,14 +72,14 @@ function CheckoutScreen() {
                       </ListItem>
                       <Divider/>
                       <ListItem>
-                        <Stack direction={"row"} spacing={2}>
+                        <Stack direction={"row"} width={"100%"} spacing={2} alignItems={"center"}>
                           <Icon sx={{ background: "#f0f0f0", width: "40px", height: "40px", borderRadius: "4px" }}>
                             <EnvironmentOutlined style={{fontSize: "16px"}}/>
                           </Icon>
                           {
                             selectedAddress
-                            ? (
-                              <Stack spacing={0.5}>
+                            ? ( 
+                              <Stack width={"100%"} spacing={0.5}>
                                 <Typography variant="h5" fontWeight={600} fontSize={15}>Address</Typography>
                                 <Typography>{`${selectedAddress.type} - ${selectedAddress.address}, ${selectedAddress.pincode}`}</Typography>
                               </Stack>
@@ -91,11 +88,14 @@ function CheckoutScreen() {
                               <Button onClick={()=>setPickAddress(true)} variant="contained">Select an address</Button>
                             )
                           }
+                          {
+                            selectedAddress && <Button onClick={()=>setPickAddress(true)} variant="outlined">Edit</Button>
+                          }
                         </Stack>
                       </ListItem>
                       <Divider/>
                       <ListItem sx={{opacity: selectedAddress ? 1 : 0.5}}>
-                        <Stack direction={"row"} spacing={2} alignItems={"center"}>
+                        <Stack direction={"row"} spacing={2} width={"100%"} alignItems={"center"}>
                           <Icon sx={{ background: "#f0f0f0", width: "40px", height: "40px", borderRadius: "4px" }}>
                             <ClockCircleOutlined style={{fontSize: "16px"}}/>
                           </Icon>
@@ -104,7 +104,7 @@ function CheckoutScreen() {
                             ? (
                               (selectedDate && selectedTime)
                               ? (
-                                <Stack spacing={0.5}>
+                                <Stack spacing={0.5} width={"100%"}>
                                   <Typography variant="h5" fontWeight={600} fontSize={15}>Slot</Typography>
                                   <Typography>{`${formatDate(selectedDate)} - ${selectedTime}`}</Typography>
                                 </Stack>
@@ -116,6 +116,9 @@ function CheckoutScreen() {
                             : (
                               <Typography variant="h5" fontWeight={600} fontSize={15}>Slot</Typography>
                             )
+                          }
+                          {
+                            selectedDate && selectedTime && <Button onClick={()=>setPickSlot(true)} variant="outlined">Edit</Button>
                           }
                         </Stack>
                       </ListItem>
@@ -141,7 +144,9 @@ function CheckoutScreen() {
                             }
                             
                           </Stack>
-                          <Button fullWidth sx={{background: "green", width: "100%"}} onClick={()=>setPickSlot(true)} variant="contained">Book Now ( Pay With Cash )</Button>
+                          { 
+                            (selectedDate && selectedTime) && <Button fullWidth sx={{background: "green", width: "100%"}} onClick={()=>setPickSlot(true)} variant="contained">Book Now ( Pay With Cash )</Button>
+                          }
                         </Stack>
                       </ListItem>
                     </Stack>
