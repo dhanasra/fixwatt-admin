@@ -7,6 +7,16 @@ export function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
+export function formatDateOnly(dateString) {
+  const options = { day: '2-digit' };
+  return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
+export function formatDayOnly(dateString) {
+  const options = { weekday: 'short' };
+  return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
 export function formatFilterDate(dateString) {
 
   const date = new Date(dateString);

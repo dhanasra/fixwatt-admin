@@ -3,11 +3,10 @@ import MainCard from "../MainCard";
 import { useEffect, useState } from "react";
 import { getUserById } from "../../network/service";
 
-const AddressPicker =({open, addresses, onCancel, onOk, onNewAddress})=>{
+const AddressPicker =({open, addresses, onCancel, onProceed, onNewAddress})=>{
 
     const [ uas, setUas ] = useState(null)
-
-    console.log(addresses)
+    const [ address, setAddress ] = useState(null)
 
     return(
     <Dialog open={open}>
@@ -31,6 +30,9 @@ const AddressPicker =({open, addresses, onCancel, onOk, onNewAddress})=>{
                   addresses?.map((a)=>{
                     return <FormControlLabel
                       value={a.id} 
+                      onChange={(v)=>{
+                        setAddress(a)
+                      }}
                       control={<Radio />} 
                       label={
                         <>
@@ -44,7 +46,7 @@ const AddressPicker =({open, addresses, onCancel, onOk, onNewAddress})=>{
               </RadioGroup>
             </FormControl>
             <Box/>
-            <Button variant="contained">Proceed</Button>
+            <Button disabled={!address} onClick={()=>onProceed(address)} variant="contained">Proceed</Button>
           </Stack>
         </MainCard>
     </Dialog>

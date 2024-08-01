@@ -12,6 +12,7 @@ import { FaLocationPin, FaMapLocation } from 'react-icons/fa6';
 import AddressPicker from '../../../components/dialogs/AddressPicker';
 import SlotPicker from '../../../components/dialogs/SlotPicker';
 import CreateAddressDialog from '../../../components/dialogs/CreateAddressDialog';
+import { formatDate } from '../../../utils/utils';
 
 function CheckoutScreen() {
 
@@ -19,6 +20,10 @@ function CheckoutScreen() {
   const dispatch = useDispatch();
 
   const [ user, setUser ] = useState(null);
+  const [ selectedAddress, setSelectedAddress ] = useState(null);
+  const [ selectedDate, setSelectedDate ] = useState(null);
+  const [ selectedTime, setSelectedTime ] = useState(null);
+
   const [ pickAddress, setPickAddress ] = useState(false);
   const [ openAddress, setOpenAddress ] = useState(false);
   const [ pickSlot, setPickSlot ] = useState(false);
@@ -30,8 +35,23 @@ function CheckoutScreen() {
   return (
     <>
       <CreateAddressDialog open={openAddress} onCancel={()=>setOpenAddress(false)}/>
-      <AddressPicker open={pickAddress} addresses={user?.addresses} onNewAddress={()=>setOpenAddress(true)}/>
-      <SlotPicker open={pickSlot}/>
+      <AddressPicker 
+        open={pickAddress} 
+        addresses={user?.addresses} 
+        onNewAddress={()=>setOpenAddress(true)}
+        onProceed={(a)=>{
+          setSelectedAddress(a);
+          setPickAddress(false);
+        }}
+      />
+      <SlotPicker 
+        open={pickSlot}
+        onProceed={(d, t)=>{  
+          setSelectedDate(d);
+          setSelectedTime(t);
+          setPickSlot(false);
+        }}
+      />
       <CustomerAppBar/>
       <Stack sx={{alignItems: "center", mt: "100px"}}>
       <Grid container sx={{maxWidth: "900px", position: "relative"}} spacing={3}>
@@ -59,25 +79,69 @@ function CheckoutScreen() {
                           <Icon sx={{ background: "#f0f0f0", width: "40px", height: "40px", borderRadius: "4px" }}>
                             <EnvironmentOutlined style={{fontSize: "16px"}}/>
                           </Icon>
-                          <Button onClick={()=>setPickAddress(true)} variant="contained">Select an address</Button>
+                          {
+                            selectedAddress
+                            ? (
+                              <Stack spacing={0.5}>
+                                <Typography variant="h5" fontWeight={600} fontSize={15}>Address</Typography>
+                                <Typography>{`${selectedAddress.type} - ${selectedAddress.address}, ${selectedAddress.pincode}`}</Typography>
+                              </Stack>
+                            )
+                            : (
+                              <Button onClick={()=>setPickAddress(true)} variant="contained">Select an address</Button>
+                            )
+                          }
                         </Stack>
                       </ListItem>
                       <Divider/>
-                      <ListItem sx={{opacity: 0.5}}>
+                      <ListItem sx={{opacity: selectedAddress ? 1 : 0.5}}>
                         <Stack direction={"row"} spacing={2} alignItems={"center"}>
                           <Icon sx={{ background: "#f0f0f0", width: "40px", height: "40px", borderRadius: "4px" }}>
                             <ClockCircleOutlined style={{fontSize: "16px"}}/>
                           </Icon>
-                          <Typography variant="h5" fontWeight={600} fontSize={15}>Slot</Typography>
+                          {
+                            selectedAddress
+                            ? (
+                              (selectedDate && selectedTime)
+                              ? (
+                                <Stack spacing={0.5}>
+                                  <Typography variant="h5" fontWeight={600} fontSize={15}>Slot</Typography>
+                                  <Typography>{`${formatDate(selectedDate)} - ${selectedTime}`}</Typography>
+                                </Stack>
+                              )
+                              : (
+                                <Button onClick={()=>setPickSlot(true)} variant="contained">Select time & date</Button>
+                              )
+                            )
+                            : (
+                              <Typography variant="h5" fontWeight={600} fontSize={15}>Slot</Typography>
+                            )
+                          }
                         </Stack>
                       </ListItem>
                       <Divider/>
-                      <ListItem sx={{opacity: 0.5}}>
-                        <Stack direction={"row"} spacing={2} alignItems={"center"}>
-                          <Icon sx={{ background: "#f0f0f0", width: "40px", height: "40px", borderRadius: "4px" }}>
-                            <CheckOutlined style={{fontSize: "16px"}}/>
-                          </Icon>
-                          <Typography variant="h5" fontWeight={600} fontSize={15}>Confirm</Typography>
+                      <ListItem sx={{opacity: (selectedDate && selectedTime) ? 1 : 0.5}}>
+                        <Stack direction={"column"} spacing={2} sx={{width: "100%"}}>
+                          <Stack direction={"row"} spacing={2} alignItems={"center"}>
+                            <Icon sx={{ background: "#f0f0f0", width: "40px", height: "40px", borderRadius: "4px" }}>
+                              <CheckOutlined style={{fontSize: "16px"}}/>
+                            </Icon>
+                            
+                            {
+                              (selectedDate && selectedTime)
+                              ? (
+                                <Stack spacing={0.5}>
+                                  <Typography variant="h5" fontWeight={600} fontSize={15}>Confirm</Typography>
+                                  
+                                </Stack>
+                              )
+                              : (
+                                <Typography variant="h5" fontWeight={600} fontSize={15}>Confirm</Typography>
+                              )
+                            }
+                            
+                          </Stack>
+                          <Button fullWidth sx={{background: "green", width: "100%"}} onClick={()=>setPickSlot(true)} variant="contained">Book Now ( Pay With Cash )</Button>
                         </Stack>
                       </ListItem>
                     </Stack>
