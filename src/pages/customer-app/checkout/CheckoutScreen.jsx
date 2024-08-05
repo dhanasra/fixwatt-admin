@@ -10,6 +10,7 @@ import SlotPicker from '../../../components/dialogs/SlotPicker';
 import CreateAddressDialog from '../../../components/dialogs/CreateAddressDialog';
 import { formatDate } from '../../../utils/utils';
 import { bookService } from '../../../network/service';
+import LoginPopup from '../../../components/customer/LoginPopup';
 
 function CheckoutScreen() {
 
@@ -26,12 +27,20 @@ function CheckoutScreen() {
   const [ openAddress, setOpenAddress ] = useState(false);
   const [ pickSlot, setPickSlot ] = useState(false);
 
+  const [ openLogin, setOpenLogin ] = useState(false);
+
   useEffect(()=>{
     setUser(DB.getUser());
   }, [])
 
   return (
     <>
+      <LoginPopup 
+        open={openLogin} 
+        onOk={()=>{
+          setPickAddress(true)
+        }} 
+        onCancel={()=>setOpenLogin(false)} />
       <CreateAddressDialog 
         userId={user?.id} 
         open={openAddress} 
@@ -123,7 +132,16 @@ function CheckoutScreen() {
                               </Stack>
                             )
                             : (
-                              <Button onClick={()=>setPickAddress(true)} variant="contained">Select an address</Button>
+                              <Button 
+                                onClick={()=>{
+                                  if(user){
+                                    setPickAddress(true);
+                                  }else{
+                                    setOpenLogin(true);
+                                  }
+                                }} 
+                                variant="contained"
+                              >Select an address</Button>
                             )
                           }
                           {

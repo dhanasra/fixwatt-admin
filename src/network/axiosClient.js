@@ -48,13 +48,14 @@ axiosClient.interceptors.response.use(
         return data;
     },
     error=>{
+        console.log(error);
         const originalRequest = error.config;
         console.log(originalRequest)
         if (
             error.response.status === 401
         ) {
           clearCookies();
-          window.location.href = 'https://fixwatt-admin.web.app/';
+        //   window.location.href = 'https://fixwatt-admin.web.app/';
         }
         return Promise.reject(error)
     }

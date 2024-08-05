@@ -8,6 +8,7 @@ import AnimateButton from '../../../components/@extended/AnimateButton';
 import { getOrders, getUserById, login } from '../../../network/service';
 import { useNavigate } from 'react-router-dom';
 import DB from '../../../network/db';
+import Cookies from "js-cookie";
 
 const Login = () => {
 
@@ -34,9 +35,9 @@ const Login = () => {
           try {
             
             const data = await login({phone: values.phone, password: values.password});
-            const uData = await getUserById(data.user.id)
-
-            DB.initialize(data, uData.user);
+            DB.initialize(data);
+            const uData = await getUserById(data.user.id);
+            Cookies.set('user', JSON.stringify(uData.user));
 
             setStatus({ success: true });
             setSubmitting(false);
