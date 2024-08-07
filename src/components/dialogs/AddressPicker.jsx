@@ -38,7 +38,7 @@ const AddressPicker =({open, addresses, value, onCancel, onEdit, onProceed, onNe
                 value={address?.id}
               >
                 {
-                  user.addresses?.map((a)=>{
+                  user?.addresses?.map((a)=>{
                     return <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
                         <FormControlLabel
                         value={a.id} 

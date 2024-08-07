@@ -1,7 +1,7 @@
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import CustomerAppBar from "../../../components/customer/CustomerAppBar";
 import { useEffect, useState } from "react";
-import { getCategories, getServices } from "../../../network/service";
+import { getCategories, getCustomerCategories, getCustomerServices, getServices } from "../../../network/service";
 import CategoriesGrid from "../../../components/customer/CategoriesGrid";
 import ImagesGrid from "../../../components/customer/ImagesGrid";
 import WorkCount from "../../../components/customer/WorkCount";
@@ -25,8 +25,8 @@ const CustomerDashboard = ()=>{
     const fetchData = async () => {
       try {
         const data = await Promise.all([
-          getCategories(),
-          getServices()
+          getCustomerCategories(),
+          getCustomerServices()
         ]);
         setCategories(data[0].categories);
         const services = data[1].services;        

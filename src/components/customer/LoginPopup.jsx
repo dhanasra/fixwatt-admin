@@ -29,7 +29,7 @@ const LoginPopup =({open, onCancel, onOk})=>{
             title={
                 <Stack direction={"row"} justifyContent={"space-between"}>
                     <Stack spacing={0.2}>
-                        <Typography variant="h3">Login/Signup</Typography>
+                        <Typography variant="h3">Login / Signup</Typography>
                         <Typography variant="body2">Login to continue your booking</Typography>
                     </Stack>
                     <IconButton onClick={()=>onCancel()}>

@@ -21,7 +21,8 @@ axiosClient.interceptors.request.use(
             && (config.method === "post" || config.method === "put")) {
             config.headers['Content-Type'] = 'multipart/form-data';
         }
-        if(accessToken){
+        
+        if(accessToken && !config.headers.hasOwnProperty('x-refresh-token')){
             config.headers['x-refresh-token'] = `${accessToken}`;
         }
         return config;

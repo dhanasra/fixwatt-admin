@@ -227,8 +227,12 @@ export async function getCategories(){
   return await axiosClient.get(`/category`);
 }
 
+export async function getCustomerCategories(){
+  return await axiosClient.get(`/category`, { headers: { "x-refresh-token": "--customer--" }});
+}
+
 export async function getCategory(id){
-  return await axiosClient.get(`/category/${id}`);
+  return await axiosClient.get(`/category/${id}`, { headers: { "x-refresh-token": "--customer--" }});
 }
 
 export async function deleteCategory(id){
@@ -252,6 +256,10 @@ export async function updateCategory({name, imageBlob, category}){
 
 export async function getServices(){
   return await axiosClient.get(`/service`);
+}
+
+export async function getCustomerServices(){
+  return await axiosClient.get(`/service`, { headers: { "x-refresh-token": "--customer--" }});
 }
 
 export async function deleteService(id){

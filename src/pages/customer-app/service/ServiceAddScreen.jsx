@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import CustomerAppBar from '../../../components/customer/CustomerAppBar'
 import { Box, Button, Divider, Grid, Stack, Typography } from '@mui/material'
 import { groupByCategory, useQuery } from '../../../utils/utils';
-import { getCategory, getServices } from '../../../network/service';
+import { getCategory, getCustomerServices, getServices } from '../../../network/service';
 import MainCard from '../../../components/MainCard';
 import Footer from '../../../components/customer/Footer';
 import CART from '../../../assets/cart.png'
@@ -31,7 +31,7 @@ function ServiceAddScreen() {
       const categoryID = query.get('category');
       const data = await Promise.all([
         getCategory(categoryID),
-        getServices()
+        getCustomerServices()
       ]);
       setCategory(data[0].category);
       const serviceList = data[1].services;  

@@ -241,7 +241,7 @@ function CheckoutScreen() {
                       <Typography variant="h5">Account</Typography>
                       <Typography variant="body1">To book the service, please login or sign up</Typography>
                     </Stack>
-                    <Button variant="contained" sx={{background: "black"}}>
+                    <Button variant="contained" sx={{background: "black"}} onClick={()=>setOpenLogin(true)}>
                         Login
                     </Button>
                   </Stack>  
