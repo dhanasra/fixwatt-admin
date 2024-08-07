@@ -8,14 +8,18 @@ import DB from '../../../network/db';
 import AddressPicker from '../../../components/dialogs/AddressPicker';
 import SlotPicker from '../../../components/dialogs/SlotPicker';
 import CreateAddressDialog from '../../../components/dialogs/CreateAddressDialog';
-import { formatDate } from '../../../utils/utils';
+import { formatDate, formatFilterDate, formatTime } from '../../../utils/utils';
 import { bookService } from '../../../network/service';
 import LoginPopup from '../../../components/customer/LoginPopup';
+import { showSnackbar } from '../../../utils/snackbar-utils';
+import { useNavigate } from 'react-router-dom';
+import { clearItems } from '../../../store/reducers/cart';
 
 function CheckoutScreen() {
 
   const { items } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [ user, setUser ] = useState(null);
   const [ selectedAddress, setSelectedAddress ] = useState(null);
@@ -28,6 +32,29 @@ function CheckoutScreen() {
   const [ pickSlot, setPickSlot ] = useState(false);
 
   const [ openLogin, setOpenLogin ] = useState(false);
+
+  const bookNow = async()=>{
+
+    let time = parseInt(selectedTime.substring(0, 2));
+
+    if(selectedTime.includes("PM")){
+      time +=12;
+    }
+    
+    for(let i=0;i<items.length;i++){
+      await bookService({
+        date: formatFilterDate(selectedDate),
+        startTime: `${time}:00:00`,
+        serviceId: items[i].id,
+        userId: user.id,
+        userAddressId: selectedAddress.id
+      });
+    }
+
+    showSnackbar("Your order is booked successfully!. We will reach out soon.", { variant: 'success' });
+    dispatch(clearItems());
+    navigate('/customer');
+  }
 
   useEffect(()=>{
     setUser(DB.getUser());
@@ -201,7 +228,7 @@ function CheckoutScreen() {
                             
                           </Stack>
                           { 
-                            (selectedDate && selectedTime) && <Button fullWidth sx={{background: "green", width: "100%"}} onClick={()=>setPickSlot(true)} variant="contained">Book Now ( Pay With Cash )</Button>
+                            (selectedDate && selectedTime) && <Button fullWidth sx={{background: "green", width: "100%"}} onClick={()=>bookNow()} variant="contained">Book Now ( Pay With Cash )</Button>
                           }
                         </Stack>
                       </ListItem>
