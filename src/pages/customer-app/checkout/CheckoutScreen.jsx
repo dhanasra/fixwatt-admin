@@ -65,7 +65,8 @@ function CheckoutScreen() {
       <LoginPopup 
         open={openLogin} 
         onOk={()=>{
-          setPickAddress(true)
+          setOpenLogin(false);
+          setPickAddress(true);
         }} 
         onCancel={()=>setOpenLogin(false)} />
       <CreateAddressDialog 
