@@ -4,7 +4,7 @@ import { Avatar, Button, Dialog, Divider, FormHelperText, Grid, IconButton, Inpu
 import { useTheme } from "@emotion/react";
 import MainCard from "../MainCard";
 import { Field, Form, Formik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Cookies from 'js-cookie';
 import AnimateButton from "../@extended/AnimateButton";
@@ -32,8 +32,8 @@ const LoginPopup =({open, onCancel, onOk})=>{
             title={
                 <Stack direction={"row"} justifyContent={"space-between"}>
                     <Stack spacing={0.2}>
-                        <Typography variant="h3">Login / Signup</Typography>
-                        <Typography variant="body2">Login to continue your booking</Typography>
+                        <Typography variant="h3">Login</Typography>
+                        <Typography variant="body2">Don't have an account? <Link>Create Now</Link></Typography>
                     </Stack>
                     <IconButton onClick={()=>onCancel()}>
                         <CloseOutlined/>

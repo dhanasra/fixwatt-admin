@@ -1,11 +1,42 @@
-import { Box, IconButton, InputAdornment, OutlinedInput, Stack, Toolbar, Typography } from "@mui/material";
-import { useTheme } from "@emotion/react";
+import { Box, IconButton, InputAdornment, ListItemIcon, Menu, MenuItem, OutlinedInput, Stack, Toolbar, Typography } from "@mui/material";
+import { Global, useTheme } from "@emotion/react";
 import logo from '.././../assets/app-logo.png';
-import { SearchOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { LoginOutlined, LogoutOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import AppBarStyled from "../../layout/main/header/AppBarStyled";
+import { useEffect, useState } from "react";
+import DB from "../../network/db";
+import { useNavigate } from "react-router-dom";
+import LoginPopup from "./LoginPopup";
 
 const CustomerAppBar = ()=>{
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+  const [ openLogin, setOpenLogin ] = useState(false);
+
+  useEffect(()=>{
+    setUser(DB.getUser());
+  }, [])
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogin = () => {
+    setOpenLogin(true);
+  }
+
+  const handleLogout = () => {
+    DB.clear();
+    navigate(0);
+  }
 
   const appBar = {
       position: 'fixed',
@@ -22,6 +53,14 @@ const CustomerAppBar = ()=>{
 
   return (
     <>
+      <LoginPopup
+        open={openLogin} 
+        onOk={()=>{
+          setOpenLogin(false);
+          navigate(0);
+        }} 
+        onCancel={()=>setOpenLogin(false)}
+      />
       <AppBarStyled {...appBar}>
         <Toolbar direction={"row"} spacing={2} sx={{width: "100%"}}>
           <Box component={'img'} src={logo} height={"50px"} marginRight={"50px"}/>
@@ -50,9 +89,37 @@ const CustomerAppBar = ()=>{
             <IconButton>
               <ShoppingCartOutlined style={{fontSize: "20px"}}/>
             </IconButton>
-            <IconButton>
+            <IconButton onClick={handleClick}>
               <UserOutlined style={{fontSize: "20px"}}/>
             </IconButton>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              PaperProps={{
+                style: {
+                  width: 160,
+                },
+              }}
+            >
+              {
+                user
+                ? <MenuItem onClick={()=>handleLogout()}>
+                    <ListItemIcon>
+                      <LogoutOutlined fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                  </MenuItem>
+                : <MenuItem onClick={()=>handleLogin()}>
+                    <ListItemIcon>
+                      <LoginOutlined fontSize="small" />
+                    </ListItemIcon>
+                    Login
+                  </MenuItem>
+              }
+            </Menu>
           </Stack>
         </Toolbar>
       </AppBarStyled>

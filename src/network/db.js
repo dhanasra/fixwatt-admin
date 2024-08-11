@@ -15,8 +15,14 @@ class DB {
       return JSON.parse(user)
     }else{
       return null;
+    } 
+  }
+
+  static clear(){
+    const allCookies = Cookies.get();
+    for (const cookie in allCookies) {
+      Cookies.remove(cookie);
     }
-    
   }
 
   static updateUser(user) {
