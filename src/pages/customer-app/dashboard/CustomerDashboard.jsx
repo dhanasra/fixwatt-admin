@@ -1,6 +1,6 @@
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import CustomerAppBar from "../../../components/customer/CustomerAppBar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getCategories, getCustomerCategories, getCustomerServices, getServices } from "../../../network/service";
 import CategoriesGrid from "../../../components/customer/CategoriesGrid";
 import ImagesGrid from "../../../components/customer/ImagesGrid";
@@ -20,6 +20,14 @@ const CustomerDashboard = ()=>{
   const [servicesGroup, setServicesGroup] = useState([]);
 
   const navigate = useNavigate();
+
+  const sectionRefs = {
+    home: useRef(null),
+    testimonials: useRef(null),
+    faq: useRef(null),
+    services: useRef(null),
+    contact: useRef(null)
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,9 +49,19 @@ const CustomerDashboard = ()=>{
     fetchData();
   }, []);
 
+  const handleScrollToSection = (section) => {
+    if (sectionRefs[section].current) {
+      sectionRefs[section].current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <>
-      <CustomerAppBar/>
+      <div ref={sectionRefs.home}>
+        <CustomerAppBar
+          handleClick={(s)=>handleScrollToSection(s)}
+        />
+      </div>
       <Grid container sx={{padding: "100px 100px"}}>
         <Grid item xs={5}>
           <Stack direction={"column"} spacing={3}>
@@ -59,30 +77,32 @@ const CustomerDashboard = ()=>{
         </Grid> 
       </Grid>
       <WorkCount/>
-      {
-        Object.keys(servicesGroup).slice(0, 5).map((key)=>{
+      <div ref={sectionRefs.services}>
+        {
+          Object.keys(servicesGroup).slice(0, 5).map((key)=>{
 
-          return (
-            <Stack direction={"column"} paddingX={8} paddingY={2} spacing={3}>
-              <Typography variant="h3" fontWeight={600}>{key}</Typography>
-              <HorizontalScroller>
-                {
-                  servicesGroup[key].map((i)=>{
-                    return (
-                        <MainCard onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
-                          <Stack >
-                            <Typography variant="h6" fontSize={"15px"} fontWeight={500}>{i.name}</Typography>
-                            <img src={i.image} width={"180px"} height={"180px"} style={{padding: "20px"}}/>
-                          </Stack>
-                        </MainCard>
-                    )
-                  })
-                }
-              </HorizontalScroller>
-            </Stack>
-          )
-        })
-      }
+            return (
+              <Stack  key={key} direction={"column"} paddingX={8} paddingY={2} spacing={3}>
+                <Typography variant="h3" fontWeight={600}>{key}</Typography>
+                <HorizontalScroller>
+                  {
+                    servicesGroup[key].map((i)=>{
+                      return (
+                          <MainCard onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
+                            <Stack >
+                              <Typography variant="h6" fontSize={"15px"} fontWeight={500}>{i.name}</Typography>
+                              <img src={i.image} width={"180px"} height={"180px"} style={{padding: "20px"}}/>
+                            </Stack>
+                          </MainCard>
+                      )
+                    })
+                  }
+                </HorizontalScroller>
+              </Stack>
+            )
+          })
+        }
+      </div>
 
       <MainCard sx={{margin: "50px 60px"}}>
         <a href="https://play.google.com/store/apps/details?id=com.spiderlingz.inses" target="_blank">
@@ -94,7 +114,7 @@ const CustomerDashboard = ()=>{
         categories.length>5 && Object.keys(servicesGroup).slice(5, 10).map((key)=>{
 
           return (
-            <Stack direction={"column"} paddingX={8} paddingY={2} spacing={3}>
+            <Stack key={key} direction={"column"} paddingX={8} paddingY={2} spacing={3}>
               <Typography variant="h3" fontWeight={600}>{key}</Typography>
               <HorizontalScroller>
                 {
@@ -124,7 +144,7 @@ const CustomerDashboard = ()=>{
         categories.length>10 && Object.keys(servicesGroup).slice(10, categories.length).map((key)=>{
 
           return (
-            <Stack direction={"column"} paddingX={8} paddingY={2} spacing={3}>
+            <Stack key={key}  direction={"column"} paddingX={8} paddingY={2} spacing={3}>
               <Typography variant="h3" fontWeight={600}>{key}</Typography>
               <HorizontalScroller>
                 {
@@ -145,11 +165,17 @@ const CustomerDashboard = ()=>{
         })
       }
 
-      <Testimonials/>
+      <div ref={sectionRefs.testimonials}>
+        <Testimonials/>
+      </div>
 
-      <Contact/>
+      <div ref={sectionRefs.contact}>
+        <Contact/>
+      </div>
 
-      <Faq/>
+      <div ref={sectionRefs.faq}>
+        <Faq/>
+      </div>
 
       <Divider/>
 

@@ -8,7 +8,7 @@ import DB from "../../network/db";
 import { useNavigate } from "react-router-dom";
 import LoginPopup from "./LoginPopup";
 
-const CustomerAppBar = ()=>{
+const CustomerAppBar = ({ handleClick })=>{
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const CustomerAppBar = ()=>{
 
   const [anchorEl, setAnchorEl] = useState(null);
   
-  const handleClick = (event) => {
+  const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -48,7 +48,26 @@ const CustomerAppBar = ()=>{
   };
 
   const options = [
-    "Home", "About", "Services", "Service Partner", "Contact Us"
+    { 
+      id: "home",
+      name: "Home" 
+    },
+    { 
+      id: "about",
+      name: "About" 
+    },
+    { 
+      id: "services",
+      name: "Services" 
+    },
+    { 
+      id: "partner",
+      name: "Service Partner" 
+    },
+    { 
+      id: "contact",
+      name: "Contact Us" 
+    }
   ];
 
   return (
@@ -67,8 +86,8 @@ const CustomerAppBar = ()=>{
           {
             options.map((e)=>{
               return (
-                <Box key={e} sx={{cursor: "pointer", padding: "0 20px", whiteSpace: "nowrap"}}>
-                  <Typography>{e}</Typography>
+                <Box onClick={()=>handleClick(e["id"])} key={e["id"]} sx={{cursor: "pointer", padding: "0 20px", whiteSpace: "nowrap"}}>
+                  <Typography>{e["name"]}</Typography>
                 </Box>
               )
             })
@@ -86,10 +105,10 @@ const CustomerAppBar = ()=>{
               }
               placeholder="Search services"
             />
-            <IconButton>
+            <IconButton onClick={()=>navigate("/c/checkout")}>
               <ShoppingCartOutlined style={{fontSize: "20px"}}/>
             </IconButton>
-            <IconButton onClick={handleClick}>
+            <IconButton onClick={handleMenuClick}>
               <UserOutlined style={{fontSize: "20px"}}/>
             </IconButton>
             <Menu
