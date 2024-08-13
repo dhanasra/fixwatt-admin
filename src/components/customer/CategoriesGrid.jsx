@@ -1,8 +1,11 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import MainCard from "../MainCard";
 import { formatImage } from "../../utils/utils";
+import { useNavigate } from "react-router-dom";
 
 const CategoriesGrid = ({ categories })=>{
+
+  const navigate = useNavigate();
 
   return (
     <MainCard>
@@ -12,7 +15,12 @@ const CategoriesGrid = ({ categories })=>{
           {
             categories.map((item)=>{
               return (
-                <Grid item xs={4} key={item.id}>
+                <Grid  
+                  sx={{cursor: "pointer"}}
+                  onClick={()=>navigate(`/c/service?category=${item.id}`)}
+                  item xs={4} 
+                  key={item.id}
+                >
                   <Stack direction={"column"} spacing={1}>
                     <Box
                       p={"10px"}

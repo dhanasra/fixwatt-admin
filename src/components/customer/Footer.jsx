@@ -190,7 +190,7 @@ function Footer({handleProductClick}) {
           <Typography
             // onClick={()=>window.open(URL_CONST.COMPANY, "_blank")}
             sx={{cursor: "pointer"}}
-            variant="body1" fontWeight={700} color={"#5b3fa9"}>FIXWATT</Typography>
+            variant="body1" fontWeight={700} color={"#5b3fa9"}>SPIDERLINGZ</Typography>
         </Stack>
       </Grid>
     </Grid>

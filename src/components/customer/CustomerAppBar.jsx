@@ -85,7 +85,7 @@ const CustomerAppBar = ({ handleClick, minimal })=>{
       />
       <AppBarStyled {...appBar}>
         <Toolbar direction={"row"} spacing={2} sx={{width: "100%"}}>
-          <Box component={'img'} src={logo} height={"50px"} marginRight={"50px"}/>
+          <Box component={'img'} onClick={()=>navigate('/customer')} sx={{cursor: "pointer"}} src={logo} height={"50px"} marginRight={"50px"}/>
           {
             !minimal && options.map((e)=>{
               return (

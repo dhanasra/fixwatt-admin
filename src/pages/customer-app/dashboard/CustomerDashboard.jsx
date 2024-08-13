@@ -88,7 +88,7 @@ const CustomerDashboard = ()=>{
                   {
                     servicesGroup[key].map((i)=>{
                       return (
-                          <MainCard onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
+                          <MainCard sx={{cursor: "pointer"}} onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
                             <Stack >
                               <Typography variant="h6" fontSize={"15px"} fontWeight={500}>{i.name}</Typography>
                               <img src={i.image} width={"180px"} height={"180px"} style={{padding: "20px"}}/>
@@ -120,7 +120,7 @@ const CustomerDashboard = ()=>{
                 {
                   servicesGroup[key].map((i)=>{
                     return (
-                        <MainCard onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
+                        <MainCard sx={{cursor: "pointer"}} onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
                           <Stack >
                             <Typography variant="h6" fontSize={"16px"} fontWeight={500}>{i.name}</Typography>
                             <img src={i.image} width={"150px"} height={"150px"} style={{paddingTop: "20px"}}/>
@@ -150,7 +150,7 @@ const CustomerDashboard = ()=>{
                 {
                   servicesGroup[key].map((i)=>{
                     return (
-                        <MainCard onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
+                        <MainCard sx={{cursor: "pointer"}} onClick={()=>navigate(`/c/service?category=${i.category_id}`)}>
                           <Stack >
                             <Typography variant="h6" fontSize={"17px"} fontWeight={500}>{i.name}</Typography>
                             <img src={i.image} width={"150px"} height={"150px"} style={{paddingTop: "20px"}}/>
