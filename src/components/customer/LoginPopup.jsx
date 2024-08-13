@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Cookies from 'js-cookie';
 import AnimateButton from "../@extended/AnimateButton";
-import { getUserById, login } from "../../network/service";
+import { getUserById, login, register } from "../../network/service";
 import DB from "../../network/db";
 
 const LoginPopup =({open, onCancel, onOk})=>{
@@ -16,6 +16,8 @@ const LoginPopup =({open, onCancel, onOk})=>{
     const theme = useTheme();
 
     const navigate = useNavigate();
+
+    const [ isLogin, setIsLogin ] = useState(true);
 
     const [showPassword, setShowPassword] = useState(false);
   
@@ -32,8 +34,12 @@ const LoginPopup =({open, onCancel, onOk})=>{
             title={
                 <Stack direction={"row"} justifyContent={"space-between"}>
                     <Stack spacing={0.2}>
-                        <Typography variant="h3">Login</Typography>
-                        <Typography variant="body2">Don't have an account? <Link>Create Now</Link></Typography>
+                        <Typography variant="h3">{ isLogin ? 'Login': 'Signup' }</Typography>
+                        {
+                            isLogin
+                            ? <Typography variant="body2">Don't have an account? <Link onClick={()=>setIsLogin(false)}>Create Now</Link></Typography>
+                            : <Typography variant="body2">Already have an account? <Link onClick={()=>setIsLogin(true)}>Login Now</Link></Typography>
+                        }
                     </Stack>
                     <IconButton onClick={()=>onCancel()}>
                         <CloseOutlined/>
@@ -43,17 +49,21 @@ const LoginPopup =({open, onCancel, onOk})=>{
         >
             <Formik
                 initialValues={{
-                phone: '8940710708',
-                password: '123456',
+                phone: '',
+                password: '',
+                name: '',
                 }}
                 validationSchema={Yup.object().shape({
-                phone: Yup.string().required('Phone is required'),
-                password: Yup.string().required('Password is required'),
+                    name: Yup.string().required('Name is required'),
+                    phone: Yup.string().required('Phone is required'),
+                    password: Yup.string().required('Password is required'),
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
                     
-                    const data = await login({phone: values.phone, password: values.password});
+                    const data = isLogin
+                    ? await login({phone: values.phone, password: values.password})
+                    : await register({phone: values.phone, password: values.password, name: values.name}); 
                     DB.initialize(data);
                     const uData = await getUserById(data.user.id);
                     Cookies.set('user', JSON.stringify(uData.user));
@@ -72,6 +82,22 @@ const LoginPopup =({open, onCancel, onOk})=>{
                 {({ errors, touched, isSubmitting }) => (
                 <Form noValidate>
                     <Grid container spacing={1}>
+                    {
+                        !isLogin && <Grid item xs={12}>
+                            <Stack spacing={1}>
+                            <InputLabel htmlFor="name">Full Name</InputLabel>
+                            <Field
+                                as={OutlinedInput}
+                                id="name"
+                                name="name"
+                                placeholder="Enter your name"
+                                fullWidth
+                                error={Boolean(touched.name && errors.name)}
+                            />
+                            <FormHelperText error>{touched.name && errors.name}</FormHelperText>
+                            </Stack>
+                        </Grid>
+                    }
                     <Grid item xs={12}>
                         <Stack spacing={1}>
                         <InputLabel htmlFor="phone">Phone Number</InputLabel>
@@ -121,7 +147,9 @@ const LoginPopup =({open, onCancel, onOk})=>{
                     <Grid item xs={12} sx={{ mt: 3 }}>
                         <AnimateButton>
                         <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                            Login
+                            {
+                                isLogin ? "Login": "Create"
+                            }
                         </Button>
                         </AnimateButton>
                     </Grid>

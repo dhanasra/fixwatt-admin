@@ -7,6 +7,10 @@ export async function login({phone, password}){
   return await axiosClient.post(`/auth/login`, { phone, password });
 }
 
+export async function register({phone, password, name}){
+  return await axiosClient.post(`/auth/register`, { phone, password, name });
+}
+
 // users
 
 export async function getUsers(){

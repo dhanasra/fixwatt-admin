@@ -14,6 +14,7 @@ import LoginPopup from '../../../components/customer/LoginPopup';
 import { showSnackbar } from '../../../utils/snackbar-utils';
 import { useNavigate } from 'react-router-dom';
 import { clearItems } from '../../../store/reducers/cart';
+import CART from '../../../assets/cart.png'
 
 function CheckoutScreen() {
 
@@ -126,8 +127,8 @@ function CheckoutScreen() {
       />
       <CustomerAppBar/>
       <Stack sx={{alignItems: "center", mt: "100px"}}>
-      <Grid container sx={{maxWidth: "900px", position: "relative"}} spacing={3}>
-        <Grid item xs={7}>
+      <Grid container sx={{maxWidth: "900px", position: "relative", justifyContent: "center"}} spacing={3}>
+        <Grid item xs={7} sx={{display: items.length>0 ? null: "none"}}>
           <Stack direction={"column"} sx={{position: "sticky", top: "100px"}}>
             {
               user
@@ -162,8 +163,17 @@ function CheckoutScreen() {
                             : (
                               <Button 
                                 onClick={()=>{
-                                  if(user){
-                                    setPickAddress(true);
+                                  if(user ){
+
+                                    const addresses = user.addresses.filter((i)=>i.address!=null);
+
+                                    if(addresses.length>0){
+                                      setPickAddress(true);
+                                    }else{
+                                      setOpenAddress(true);
+                                    }
+
+                                    
                                   }else{
                                     setOpenLogin(true);
                                   }
@@ -250,10 +260,10 @@ function CheckoutScreen() {
             }
           </Stack>
         </Grid>
-        <Grid item xs={5} >
+        <Grid item xs={ items.length>0 ? 5: 6} >
           <Stack direction={"column"} spacing={2} sx={{position: "sticky", top: "100px"}}>
             <MainCard>
-              <Stack spacing={2}>
+                <Stack spacing={2}>
                 <Typography variant="h5">Cart</Typography>
                 <Stack direction={"column"} spacing={1}>
                   {
@@ -275,10 +285,18 @@ function CheckoutScreen() {
                     background: "rgb(237, 247, 242)"
                   }}
                 >
-                  <Stack direction={"row"} spacing={1} alignItems={"center"}>
-                    <TagFilled/>
-                    <Typography>Material cost will be additional, if any.</Typography>
-                  </Stack>
+                  {
+                    items.length>0
+                    ? <Stack direction={"row"} spacing={1} alignItems={"center"}>
+                        <TagFilled/>
+                        <Typography>Material cost will be additional, if any.</Typography>
+                      </Stack>
+
+                    : <Stack direction={"column"} sx={{my: 2}} spacing={1} justifyContent={"center"} alignItems={"center"}>
+                        <Box component={"img"} src={CART} width={40} height={40}/>
+                        <Typography sx={{color: "rgb(117, 117, 117)"}}>No items in your cart</Typography>
+                      </Stack>
+                  }
                 </Box>
 
                 {/* <Button variant="contained" sx={{background: "black"}} onClick={()=>navigate('/c/checkout')}>

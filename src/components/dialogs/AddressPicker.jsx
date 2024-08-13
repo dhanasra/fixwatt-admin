@@ -5,7 +5,7 @@ import { getUserById, removeUserAddress } from "../../network/service";
 import OptionsMenu from "../../pages/customer-app/checkout/OptionsMenu";
 import DB from "../../network/db";
 
-const AddressPicker =({open, addresses, value, onCancel, onEdit, onProceed, onNewAddress})=>{
+const AddressPicker =({open, value, onCancel, onEdit, onProceed, onNewAddress})=>{
 
     const [ user, setUser ] = useState(DB.getUser())
     const [ address, setAddress ] = useState(value)
@@ -17,6 +17,8 @@ const AddressPicker =({open, addresses, value, onCancel, onEdit, onProceed, onNe
       DB.updateUser(updated);
       setUser(updated);
     }
+
+    let addresses = user?.addresses.filter((i)=>i.address!=null);
 
     return(
     <Dialog open={open}>
@@ -38,7 +40,7 @@ const AddressPicker =({open, addresses, value, onCancel, onEdit, onProceed, onNe
                 value={address?.id}
               >
                 {
-                  user?.addresses?.map((a)=>{
+                  addresses?.map((a)=>{
                     return <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
                         <FormControlLabel
                         value={a.id} 
