@@ -4,12 +4,16 @@ import { createSlice } from '@reduxjs/toolkit';
 // initial state
 const initialState = {
   items: [],
+  services: []
 };
 
 const cart = createSlice({
   name: 'cart',
   initialState,
   reducers: {
+    init(state, action){
+      state.services = action.payload;
+    },
     addItem(state, action) {
       const existingItem = state.items.find(item => item.id === action.payload.id);
       if (existingItem) {
@@ -36,4 +40,4 @@ const cart = createSlice({
 
 export default cart.reducer;
 
-export const { addItem, removeItem, clearItems } = cart.actions;
+export const { addItem, removeItem, clearItems, init } = cart.actions;

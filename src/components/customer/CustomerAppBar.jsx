@@ -8,6 +8,7 @@ import DB from "../../network/db";
 import { useNavigate } from "react-router-dom";
 import LoginPopup from "./LoginPopup";
 import { useSelector } from "react-redux";
+import ServicesSearchBox from "./ServicesSearchBox";
 
 const CustomerAppBar = ({ handleClick, minimal })=>{
   const theme = useTheme();
@@ -16,7 +17,7 @@ const CustomerAppBar = ({ handleClick, minimal })=>{
   const [user, setUser] = useState(null);
   const [ openLogin, setOpenLogin ] = useState(false);
 
-  const { items } = useSelector((state) => state.cart);
+  const { items, services } = useSelector((state) => state.cart);
 
   useEffect(()=>{
     setUser(DB.getUser());
@@ -96,18 +97,9 @@ const CustomerAppBar = ({ handleClick, minimal })=>{
             })
           }
           <Stack direction={"row"} justifyContent={"end"} spacing={2} sx={{width: "100%"}}>
-            <OutlinedInput
-              sx={{
-                borderRadius: "10px",
-                width: "200px"
-              }}
-              startAdornment={
-                <InputAdornment position="start" sx={{ mr: -0.5 }}>
-                  <SearchOutlined />
-                </InputAdornment>
-              }
-              placeholder="Search services"
-            />
+            
+            <ServicesSearchBox services={services}/>
+
             <IconButton onClick={()=>navigate("/c/checkout")}>
               <Badge badgeContent={items.length} color="primary">
                 <ShoppingCartOutlined style={{fontSize: "20px"}}/>

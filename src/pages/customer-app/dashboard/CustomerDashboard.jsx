@@ -13,6 +13,8 @@ import Contact from "../../../components/customer/Contact";
 import Faq from "../../../components/customer/Faq";
 import Testimonials from "../../../components/customer/Testimonials";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { init } from "../../../store/reducers/cart";
 
 const CustomerDashboard = ()=>{
 
@@ -20,6 +22,8 @@ const CustomerDashboard = ()=>{
   const [servicesGroup, setServicesGroup] = useState([]);
 
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const sectionRefs = {
     home: useRef(null),
@@ -37,7 +41,10 @@ const CustomerDashboard = ()=>{
           getCustomerServices()
         ]);
         setCategories(data[0].categories);
-        const services = data[1].services;        
+        const services = data[1].services;  
+        
+        dispatch(init(services));
+        
         const serviceGroup = groupByCategory(services, "category_name")
         console.log(serviceGroup)
         setServicesGroup(serviceGroup);
