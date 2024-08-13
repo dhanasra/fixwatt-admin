@@ -125,7 +125,7 @@ function CheckoutScreen() {
           setPickSlot(false);
         }}
       />
-      <CustomerAppBar/>
+      <CustomerAppBar minimal={true}/>
       <Stack sx={{alignItems: "center", mt: "100px"}}>
       <Grid container sx={{maxWidth: "900px", position: "relative", justifyContent: "center"}} spacing={3}>
         <Grid item xs={7} sx={{display: items.length>0 ? null: "none"}}>

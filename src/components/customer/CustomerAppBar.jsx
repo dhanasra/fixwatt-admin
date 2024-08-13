@@ -1,4 +1,4 @@
-import { Box, IconButton, InputAdornment, ListItemIcon, Menu, MenuItem, OutlinedInput, Stack, Toolbar, Typography } from "@mui/material";
+import { Badge, Box, IconButton, InputAdornment, ListItemIcon, Menu, MenuItem, OutlinedInput, Stack, Toolbar, Typography } from "@mui/material";
 import { Global, useTheme } from "@emotion/react";
 import logo from '.././../assets/app-logo.png';
 import { LoginOutlined, LogoutOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
@@ -7,13 +7,16 @@ import { useEffect, useState } from "react";
 import DB from "../../network/db";
 import { useNavigate } from "react-router-dom";
 import LoginPopup from "./LoginPopup";
+import { useSelector } from "react-redux";
 
-const CustomerAppBar = ({ handleClick })=>{
+const CustomerAppBar = ({ handleClick, minimal })=>{
   const theme = useTheme();
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
   const [ openLogin, setOpenLogin ] = useState(false);
+
+  const { items } = useSelector((state) => state.cart);
 
   useEffect(()=>{
     setUser(DB.getUser());
@@ -84,7 +87,7 @@ const CustomerAppBar = ({ handleClick })=>{
         <Toolbar direction={"row"} spacing={2} sx={{width: "100%"}}>
           <Box component={'img'} src={logo} height={"50px"} marginRight={"50px"}/>
           {
-            options.map((e)=>{
+            !minimal && options.map((e)=>{
               return (
                 <Box onClick={()=>handleClick(e["id"])} key={e["id"]} sx={{cursor: "pointer", padding: "0 20px", whiteSpace: "nowrap"}}>
                   <Typography>{e["name"]}</Typography>
@@ -106,7 +109,9 @@ const CustomerAppBar = ({ handleClick })=>{
               placeholder="Search services"
             />
             <IconButton onClick={()=>navigate("/c/checkout")}>
-              <ShoppingCartOutlined style={{fontSize: "20px"}}/>
+              <Badge badgeContent={items.length} color="primary">
+                <ShoppingCartOutlined style={{fontSize: "20px"}}/>
+              </Badge>
             </IconButton>
             <IconButton onClick={handleMenuClick}>
               <UserOutlined style={{fontSize: "20px"}}/>

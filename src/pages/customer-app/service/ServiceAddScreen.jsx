@@ -46,7 +46,7 @@ function ServiceAddScreen() {
 
   return (
     <>
-      <CustomerAppBar/>
+      <CustomerAppBar minimal={true}/>
       <Grid container sx={{padding: "100px 100px", position: "relative"}} spacing={3}>
         <Grid item xs={3}>
           <Stack direction={"column"} sx={{position: "sticky", top: "100px"}}>
