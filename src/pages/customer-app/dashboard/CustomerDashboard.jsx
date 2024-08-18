@@ -28,7 +28,7 @@ const CustomerDashboard = ()=>{
   const sectionRefs = {
     home: useRef(null),
     testimonials: useRef(null),
-    faq: useRef(null),
+    about: useRef(null),
     services: useRef(null),
     contact: useRef(null)
   };
@@ -66,7 +66,13 @@ const CustomerDashboard = ()=>{
     <>
       <div ref={sectionRefs.home}>
         <CustomerAppBar
-          handleClick={(s)=>handleScrollToSection(s)}
+          handleClick={(s)=>{
+            if(s=="partner"){
+              navigate('/c/service-partner');
+            }else{
+              handleScrollToSection(s);
+            }
+          }}
         />
       </div>
       <Grid container sx={{padding: "100px 100px"}}>
@@ -142,9 +148,11 @@ const CustomerDashboard = ()=>{
         })
       }
 
+      <div ref={sectionRefs.about}>
       <MainCard sx={{margin: "50px 60px"}} >
           <img src="https://fixwatt.com/wp-content/uploads/2022/09/Fixwatt-Customer-Process-chart.jpg" width="100%" alt="Banner Steps"/>
       </MainCard>
+      </div>
 
 
        {

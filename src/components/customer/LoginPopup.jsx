@@ -24,6 +24,14 @@ const LoginPopup =({open, onCancel, onOk})=>{
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
     };
+
+    const getValidationSchema = (isLogin) => Yup.object().shape({
+        name: !isLogin 
+            ? Yup.string().required('Name is required when not logging in') 
+            : Yup.string(), 
+        phone: Yup.string().required('Phone is required'),
+        password: Yup.string().required('Password is required'),
+    });
     
     return(
     <Dialog open={open}>
@@ -49,17 +57,15 @@ const LoginPopup =({open, onCancel, onOk})=>{
         >
             <Formik
                 initialValues={{
-                phone: '',
-                password: '',
-                name: '',
+                    phone: '',
+                    password: '',
+                    name: '',
                 }}
-                validationSchema={Yup.object().shape({
-                    name: Yup.string().required('Name is required'),
-                    phone: Yup.string().required('Phone is required'),
-                    password: Yup.string().required('Password is required'),
-                })}
+                validationSchema={getValidationSchema(isLogin)}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
+
+                    console.log('hii')
                     
                     const data = isLogin
                     ? await login({phone: values.phone, password: values.password})
