@@ -67,7 +67,9 @@ const CustomerDashboard = ()=>{
       <div ref={sectionRefs.home}>
         <CustomerAppBar
           handleClick={(s)=>{
-            if(s=="partner"){
+            if(s=="business"){
+              navigate('/c/business');
+            }else if(s=="partner"){
               navigate('/c/service-partner');
             }else{
               handleScrollToSection(s);

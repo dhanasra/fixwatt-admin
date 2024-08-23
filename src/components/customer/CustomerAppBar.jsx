@@ -65,6 +65,10 @@ const CustomerAppBar = ({ handleClick, minimal })=>{
       name: "Services" 
     },
     { 
+      id: "business",
+      name: "For Business" 
+    },
+    { 
       id: "partner",
       name: "Service Partner" 
     },
