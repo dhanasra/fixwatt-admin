@@ -183,7 +183,7 @@ const CustomerDashboard = ()=>{
       <div ref={sectionRefs.testimonials}>
         <Testimonials/>
       </div>
-
+      
       <div ref={sectionRefs.contact}>
         <Contact/>
       </div>

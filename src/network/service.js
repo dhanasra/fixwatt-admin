@@ -1,6 +1,20 @@
 import { formatFilterDate } from "../utils/utils";
 import axiosClient from "./axiosClient";
 
+// customer
+
+export async function contactServiceInquiry(data){
+  return await axiosClient.post(`/mail/contact/service`, data);
+}
+
+export async function contactServicePartner(data){
+  return await axiosClient.post(`/mail/contact/partner`, data);
+}
+
+export async function contactBusinessInquiry(data){
+  return await axiosClient.post(`/mail/contact/business`, data);
+}
+
 // authentication
 
 export async function login({phone, password}){
