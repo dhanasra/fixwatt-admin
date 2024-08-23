@@ -1,6 +1,6 @@
-import { Avatar, Button, Divider, FormHelperText, Grid, InputLabel, OutlinedInput, Stack, Typography, useMediaQuery } from '@mui/material'
+import { Button, FormHelperText, Grid, InputLabel, OutlinedInput, Stack, Typography, useMediaQuery } from '@mui/material'
 import React, { useState } from 'react'
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from 'yup';
 import { contactServiceInquiry } from '../../network/service';
 import { CheckCircleFilled } from '@ant-design/icons';
@@ -75,15 +75,16 @@ function Contact() {
                   <Stack spacing={1} sx={{width: "100%"}}>
                     <InputLabel htmlFor="email" >First Name</InputLabel>
                     <OutlinedInput
-                        id="email"
-                        type="email"
-                        name="email"
+                        id="firstName"
+                        type="text"
+                        name="firstName"
                         placeholder="Enter first name"
                         sx={{
                           p: 0.5,
                           borderRadius: isMdScreen ? "16px": "8px",
                           background: "#efefef11"
                         }}
+                        error={Boolean(touched.firstName && errors.firstName)}
                         fullWidth
                     />
                     <FormHelperText error>{touched.firstName && errors.firstName}</FormHelperText>
@@ -91,15 +92,16 @@ function Contact() {
                   <Stack spacing={1} sx={{width: "100%"}}>
                     <InputLabel htmlFor="email" >Last Name</InputLabel>
                     <OutlinedInput
-                        id="email"
-                        type="email"
-                        name="email"
+                        id="lastName"
+                        type="text"
+                        name="lastName"
                         placeholder="Enter last name"
                         sx={{
                           p: 0.5,
                           borderRadius: isMdScreen ? "16px": "8px",
                           background: "#efefef11"
                         }}
+                        error={Boolean(touched.lastName && errors.lastName)}
                         fullWidth
                     />
                     <FormHelperText error>{touched.lastName && errors.lastName}</FormHelperText>
@@ -120,6 +122,7 @@ function Contact() {
                           borderRadius: isMdScreen ? "16px": "8px",
                           background: "#efefef11"
                         }}
+                        error={Boolean(touched.email && errors.email)}
                         fullWidth
                     />
                     <FormHelperText error>{touched.email && errors.email}</FormHelperText>
@@ -127,15 +130,16 @@ function Contact() {
                   <Stack spacing={1} sx={{width: "100%"}}>
                     <InputLabel htmlFor="email" >Phone Number</InputLabel>
                     <OutlinedInput
-                        id="email"
-                        type="email"
-                        name="email"
+                        id="phone"
+                        type="phone"
+                        name="phone"
                         placeholder="Enter phone number"
                         sx={{
                           p: 0.5,
                           borderRadius: isMdScreen ? "16px": "8px",
                           background: "#efefef11"
                         }}
+                        error={Boolean(touched.phone && errors.phone)}
                         fullWidth
                     />
                     <FormHelperText error>{touched.phone && errors.phone}</FormHelperText>
@@ -144,11 +148,11 @@ function Contact() {
               </Grid>
               <Grid item xs={12} md={8} mx={"16px"}>
                 <Stack spacing={1} sx={{width: "100%"}}>
-                  <InputLabel htmlFor="email" >Message</InputLabel>
+                  <InputLabel htmlFor="message" >Message</InputLabel>
                   <OutlinedInput
-                      id="email"
-                      type="email"
-                      name="email"
+                      id="message"
+                      type="text"
+                      name="message"
                       multiline
                       rows={10}
                       placeholder="Enter your message"
@@ -157,6 +161,7 @@ function Contact() {
                         borderRadius: isMdScreen ? "16px": "8px",
                         background: "#efefef11"
                       }}
+                      error={Boolean(touched.message && errors.message)}
                       fullWidth
                   />
                   <FormHelperText error>{touched.message && errors.message}</FormHelperText>
