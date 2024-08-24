@@ -15,6 +15,7 @@ import Testimonials from "../../../components/customer/Testimonials";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { init } from "../../../store/reducers/cart";
+import TypingAnimation from "../../../components/BouncingText";
 
 const CustomerDashboard = ()=>{
 
@@ -92,6 +93,23 @@ const CustomerDashboard = ()=>{
         </Grid> 
       </Grid>
       <WorkCount/>
+      <Stack alignItems={"center"} sx={{width: "100%", py: 5}}>
+        <Grid container sx={{maxWidth: "900px"}}>
+            <Grid item xs={12} sx={{justifyContent: "center", display: "flex"}}>
+              <Typography variant="h5">OUR - ARTICLES</Typography>
+            </Grid>
+            <Grid item xs={6} sx={{justifyContent: "center", display: "flex"}}>
+              <Box onClick={()=>{window.open("https://thekarostartup.com/fixwatt-journey/", "_blank", "noopener,noreferrer")}}>
+                <TypingAnimation text={"Karo Startup!"}/>
+              </Box>
+            </Grid>
+            <Grid item xs={6} sx={{justifyContent: "center", display: "flex"}}>
+              <Box onClick={()=>{window.open("https://www.vikatan.com/business/startups/father-is-an-electrician-son-abhilash-is-a-start-up-company-owner", "_blank", "noopener,noreferrer")}}>
+                <TypingAnimation text={"Story Today!"}/>
+              </Box>
+            </Grid>
+        </Grid>
+      </Stack>
       <div ref={sectionRefs.services}>
         {
           Object.keys(servicesGroup).slice(0, 5).map((key)=>{
