@@ -15,6 +15,11 @@ export async function contactBusinessInquiry(data){
   return await axiosClient.post(`/mail/contact/business`, data);
 }
 
+export async function getReviews(){
+  return await axiosClient.get(`/review`);
+}
+
+
 // authentication
 
 export async function login({phone, password}){

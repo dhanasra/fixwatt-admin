@@ -1,7 +1,7 @@
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import CustomerAppBar from "../../../components/customer/CustomerAppBar";
 import { useEffect, useRef, useState } from "react";
-import { getCategories, getCustomerCategories, getCustomerServices, getServices } from "../../../network/service";
+import { getCategories, getCustomerCategories, getCustomerServices, getReviews, getServices } from "../../../network/service";
 import CategoriesGrid from "../../../components/customer/CategoriesGrid";
 import ImagesGrid from "../../../components/customer/ImagesGrid";
 import WorkCount from "../../../components/customer/WorkCount";
@@ -21,6 +21,7 @@ const CustomerDashboard = ()=>{
 
   const [categories, setCategories] = useState([]);
   const [servicesGroup, setServicesGroup] = useState([]);
+  const [ reviews, setReviews ] = useState([]);
 
   const navigate = useNavigate();
 
@@ -39,10 +40,12 @@ const CustomerDashboard = ()=>{
       try {
         const data = await Promise.all([
           getCustomerCategories(),
-          getCustomerServices()
+          getCustomerServices(),
+          getReviews()
         ]);
         setCategories(data[0].categories);
         const services = data[1].services;  
+        setReviews(data[2]["reviews"])
         
         dispatch(init(services));
         
@@ -201,7 +204,7 @@ const CustomerDashboard = ()=>{
       }
 
       <div ref={sectionRefs.testimonials}>
-        <Testimonials/>
+        <Testimonials reviews={reviews}/>
       </div>
 
       <Stack sx={{alignItems: "center"}}>
