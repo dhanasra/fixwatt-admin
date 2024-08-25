@@ -16,7 +16,7 @@ export async function contactBusinessInquiry(data){
 }
 
 export async function getReviews(){
-  return await axiosClient.get(`/review`);
+  return await axiosClient.get(`/review`, { headers: { "x-refresh-token": "--customer--" }});
 }
 
 

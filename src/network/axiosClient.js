@@ -17,7 +17,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
     config=>{
         const accessToken = Cookies.get('refreshToken');
-        if ((config.url.includes("/service") || config.url.includes("/category") || config.url.includes("/technician"))  
+        if ((config.url.includes("/service") || config.url.includes("/category") || config.url.includes("/technician" || config.url.includes("/review")))  
             && (config.method === "post" || config.method === "put")) {
             config.headers['Content-Type'] = 'multipart/form-data';
         }
